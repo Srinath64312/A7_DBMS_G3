@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # --- DATABASES ---
+  db_postgres:
+    image: postgres:15-alpine
+    container_name: db_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Admin@123
+      POSTGRES_DB: klhdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  db_mongo:
+    image: mongo:6.0
+    container_name: db_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  db_redis:
+    image: redis:7-alpine
+    container_name: db_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # --- MICROSERVICES ---
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    container_name: api_gateway
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - identity_service
+      - catalog_service
+      - inventory_service
+      - order_service
+    env_file: .env
+
+  identity_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.identity
+    container_name: identity_service
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db_postgres
+    env_file: .env
+
+  catalog_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.catalog
+    container_name: catalog_service
+    restart: always
+    ports:
+      - "8002:8002"
+    depends_on:
+      - db_postgres
+      - db_mongo
+      - db_redis
+    env_file: .env
+
+  inventory_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.inventory
+    container_name: inventory_service
+    restart: always
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db_postgres
+      - db_redis
+    env_file: .env
+
+  order_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.order
+    container_name: order_service
+    restart: always
+    ports:
+      - "8004:8004"
+    depends_on:
+      - db_postgres
+      - identity_service
+      - catalog_service
+      - inventory_service
+    env_file: .env
+
+volumes:
+  postgres_data:
+  mongo_data:

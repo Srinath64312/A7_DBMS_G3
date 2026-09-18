@@ -1,0 +1,415 @@
+{
+  "prod_lap_01": {
+    "product_id": "prod_lap_01",
+    "category_id": "cat_comp_01",
+    "name": "UltraBook Pro 16 AI Workstation",
+    "sku": "UB-AI-16-PRO",
+    "price": 1499.99,
+    "description": "Next-gen laptop powered by 16-Core Neural Engine, 32GB LPDDR5X, 1TB NVMe Gen 4 SSD, and 4K Mini-LED display.",
+    "attributes": {
+      "processor": "16-Core Neural CPU",
+      "memory_gb": 32
+    },
+    "tags": [
+      "laptop",
+      "ai",
+      "workstation"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500",
+    "rating": 4.8
+  },
+  "prod_edge_02": {
+    "product_id": "prod_edge_02",
+    "category_id": "cat_elec_02",
+    "name": "Neural Edge AI Accelerator PCIe",
+    "sku": "EDGE-AI-128TOPS",
+    "price": 649.5,
+    "description": "Dedicated vector computing and edge inference accelerator with 128 TOPS INT8 performance.",
+    "attributes": {
+      "interface": "PCIe 5.0 x8",
+      "compute_tops": 128
+    },
+    "tags": [
+      "ai",
+      "accelerator",
+      "pcie"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=500",
+    "rating": 4.8
+  },
+  "prod_audio_03": {
+    "product_id": "prod_audio_03",
+    "category_id": "cat_audio_03",
+    "name": "Quantum ANC Spatial Audio Headset",
+    "sku": "AUDIO-ANC-Q7",
+    "price": 279.0,
+    "description": "High-fidelity wireless studio headset with active noise cancellation and low-latency Bluetooth 5.4.",
+    "attributes": {
+      "battery_hours": 45,
+      "anc_db_reduction": 42
+    },
+    "tags": [
+      "audio",
+      "anc",
+      "wireless"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+    "rating": 4.8
+  },
+  "prod_iot_04": {
+    "product_id": "prod_iot_04",
+    "name": "Industrial IoT LoRa & Zigbee Edge Gateway",
+    "category_id": "cat_net_04",
+    "price": 389.0,
+    "description": "Ruggedized IP67 edge gateway for telemetry collection, distributed caching, and MQTT sensor telemetry.",
+    "attributes": {
+      "protocols": [
+        "LoRaWAN",
+        "Zigbee 3.0",
+        "Wi-Fi 6",
+        "Ethernet"
+      ],
+      "ip_rating": "IP67 Weatherproof",
+      "operating_temp_c": "-40 to +85",
+      "redundant_power": true
+    },
+    "tags": [
+      "iot",
+      "gateway",
+      "lora",
+      "networking",
+      "telemetry"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60",
+    "rating": 4.8
+  },
+  "prod_mon_05": {
+    "product_id": "prod_mon_05",
+    "name": "ProDeveloper 32-inch 4K HDR Monitor",
+    "category_id": "cat_comp_01",
+    "price": 799.0,
+    "description": "Ergonomic IPS Black monitor featuring 98% DCI-P3 color accuracy, 90W USB-C Power Delivery and KVM switch.",
+    "attributes": {
+      "panel": "IPS Black 4K (3840 x 2160)",
+      "refresh_rate_hz": 120,
+      "color_gamut": "98% DCI-P3",
+      "ports": [
+        "Thunderbolt 4",
+        "HDMI 2.1",
+        "DisplayPort 1.4",
+        "RJ45"
+      ],
+      "built_in_kvm": true
+    },
+    "tags": [
+      "monitor",
+      "display",
+      "4k",
+      "developer",
+      "hardware"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&auto=format&fit=crop&q=60",
+    "rating": 4.8
+  },
+  "prod_rig_06": {
+    "product_id": "prod_rig_06",
+    "name": "Distributed DB Developer Server Node",
+    "category_id": "cat_comp_01",
+    "price": 2199.0,
+    "description": "Compact rackmount workstation engineered for database benchmarking, Docker clusters, and PostgreSQL replicas.",
+    "attributes": {
+      "cpu": "24-Core Server CPU",
+      "ram_gb": 64,
+      "nvme_raid_tb": 4,
+      "network_speed_gbps": 10
+    },
+    "tags": [
+      "server",
+      "database",
+      "workstation",
+      "high-performance"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&auto=format&fit=crop&q=60",
+    "rating": 4.8
+  },
+  "prod_0c542858befc": {
+    "product_id": "prod_0c542858befc",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_40738b43bca4": {
+    "product_id": "prod_40738b43bca4",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_5dacef42771e": {
+    "product_id": "prod_5dacef42771e",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_e0eb0cd69bae": {
+    "product_id": "prod_e0eb0cd69bae",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_79481dc2e6af": {
+    "product_id": "prod_79481dc2e6af",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_70431ff22072": {
+    "product_id": "prod_70431ff22072",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_2517decd8079": {
+    "product_id": "prod_2517decd8079",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_a290d8cf347f": {
+    "product_id": "prod_a290d8cf347f",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_16d909fdb4bf": {
+    "product_id": "prod_16d909fdb4bf",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_73cf66b66152": {
+    "product_id": "prod_73cf66b66152",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_c914a608a1ed": {
+    "product_id": "prod_c914a608a1ed",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_635b8f705355": {
+    "product_id": "prod_635b8f705355",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_179518863255": {
+    "product_id": "prod_179518863255",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  },
+  "prod_133963035579": {
+    "product_id": "prod_133963035579",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
+  }
+}

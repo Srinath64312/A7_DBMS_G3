@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCommerce | Distributed Digital Commerce & Inventory Intelligence</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amazon: {
+                            dark: '#131921',
+                            light: '#232f3e',
+                            yellow: '#febd69',
+                            orange: '#f08804',
+                            blue: '#007185',
+                            hover: '#37475a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0f1111] text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- ========================================================================= -->
+    <!-- 1. TOP MAIN HEADER -->
+    <!-- ========================================================================= -->
+    <header class="bg-[#131921] sticky top-0 z-50 border-b border-[#232f3e]">
+        <!-- Main Navbar -->
+        <div class="max-w-[1550px] mx-auto px-4 py-2.5 flex items-center justify-between gap-3 text-white">
+            
+            <!-- Logo & University Badge -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('storefront')">
+                <div class="flex items-center gap-2">
+                    <div class="h-9 w-9 rounded bg-[#febd69] flex items-center justify-center text-slate-950 font-black text-lg">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5 leading-none">
+                            <span class="text-lg font-black tracking-tight text-white">Nex<span class="text-[#febd69]">Commerce</span></span>
+                            <span class="text-[10px] bg-[#232f3e] text-slate-200 border border-slate-700 font-bold px-1.5 py-0.5 rounded">DBS-DBD</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 leading-none">KL University | Off-Campus Aziz Nagar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deliver To Location Pin -->
+            <div class="hidden lg:flex items-center gap-1.5 hover:border hover:border-slate-600 p-1.5 rounded cursor-pointer transition">
+                <i class="fa-solid fa-location-dot text-[#febd69] text-sm mt-1"></i>
+                <div class="text-left leading-tight">
+                    <span class="text-[10px] text-slate-400 block">Deliver to</span>
+                    <span class="text-xs font-bold text-white">Hyderabad 500075</span>
+                </div>
+            </div>
+
+            <!-- Search Bar with Category Selector -->
+            <div class="flex-1 max-w-2xl mx-2">
+                <div class="flex rounded overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#febd69]">
+                    <select id="headerCategorySelect" onchange="applyHeaderCategory(this.value)" class="bg-slate-100 text-slate-800 text-xs px-3 py-2 border-r border-slate-300 focus:outline-none cursor-pointer">
+                        <option value="">All Categories</option>
+                    </select>
+                    <input type="text" id="mainSearchInput" oninput="debounceSearch()" placeholder="Search hardware catalog, SKU, or vector index..." class="w-full px-3 py-2 text-xs text-slate-900 placeholder-slate-500 focus:outline-none">
+                    <button onclick="loadCatalog()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 px-4 flex items-center justify-center transition" aria-label="Search">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Database & Telemetry Health Status -->
+            <div class="hidden xl:flex items-center gap-2 bg-[#232f3e] px-3 py-1.5 rounded border border-slate-700 text-xs" id="dbHealthDock">
+                <div class="flex items-center gap-1.5" title="Relational Database (PostgreSQL klhdb)">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                    <span class="text-slate-200 font-medium" id="pgStatusText">PostgreSQL (klhdb)</span>
+                </div>
+                <span class="text-slate-600">|</span>
+                <div class="flex items-center gap-1.5" title="Document Store (MongoDB)">
+                    <span class="h-2 w-2 rounded-full bg-cyan-400"></span>
+                    <span class="text-slate-200 font-medium">MongoDB: Active</span>
+                </div>
+                <span class="text-slate-600">|</span>
+                <div class="flex items-center gap-1.5" title="Cache & Distributed Locks (Redis 10m TTL)">
+                    <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                    <span class="text-slate-200 font-medium">Redis (10m TTL)</span>
+                </div>
+            </div>
+
+            <!-- Theme Toggle Button -->
+            <button onclick="toggleTheme()" id="themeToggleBtn" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#37475a] px-2.5 py-1.5 rounded border border-slate-700 text-xs text-slate-200 transition" title="Toggle Light / Dark Theme">
+                <i class="fa-solid fa-moon text-[#febd69]" id="themeToggleIcon"></i>
+                <span class="hidden md:inline font-medium" id="themeToggleText">Dark</span>
+            </button>
+
+            <!-- User Account / Role Switcher -->
+            <div class="flex items-center gap-1 hover:border hover:border-slate-600 p-1.5 rounded cursor-pointer transition" onclick="openAuthModal()">
+                <div class="text-left leading-tight">
+                    <span class="text-[10px] text-slate-400 block" id="headerGreeting">Hello, Sign in</span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs font-bold text-white" id="headerUserName">Account & Role</span>
+                        <i class="fa-solid fa-caret-down text-[10px] text-slate-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Button -->
+            <div class="hidden sm:flex items-center hover:border hover:border-slate-600 p-1.5 rounded cursor-pointer transition" onclick="openOrdersModal()">
+                <div class="text-left leading-tight">
+                    <span class="text-[10px] text-slate-400 block">Returns</span>
+                    <span class="text-xs font-bold text-white">& Orders</span>
+                </div>
+            </div>
+
+            <!-- Cart Button -->
+            <div class="flex items-center gap-2 hover:border hover:border-slate-600 px-3 py-1.5 rounded cursor-pointer transition" onclick="openCartModal()">
+                <div class="relative">
+                    <i class="fa-solid fa-cart-shopping text-xl text-[#febd69]"></i>
+                    <span id="cartCountBadge" class="absolute -top-1.5 -right-2 bg-[#febd69] text-slate-950 text-[11px] font-bold rounded h-4 min-w-[16px] px-1 flex items-center justify-center">0</span>
+                </div>
+                <span class="text-xs font-bold text-white hidden md:inline">Cart</span>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- 2. SECONDARY SUB-NAVIGATION BAR -->
+        <!-- ========================================================================= -->
+        <div class="bg-[#232f3e] text-xs text-white border-t border-[#131921]">
+            <div class="max-w-[1550px] mx-auto px-4 flex items-center justify-between overflow-x-auto gap-2 py-1">
+                <div class="flex items-center gap-1 font-medium whitespace-nowrap" id="subNavBarTabs">
+                    <button onclick="switchTab('storefront')" id="subtab-storefront" class="sub-nav-item active px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-[#febd69] font-bold">
+                        <i class="fa-solid fa-list"></i> Hardware Catalog
+                    </button>
+                    <button onclick="switchTab('checkout-sim')" id="subtab-checkout-sim" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-layer-group text-emerald-400"></i> ACID Checkout Simulator
+                    </button>
+                    <button onclick="switchTab('warehouses')" id="subtab-warehouses" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-warehouse text-amber-400"></i> Multi-Warehouse Hub
+                    </button>
+                    <button onclick="switchTab('intelligence')" id="subtab-intelligence" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-chart-simple text-cyan-400"></i> Demand Velocity Engine
+                    </button>
+                    <button onclick="switchTab('my-account')" id="subtab-my-account" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-user-gear text-indigo-400"></i> My Account
+                    </button>
+                    <button onclick="switchTab('db-inspector')" id="subtab-db-inspector" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-database text-blue-400"></i> Live Database & Audit
+                    </button>
+                    <button onclick="switchTab('test-runner')" id="subtab-test-runner" class="sub-nav-item px-3 py-1.5 rounded hover:bg-[#37475a] flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-check-double text-rose-400"></i> Test Suite (TC01-TC10)
+                    </button>
+                </div>
+
+                <!-- Swagger API Link -->
+                <div class="flex items-center gap-2 whitespace-nowrap">
+                    <a href="/docs" target="_blank" class="text-[#febd69] hover:text-amber-300 font-bold flex items-center gap-1 text-[11px] px-2 py-1 rounded hover:bg-[#37475a] transition">
+                        <i class="fa-solid fa-terminal"></i> Interactive Swagger API
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-[1550px] mx-auto w-full p-4 md:p-6 flex-1 space-y-6">
+
+        <!-- ========================================================================= -->
+        <!-- TAB: MY ACCOUNT & ADDRESS MANAGEMENT -->
+        <!-- ========================================================================= -->
+        <div id="view-my-account" class="tab-view hidden space-y-6">
+            <div class="bg-[#131921] p-5 rounded border border-[#2a384c]">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-indigo-400"></i> Account & Shipping Profiles
+                    </h2>
+                    <button onclick="openAddressModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-3 py-1.5 rounded transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Add Address
+                    </button>
+                </div>
+                <div id="userAddressesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: ENTERPRISE STOREFRONT & DYNAMIC CATALOG -->
+        <!-- ========================================================================= -->
+        <div id="view-storefront" class="tab-view space-y-6">
+            
+            <!-- Hero Architecture Panel -->
+            <div class="rounded bg-[#131921] border border-[#2a384c] p-6 shadow-sm">
+                <div class="max-w-4xl space-y-2.5">
+                    <div class="inline-flex items-center gap-1.5 bg-[#232f3e] text-[#febd69] text-xs font-semibold px-2.5 py-1 rounded border border-slate-700">
+                        <i class="fa-solid fa-shield-halved"></i> Polyglot Persistence Architecture | Course 25CS1302E DBS-DBD
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight">
+                        Distributed Digital Commerce & Multi-Warehouse Inventory Platform
+                    </h1>
+                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                        Enterprise transactional backend powered by <strong>PostgreSQL</strong> (ACID order fulfillment on <code class="text-[#febd69]">klhdb</code>), <strong>MongoDB</strong> (polymorphic product specifications), <strong>Redis</strong> (10-minute TTL reservation locks), and <strong>pgvector</strong> (vector similarity search).
+                    </p>
+                    <div class="flex flex-wrap items-center gap-2.5 pt-2">
+                        <button onclick="switchTab('checkout-sim')" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2 rounded transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-layer-group"></i> Launch ACID Checkout Simulator
+                        </button>
+                        <button onclick="switchTab('intelligence')" class="bg-[#232f3e] hover:bg-[#37475a] text-white font-medium text-xs px-4 py-2 rounded border border-slate-700 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-simple text-cyan-400"></i> View Demand Velocity Engine
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Filter Bar & Admin Controls -->
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-[#131921] p-3 rounded border border-[#2a384c]">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-4xl" id="categoryPillFilter">
+                    <button onclick="filterByCategory('')" class="cat-btn active bg-[#febd69] text-slate-950 font-bold text-xs px-3 py-1.5 rounded transition">All Categories</button>
+                    <button onclick="filterByCategory('cat_comp_01')" class="cat-btn bg-[#232f3e] text-slate-300 hover:text-white font-medium text-xs px-3 py-1.5 rounded transition">Computing & Servers</button>
+                    <button onclick="filterByCategory('cat_elec_02')" class="cat-btn bg-[#232f3e] text-slate-300 hover:text-white font-medium text-xs px-3 py-1.5 rounded transition">Hardware Accelerators</button>
+                    <button onclick="filterByCategory('cat_audio_03')" class="cat-btn bg-[#232f3e] text-slate-300 hover:text-white font-medium text-xs px-3 py-1.5 rounded transition">Audio Equipment</button>
+                    <button onclick="filterByCategory('cat_net_04')" class="cat-btn bg-[#232f3e] text-slate-300 hover:text-white font-medium text-xs px-3 py-1.5 rounded transition">IoT & Gateways</button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openNewProductModal()" id="adminAddProductBtn" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Add Product (Admin TC02)
+                    </button>
+                    <button onclick="loadCatalog()" class="bg-[#232f3e] hover:bg-[#37475a] text-slate-300 text-xs px-2.5 py-1.5 rounded transition" title="Refresh Catalog">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: ACID TRANSACTION SIMULATOR -->
+        <!-- ========================================================================= -->
+        <div id="view-checkout-sim" class="tab-view hidden space-y-6">
+            <div class="bg-[#131921] p-5 rounded border border-[#2a384c]">
+                <div class="flex items-center gap-2.5 mb-2">
+                    <span class="p-1.5 bg-emerald-950 text-emerald-400 rounded text-xs border border-emerald-800"><i class="fa-solid fa-lock"></i></span>
+                    <h2 class="text-base font-bold text-white">ACID Transaction & Distributed Consistency Simulator</h2>
+                </div>
+                <p class="text-xs text-slate-300 max-w-4xl leading-relaxed">
+                    Slide 6 and Slide 7 (TC06, TC07) demonstration: When an order is submitted, the backend starts a strict database transaction with row-level locks (<code class="bg-slate-900 px-1 py-0.5 rounded text-[#febd69] font-mono">SELECT FOR UPDATE</code>), acquires temporary 10-minute reservation locks in Redis, validates stock availability, atomically decrements warehouse quantity, and rolls back all operations if any warehouse encounters a stockout.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- Left: Active Cart Checkout -->
+                <div class="lg:col-span-1 bg-[#131921] p-4 rounded border border-[#2a384c] flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+                            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                <i class="fa-solid fa-cart-shopping text-[#febd69]"></i> Active Order Cart
+                            </h3>
+                            <button onclick="clearCart()" class="text-xs text-rose-400 hover:underline">Clear</button>
+                        </div>
+                        <div id="simCartItems" class="space-y-2.5 min-h-[180px] max-h-[300px] overflow-y-auto pr-1">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3 mt-4 space-y-2.5">
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Order Total:</span>
+                            <span id="simCartSubtotal" class="font-bold text-white text-sm">$0.00</span>
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                            <input type="text" id="couponInput" placeholder="Coupon Code" class="flex-1 bg-[#131921] border border-slate-700 rounded px-2 py-1 text-xs text-white">
+                            <button onclick="applyCoupon()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs px-2 py-1 rounded transition">Apply</button>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Transaction State:</span>
+                            <span id="simTxnState" class="font-bold text-[#febd69] font-mono">IDLE (Ready)</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="executeAcidCheckout(false)" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-check"></i> Commit (TC06)
+                            </button>
+                            <button onclick="executeAcidCheckout(true)" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2.5 rounded transition flex items-center justify-center gap-1.5" title="Simulates over-ordering to demonstrate automatic transaction rollback">
+                                <i class="fa-solid fa-ban"></i> Rollback (TC07)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Step-by-Step Transaction Log Visualizer -->
+                <div class="lg:col-span-2 bg-[#131921] p-4 rounded border border-[#2a384c] flex flex-col">
+                    <div class="flex items-center justify-between mb-2.5 border-b border-slate-800 pb-2">
+                        <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-cyan-400"></i> Database Transaction Execution Pipeline
+                        </h3>
+                        <button onclick="clearSimLogs()" class="text-xs text-slate-500 hover:text-slate-300">Clear</button>
+                    </div>
+                    <div id="simLogConsole" class="bg-[#0f1111] rounded p-3 font-mono text-xs text-slate-300 flex-1 min-h-[340px] overflow-y-auto space-y-1.5 border border-slate-800">
+                        <p class="text-slate-500">// Transaction logs will output here during live checkout...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: MULTI-WAREHOUSE INVENTORY -->
+        <!-- ========================================================================= -->
+        <div id="view-warehouses" class="tab-view hidden space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base font-bold text-white">Distributed Regional Warehouses</h2>
+                    <p class="text-xs text-slate-400">Real-time stock monitoring across Hyderabad, Bangalore, Mumbai, and Delhi hubs.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="warehouseFilterSelect" onchange="loadInventoryTable()" class="bg-[#131921] border border-[#2a384c] rounded px-3 py-1.5 text-xs text-slate-300">
+                        <option value="">All Warehouses</option>
+                    </select>
+                    <button onclick="openRestockModal()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-boxes-stacked"></i> Restock Inventory (TC04)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Warehouse Inventory Table -->
+            <div class="bg-[#131921] rounded border border-[#2a384c] overflow-hidden">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-[#232f3e] text-slate-300 uppercase font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="p-3">Product & SKU</th>
+                            <th class="p-3">Warehouse Location</th>
+                            <th class="p-3 text-center">Total Stock</th>
+                            <th class="p-3 text-center">Reserved (TTL)</th>
+                            <th class="p-3 text-center">Available</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody" class="divide-y divide-slate-800/60">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 4: DEMAND VELOCITY ENGINE -->
+        <!-- ========================================================================= -->
+        <div id="view-intelligence" class="tab-view hidden space-y-6">
+            <!-- Summary Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="intelMetricsContainer">
+                <div class="bg-[#131921] p-4 rounded border border-[#2a384c]">
+                    <span class="text-xs text-slate-400 font-medium">Products Monitored</span>
+                    <p class="text-2xl font-bold text-white mt-1" id="intelTotalProds">--</p>
+                </div>
+                <div class="bg-[#131921] p-4 rounded border border-[#2a384c]">
+                    <span class="text-xs text-slate-400 font-medium">Inventory Valuation (PostgreSQL)</span>
+                    <p class="text-2xl font-bold text-emerald-400 mt-1" id="intelTotalValuation">$--</p>
+                </div>
+                <div class="bg-[#131921] p-4 rounded border border-[#2a384c]">
+                    <span class="text-xs text-slate-400 font-medium">Critical Stockout Warnings</span>
+                    <p class="text-2xl font-bold text-rose-400 mt-1" id="intelCriticalAlerts">--</p>
+                </div>
+            </div>
+
+            <!-- Demand Forecasting Table -->
+            <div class="bg-[#131921] rounded border border-[#2a384c] overflow-hidden">
+                <div class="p-3.5 bg-[#232f3e] border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xs font-bold text-white">Demand Velocity & Automated Reorder Point Engine</h3>
+                        <p class="text-[11px] text-slate-400">Calculated from order history, 5-day supplier lead time, and safety stock thresholds.</p>
+                    </div>
+                    <button onclick="loadIntelligence()" class="text-xs text-[#febd69] font-bold hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-rotate"></i> Recalculate
+                    </button>
+                </div>
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-[#131921] text-slate-400 uppercase font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="p-3">Product</th>
+                            <th class="p-3 text-center">Available Stock</th>
+                            <th class="p-3 text-center">Historical Orders</th>
+                            <th class="p-3 text-center">Daily Velocity</th>
+                            <th class="p-3 text-center">Runway Remaining</th>
+                            <th class="p-3 text-center">Reorder Recommendation</th>
+                            <th class="p-3">Inventory Health</th>
+                        </tr>
+                    </thead>
+                    <tbody id="intelTableBody" class="divide-y divide-slate-800/60">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 5: DATABASE & AUDIT INSPECTOR -->
+        <!-- ========================================================================= -->
+        <div id="view-db-inspector" class="tab-view hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-white">Database & Audit Trail Inspector</h2>
+                    <p class="text-xs text-slate-400">Inspect raw PostgreSQL tables and immutable inventory transactions in real-time.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="loadAuditLogs()" class="bg-[#232f3e] hover:bg-[#37475a] text-xs text-slate-200 px-3 py-1.5 rounded transition">
+                        <i class="fa-solid fa-rotate mr-1"></i> Refresh Logs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audit Logs Table -->
+            <div class="bg-[#131921] rounded border border-[#2a384c] overflow-hidden">
+                <div class="p-3 bg-[#232f3e] border-b border-slate-800 font-semibold text-xs text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-[#febd69]"></i> Immutable Inventory Transaction Log (PostgreSQL inventory_transactions)
+                </div>
+                <div class="max-h-[420px] overflow-y-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-[#131921] text-slate-400 sticky top-0 uppercase font-semibold">
+                            <tr>
+                                <th class="p-3">Txn ID</th>
+                                <th class="p-3">Timestamp</th>
+                                <th class="p-3">Product</th>
+                                <th class="p-3">Warehouse</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3 text-center">Delta</th>
+                                <th class="p-3">Note / Author</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody" class="divide-y divide-slate-800/60 font-mono">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 6: AUTOMATED TEST RUNNER (TC01 - TC10) -->
+        <!-- ========================================================================= -->
+        <div id="view-test-runner" class="tab-view hidden space-y-6">
+            <div class="bg-[#131921] p-5 rounded border border-[#2a384c] flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-check-double text-emerald-400"></i> Automated Test Suite Verification (TC01-TC10)
+                    </h2>
+                    <p class="text-xs text-slate-300 mt-1 max-w-2xl">
+                        Executes automated verification across all 10 test cases (TC01 to TC10) against PostgreSQL and MongoDB.
+                    </p>
+                </div>
+                <button onclick="runTestSuite()" id="runTestBtn" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2 rounded transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-play"></i> Run All 10 Test Cases
+                </button>
+            </div>
+
+            <!-- Test Summary Banner -->
+            <div id="testSummaryBanner" class="hidden p-3 rounded border bg-[#131921] flex items-center justify-between text-xs">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Test Cases Table -->
+            <div class="bg-[#131921] rounded border border-[#2a384c] overflow-hidden">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-[#232f3e] text-slate-300 uppercase font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="p-3">TC ID</th>
+                            <th class="p-3">Test Case Title</th>
+                            <th class="p-3">Evaluation Criteria</th>
+                            <th class="p-3 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="testTableBody" class="divide-y divide-slate-800/60">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- PRODUCT DETAIL MODAL (MongoDB Dynamic Attributes & pgvector Recommendations) -->
+    <!-- ========================================================================= -->
+    <div id="productDetailModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="modalCategoryBadge" class="text-[10px] font-bold text-[#febd69] bg-[#232f3e] px-2 py-0.5 rounded uppercase tracking-wider">CATEGORY</span>
+                        <span class="text-[10px] text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Stock Verified</span>
+                    </div>
+                    <h3 id="modalProductName" class="text-lg font-bold text-white mt-1">Product Name</h3>
+                    <p id="modalProductSku" class="text-xs text-slate-400 font-mono">SKU-000</p>
+                </div>
+                <button onclick="closeProductModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <p id="modalProductDesc" class="text-xs text-slate-300 leading-relaxed"></p>
+
+            <!-- MongoDB Flexible Attributes Box -->
+            <div class="bg-[#232f3e] p-3.5 rounded border border-slate-700 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5"><i class="fa-solid fa-file-code"></i> Dynamic MongoDB Document Specifications:</span>
+                    <span class="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded font-mono">Schema-Free</span>
+                </div>
+                <div id="modalAttributesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Vector Similarity Recommendations Section -->
+            <div class="space-y-2 pt-1">
+                <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5"><i class="fa-solid fa-vector-square text-cyan-400"></i> Related Products (pgvector Cosine Similarity Index):</span>
+                <div id="modalRecsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Pricing & Add to Cart -->
+            <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                <div>
+                    <span class="text-[10px] text-slate-400 block">Unit Price (PostgreSQL):</span>
+                    <span id="modalProductPrice" class="text-xl font-bold text-[#febd69]">$0.00</span>
+                </div>
+                <button onclick="addModalProductToCart()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Order Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- AUTHENTICATION & LOGIN PORTAL MODAL -->
+    <!-- ========================================================================= -->
+    <div id="authModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                <div class="space-y-0.5">
+                    <h3 class="text-sm font-bold text-white" id="authModalTitle">Sign In to Platform</h3>
+                    <p class="text-[11px] text-slate-400">KL University | Course 25CS1302E DBS-DBD</p>
+                </div>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Quick 1-Click Role Login Bar -->
+            <div class="space-y-1.5">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Demo Quick Login:</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="quickLoginRole('CUSTOMER')" class="bg-[#232f3e] hover:bg-[#37475a] border border-slate-700 p-2 rounded text-left transition flex flex-col justify-between">
+                        <span class="text-[9px] text-[#febd69] font-bold uppercase">Customer</span>
+                        <span class="text-xs font-semibold text-white mt-1">Abhinay</span>
+                    </button>
+                    <button onclick="quickLoginRole('WAREHOUSE_MANAGER')" class="bg-[#232f3e] hover:bg-[#37475a] border border-slate-700 p-2 rounded text-left transition flex flex-col justify-between">
+                        <span class="text-[9px] text-cyan-400 font-bold uppercase">Manager</span>
+                        <span class="text-xs font-semibold text-white mt-1">Poli Naidu</span>
+                    </button>
+                    <button onclick="quickLoginRole('ADMIN')" class="bg-[#232f3e] hover:bg-[#37475a] border border-slate-700 p-2 rounded text-left transition flex flex-col justify-between">
+                        <span class="text-[9px] text-rose-400 font-bold uppercase">Admin</span>
+                        <span class="text-xs font-semibold text-white mt-1">Srinath</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="relative flex items-center justify-center">
+                <div class="border-t border-slate-800 w-full"></div>
+                <span class="bg-[#131921] px-2 text-[10px] text-slate-500 uppercase">Or manual login</span>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3 text-xs">
+                <div id="registerNameGroup" class="hidden">
+                    <label class="text-slate-400 block mb-1 font-medium">Full Name:</label>
+                    <input type="text" id="authNameInput" placeholder="Name" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+
+                <div id="registerRoleGroup" class="hidden">
+                    <label class="text-slate-400 block mb-1 font-medium">Role:</label>
+                    <select id="authRoleInput" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                        <option value="CUSTOMER">Customer</option>
+                        <option value="WAREHOUSE_MANAGER">Warehouse Manager</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-slate-400 block mb-1 font-medium">Email:</label>
+                    <input type="email" id="authEmailInput" value="abhinay@klh.edu.in" required placeholder="user@klh.edu.in" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+
+                <div>
+                    <label class="text-slate-400 block mb-1 font-medium">Password:</label>
+                    <input type="password" id="authPasswordInput" value="Customer@123" required placeholder="Password" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+
+                <div id="authErrorMsg" class="hidden p-2 rounded bg-rose-950 border border-rose-800 text-rose-300 text-xs"></div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold py-2 rounded transition">
+                    Sign In with JWT
+                </button>
+            </form>
+
+            <div class="text-center text-xs text-slate-400 pt-1">
+                <span id="authTogglePrompt">Need an account?</span>
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-[#febd69] font-bold hover:underline ml-1">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restock Modal -->
+    <div id="restockModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-md w-full p-5 shadow-2xl space-y-3">
+            <h3 class="text-xs font-bold text-white flex items-center gap-2"><i class="fa-solid fa-boxes-stacked text-[#febd69]"></i> Restock Warehouse Inventory</h3>
+            <div class="space-y-2.5 text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">Select Product:</label>
+                    <select id="restockProductSelect" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white"></select>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Target Warehouse:</label>
+                    <select id="restockWarehouseSelect" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white"></select>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Quantity Delta:</label>
+                    <input type="number" id="restockQtyInput" value="25" min="1" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeRestockModal()" class="text-xs text-slate-400 px-3 py-1.5 hover:text-white">Cancel</button>
+                <button onclick="submitRestock()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded">Submit Restock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal (Admin TC02) -->
+    <div id="newProductModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-lg w-full p-5 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xs font-bold text-white flex items-center gap-2"><i class="fa-solid fa-plus text-[#febd69]"></i> Add New Product (Admin TC02)</h3>
+            <div class="space-y-2.5 text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">Product Name:</label>
+                    <input type="text" id="newProdName" placeholder="e.g. Enterprise Gateway Node" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-slate-400 block mb-1">SKU:</label>
+                        <input type="text" id="newProdSku" placeholder="GW-ENT-01" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="text-slate-400 block mb-1">Price ($):</label>
+                        <input type="number" step="0.01" id="newProdPrice" placeholder="499.00" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Category:</label>
+                    <select id="newProdCategory" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white"></select>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Description:</label>
+                    <textarea id="newProdDesc" rows="2" placeholder="Technical specifications..." class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white"></textarea>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Tags (comma separated):</label>
+                    <input type="text" id="newProdTags" placeholder="gateway, networking, hardware" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeNewProductModal()" class="text-xs text-slate-400 px-3 py-1.5 hover:text-white">Cancel</button>
+                <button onclick="submitNewProduct()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded">Create Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders History Modal -->
+    <div id="ordersModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-2xl w-full p-5 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="text-xs font-bold text-white flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-[#febd69]"></i> Order History (ACID Transactions)</h3>
+                <button onclick="closeOrdersModal()" class="text-slate-400 hover:text-white text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="ordersListContainer" class="space-y-2.5 text-xs">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Gateway Simulation Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded-xl max-w-md w-full p-6 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-credit-card text-[#febd69]"></i> Secure Checkout Gateway</h3>
+                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#232f3e] p-3 rounded border border-slate-700 text-center">
+                    <span class="text-xs text-slate-400 block">Amount to Pay</span>
+                    <span id="paymentAmount" class="text-2xl font-bold text-white">$0.00</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="selectPaymentMethod('UPI')" class="payment-method-card bg-[#131921] p-3 rounded border border-slate-700 flex flex-col items-center gap-2" id="pay-UPI">
+                        <i class="fa-solid fa-mobile-screen text-blue-400 text-xl"></i>
+                        <span class="text-[11px] font-bold text-slate-200">UPI / GPay</span>
+                    </div>
+                    <div onclick="selectPaymentMethod('CREDIT_CARD')" class="payment-method-card bg-[#131921] p-3 rounded border border-slate-700 flex flex-col items-center gap-2" id="pay-CREDIT_CARD">
+                        <i class="fa-solid fa-credit-card text-amber-400 text-xl"></i>
+                        <span class="text-[11px] font-bold text-slate-200">Credit Card</span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[11px] text-slate-400 block">Transaction Reference (Mock):</label>
+                    <input type="text" id="paymentTxnId" value="TXN_PRO_998877" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-xs text-white">
+                </div>
+            </div>
+            <button onclick="submitPayment()" class="w-full bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-lock"></i> Complete Secure Payment
+            </button>
+        </div>
+    </div>
+
+    <!-- Address Management Modal -->
+    <div id="addressModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-md w-full p-5 shadow-2xl space-y-3">
+            <h3 class="text-xs font-bold text-white flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-[#febd69]"></i> Add Shipping Address</h3>
+            <div class="space-y-2.5 text-xs">
+                <input type="text" id="addrLine1" placeholder="Address Line 1" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="addrCity" placeholder="City" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                    <input type="text" id="addrState" placeholder="State" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="addrZip" placeholder="ZIP Code" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                    <input type="text" id="addrCountry" value="India" class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white">
+                </div>
+                <label class="flex items-center gap-2 text-slate-400 cursor-pointer">
+                    <input type="checkbox" id="addrDefault" class="accent-amber-500"> Set as default shipping address
+                </label>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeAddressModal()" class="text-xs text-slate-400 px-3 py-1.5 hover:text-white">Cancel</button>
+                <button onclick="submitAddress()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded">Save Address</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Tracking Modal -->
+    <div id="shippingModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-truck-fast text-[#febd69]"></i> Shipment Tracking</h3>
+                <button onclick="closeShippingModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="shippingTrackContent" class="space-y-4 text-xs">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Submission Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-star text-[#febd69]"></i> Rate Product</h3>
+            <div class="space-y-3 text-xs">
+                <div class="flex justify-center gap-2 text-2xl text-slate-600" id="reviewStars">
+                    <i class="fa-solid fa-star cursor-pointer hover:text-amber-400" onclick="setReviewRating(1)"></i>
+                    <i class="fa-solid fa-star cursor-pointer hover:text-amber-400" onclick="setReviewRating(2)"></i>
+                    <i class="fa-solid fa-star cursor-pointer hover:text-amber-400" onclick="setReviewRating(3)"></i>
+                    <i class="fa-solid fa-star cursor-pointer hover:text-amber-400" onclick="setReviewRating(4)"></i>
+                    <i class="fa-solid fa-star cursor-pointer hover:text-amber-400" onclick="setReviewRating(5)"></i>
+                </div>
+                <textarea id="reviewComment" rows="3" placeholder="Share your experience..." class="w-full bg-[#232f3e] border border-slate-700 rounded p-2 text-white"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeReviewModal()" class="text-xs text-slate-400 px-3 py-1.5 hover:text-white">Cancel</button>
+                <button onclick="submitReview()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded">Post Review</button>
+            </div>
+        </div>
+    </div>
+    <div id="privacyModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto legal-content">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-[#febd69]"></i> Privacy Policy
+                </h2>
+                <button onclick="closePrivacyModal()" class="text-slate-400 hover:text-white text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p><strong>Effective Date:</strong> January 1, 2026</p>
+            <p>This Privacy Policy outlines how NexCommerce ("the Platform"), developed for Course 25CS1302E (Database Systems & Distributed Backend Development) at KL University, collects, processes, and protects user data across its polyglot storage layer.</p>
+            
+            <h3>1. Data Collection & Purpose</h3>
+            <p>The platform collects and stores user information exclusively for authentication, order processing, and multi-warehouse inventory allocation:</p>
+            <ul>
+                <li><strong>Identity & Credentials:</strong> Name, academic email address, bcrypt-hashed passwords, and RBAC role assignments.</li>
+                <li><strong>Transactional Data:</strong> Orders, items, shipping destinations, and transactional amounts recorded immutably in PostgreSQL.</li>
+                <li><strong>Telemetry & Session Logs:</strong> Temporary cache keys, reservation tokens, and audit transaction records.</li>
+            </ul>
+
+            <h3>2. Security & Storage Architecture</h3>
+            <p>All sensitive credentials are encrypted using industry-standard bcrypt hashing. Sessions are secured via JSON Web Tokens (JWT) signed with HS256. Relational transaction integrity is enforced via PostgreSQL ACID properties and row-level locks.</p>
+
+            <h3>3. Data Retention & Access</h3>
+            <p>Data stored in PostgreSQL and MongoDB is retained strictly for evaluation and academic testing purposes. Users may review order histories and audit trails directly through the verified database inspector.</p>
+
+            <div class="pt-3 border-t border-slate-800 flex justify-end">
+                <button onclick="closePrivacyModal()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-1.5 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TERMS AND CONDITIONS MODAL -->
+    <!-- ========================================================================= -->
+    <div id="termsModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#131921] border border-[#2a384c] rounded max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto legal-content">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-scale-balanced text-[#febd69]"></i> Terms and Conditions
+                </h2>
+                <button onclick="closeTermsModal()" class="text-slate-400 hover:text-white text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p><strong>Last Updated:</strong> January 1, 2026</p>
+            <p>By accessing or using the NexCommerce Platform, you agree to comply with and be bound by the following academic and operational terms.</p>
+
+            <h3>1. Platform Scope & Academic Usage</h3>
+            <p>NexCommerce is an engineering software project built for Course 25CS1302E - DBS-DBD at KL University (Off-Campus Aziz Nagar). All catalog items, prices, and simulated transactions are intended for system evaluation, benchmarking, and database demonstration.</p>
+
+            <h3>2. Transactional Consistency & Concurrency</h3>
+            <p>All checkout transactions execute under strict ACID guarantees on PostgreSQL (klhdb). Attempted orders exceeding warehouse availability are subject to automatic transaction rollback without partial database writes.</p>
+
+            <h3>3. Role-Based Access Control (RBAC)</h3>
+            <p>Administrative privileges (catalog creation, stock adjustment, audit inspection) require authenticated JWT credentials with ADMIN or WAREHOUSE_MANAGER role permissions.</p>
+
+            <h3>4. Intellectual Property</h3>
+            <p>The system architecture, database schemas, and codebase are authored by the engineering project team under the Department of Computer Science & Engineering, KL University.</p>
+
+            <div class="pt-3 border-t border-slate-800 flex justify-end">
+                <button onclick="closeTermsModal()" class="bg-[#febd69] hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-1.5 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MULTI-COLUMN FOOTER -->
+    <!-- ========================================================================= -->
+    <footer class="bg-[#131921] text-slate-400 text-xs border-t border-[#232f3e] mt-12">
+        <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-[#232f3e] hover:bg-[#37475a] text-center py-2.5 font-bold text-slate-200 cursor-pointer transition">
+            Back to top
+        </div>
+        <div class="max-w-[1550px] mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs">Course & Academic Context</h4>
+                <p class="text-[11px] text-slate-400">Course 25CS1302E: Database Systems & Distributed Backend Development (DBS-DBD)</p>
+                <p class="text-[11px] text-slate-400">Department of Computer Science & Engineering</p>
+                <p class="text-[11px] text-slate-400">KL University | Off-Campus Aziz Nagar, Hyderabad</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs">Polyglot Architecture</h4>
+                <p class="text-[11px] text-slate-400"><strong class="text-slate-300">PostgreSQL (klhdb):</strong> ACID Orders & Warehouse Inventory</p>
+                <p class="text-[11px] text-slate-400"><strong class="text-slate-300">MongoDB:</strong> Schema-Free Dynamic Product Attributes</p>
+                <p class="text-[11px] text-slate-400"><strong class="text-slate-300">Redis:</strong> 10-Minute TTL Stock Reservation Locks</p>
+                <p class="text-[11px] text-slate-400"><strong class="text-slate-300">pgvector:</strong> Cosine Similarity Vector Embeddings</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs">Engineering Team</h4>
+                <p class="text-[11px] text-slate-400">2510030106: Srinath (Backend & Database Architecture)</p>
+                <p class="text-[11px] text-slate-400">2510030103: Abhinay Sai (API & Security Services)</p>
+                <p class="text-[11px] text-slate-400">2510030160: Poli Naidu (Distributed Cache & Microservices)</p>
+                <p class="text-[11px] text-slate-400">2510030083: Chandu (Verification & Documentation)</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs">Platform Links & Legal</h4>
+                <a href="/docs" target="_blank" class="text-[#febd69] hover:underline block text-[11px]">Interactive Swagger API Docs</a>
+                <button onclick="switchTab('test-runner')" class="text-[#febd69] hover:underline block text-[11px] text-left">Automated TC01-TC10 Test Suite</button>
+                <button onclick="openPrivacyModal()" class="text-slate-400 hover:text-white block text-[11px] text-left">Privacy Policy</button>
+                <button onclick="openTermsModal()" class="text-slate-400 hover:text-white block text-[11px] text-left">Terms and Conditions</button>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 py-3 text-center text-[11px] text-slate-500">
+            (C) 2026 NexCommerce Platform | Department of Computer Science & Engineering, KL University
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
