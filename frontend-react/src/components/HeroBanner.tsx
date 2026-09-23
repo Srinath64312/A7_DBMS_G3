@@ -1,5 +1,6 @@
 import React from 'react';
 import { AccretionDisc } from './AccretionDisc';
+import { OrbitBorderButton } from './OrbitBorderButton';
 
 interface HeroBannerProps {
   onSelectCategory: (catId: string) => void;
@@ -38,6 +39,26 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
           <p className="text-gray-200 text-xs sm:text-sm max-w-xl leading-relaxed drop-shadow">
             Powered by ACID Transactions on PostgreSQL, Flexible NoSQL Catalog on MongoDB, Distributed Locks on Redis, and Vector Similarity Search.
           </p>
+
+          {/* Action Orbit Border Buttons */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <OrbitBorderButton
+              label="Explore Compute Nodes"
+              stroke={{ color: "#febd69", size: 30, speed: 60 }}
+              colors={{ fill: "#131921", textColor: "#febd69" }}
+              rounded={9999}
+              padding="8px 20px"
+              onClick={() => onSelectCategory('cat_comp_01')}
+            />
+            <OrbitBorderButton
+              label="Tensor Accelerators"
+              stroke={{ color: "#38bdf8", size: 30, speed: 50 }}
+              colors={{ fill: "#0f172a", textColor: "#38bdf8" }}
+              rounded={9999}
+              padding="8px 20px"
+              onClick={() => onSelectCategory('cat_elec_02')}
+            />
+          </div>
         </div>
 
         {/* Decorative Server Visual */}
