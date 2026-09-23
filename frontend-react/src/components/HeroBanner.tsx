@@ -1,4 +1,5 @@
 import React from 'react';
+import { AccretionDisc } from './AccretionDisc';
 
 interface HeroBannerProps {
   onSelectCategory: (catId: string) => void;
@@ -7,44 +8,58 @@ interface HeroBannerProps {
 export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
   return (
     <div className="relative mb-6">
-      {/* Background Graphic */}
-      <div className="h-64 sm:h-80 md:h-96 w-full bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] flex items-center justify-between px-6 md:px-16 text-white relative overflow-hidden">
-        {/* Glow circles */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Background Graphic with Live WebGL Accretion Disc */}
+      <div className="h-80 sm:h-96 md:h-[420px] w-full bg-[#070b14] flex items-center justify-between px-6 md:px-16 text-white relative overflow-hidden rounded-xl shadow-2xl">
         
-        <div className="max-w-2xl z-10 space-y-3">
-          <div className="inline-flex items-center gap-2 bg-[#febd69]/20 text-[#febd69] border border-[#febd69]/30 px-2.5 py-1 rounded text-xs font-bold tracking-wide uppercase">
-            <i className="fa-solid fa-server"></i> Next-Gen Enterprise Hardware
+        {/* Accretion Disc WebGL Canvas */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-85">
+          <AccretionDisc
+            baseColor="#FF5F00"
+            accentColor="#ffd814"
+            arms={7}
+            tilt={36}
+            core={5}
+            speed={75}
+            dotSize={185}
+          />
+        </div>
+
+        {/* Ambient atmospheric lighting overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070b14]/90 via-[#070b14]/40 to-transparent z-[1] pointer-events-none"></div>
+
+        {/* Hero Title & Description */}
+        <div className="max-w-2xl z-10 space-y-3 relative">
+          <div className="inline-flex items-center gap-2 bg-[#febd69]/20 text-[#febd69] border border-[#febd69]/40 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm backdrop-blur-md">
+            <i className="fa-solid fa-atom animate-spin" style={{ animationDuration: '8s' }}></i> Next-Gen Enterprise Hardware
           </div>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
             Distributed Compute, AI Acceleration & Resilient Storage
           </h1>
-          <p className="text-gray-300 text-xs sm:text-sm max-w-xl">
+          <p className="text-gray-200 text-xs sm:text-sm max-w-xl leading-relaxed drop-shadow">
             Powered by ACID Transactions on PostgreSQL, Flexible NoSQL Catalog on MongoDB, Distributed Locks on Redis, and Vector Similarity Search.
           </p>
         </div>
 
         {/* Decorative Server Visual */}
-        <div className="hidden lg:flex flex-col items-center justify-center z-10 opacity-90">
-          <div className="relative p-6 bg-slate-900/80 border border-slate-700/60 rounded-xl shadow-2xl backdrop-blur-md">
+        <div className="hidden lg:flex flex-col items-center justify-center z-10 relative opacity-95">
+          <div className="relative p-5 bg-slate-900/80 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md">
             <div className="flex items-center gap-2 mb-3 border-b border-slate-800 pb-2">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               <span className="text-[11px] text-gray-400 font-mono ml-2">NexCommerce Kernel v2.4</span>
             </div>
-            <div className="space-y-1.5 font-mono text-xs">
-              <div className="text-emerald-400">✓ klhdb (PostgreSQL) Status: READY</div>
-              <div className="text-cyan-400">✓ mongo_catalog Cluster: ACTIVE</div>
-              <div className="text-amber-400">✓ redis_lock_cache: SYNCED (TTL 300s)</div>
-              <div className="text-purple-400">✓ AI Vector Embeddings: 384-DIM LOADED</div>
+            <div className="space-y-2 font-mono text-xs">
+              <div className="text-emerald-400 flex items-center gap-1.5"><i className="fa-solid fa-check"></i> klhdb (PostgreSQL) Status: READY</div>
+              <div className="text-cyan-400 flex items-center gap-1.5"><i className="fa-solid fa-check"></i> mongo_catalog Cluster: ACTIVE</div>
+              <div className="text-amber-400 flex items-center gap-1.5"><i className="fa-solid fa-check"></i> redis_lock_cache: SYNCED (TTL 300s)</div>
+              <div className="text-purple-400 flex items-center gap-1.5"><i className="fa-solid fa-check"></i> AI Vector Embeddings: 384-DIM LOADED</div>
             </div>
           </div>
         </div>
 
         {/* Gradient bottom fade into page body */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg-page)] to-transparent pointer-events-none"></div>
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg-page)] to-transparent pointer-events-none z-[2]"></div>
       </div>
 
       {/* 4 Feature Quick Cards overlapping banner */}

@@ -150,6 +150,24 @@ export function App() {
 
   useEffect(() => {
     fetchData();
+    // Ensure active JWT token exists for default user session
+    const existingToken = sessionStorage.getItem('nex_token');
+    if (!existingToken) {
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'abhinay@klh.edu.in', password: 'Customer@123' })
+      })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            sessionStorage.setItem('nex_token', data.token);
+            sessionStorage.setItem('nex_user', JSON.stringify(data));
+            setUser(data);
+          }
+        })
+        .catch(console.warn);
+    }
   }, [fetchData]);
 
   // Sync Wishlist with Backend

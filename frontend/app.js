@@ -524,11 +524,32 @@ function simulateUserSwitch(uid, uname, urole) {
     showToast(`Switched active context to ${uname} (${urole})`, 'info');
 }
 
+async function ensureValidToken() {
+    if (!currentToken || currentToken === 'null' || currentToken === 'undefined') {
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: "abhinay@klh.edu.in", password: "Customer@123" })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                saveSession(data.token, data.user_id, data.name, data.role);
+            }
+        } catch (e) {
+            console.warn("Auto-token generation error:", e);
+        }
+    }
+    return currentToken;
+}
+
 function getAuthHeaders() {
-    return {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${currentToken}`
-    };
+    const token = currentToken || sessionStorage.getItem('nex_token') || '';
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
 }
 
 async function fetchDbStatus() {
@@ -1522,6 +1543,7 @@ async function submitGatewayPayment() {
         let finalAmount = activeGatewayTotal;
 
         if (!orderId) {
+            await ensureValidToken();
             logSim(`[2PC-PHASE-1] Acquired Redis distributed lock for ${activeGatewayItems.length} line items...`, "lock");
             const itemsPayload = activeGatewayItems.map(item => ({
                 product_id: item.product_id,
@@ -1529,7 +1551,7 @@ async function submitGatewayPayment() {
                 quantity: item.quantity
             }));
 
-            const res = await fetch(`${API_BASE}/api/orders`, {
+            let res = await fetch(`${API_BASE}/api/orders`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
@@ -1537,6 +1559,20 @@ async function submitGatewayPayment() {
                     shipping_address: "Campus Deliveries, Aziz Nagar, Hyderabad 500075"
                 })
             });
+
+            if (res.status === 401) {
+                currentToken = "";
+                sessionStorage.removeItem("nex_token");
+                await ensureValidToken();
+                res = await fetch(`${API_BASE}/api/orders`, {
+                    method: "POST",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        items: itemsPayload,
+                        shipping_address: "Campus Deliveries, Aziz Nagar, Hyderabad 500075"
+                    })
+                });
+            }
 
             const data = await res.json();
             if (!res.ok) {
