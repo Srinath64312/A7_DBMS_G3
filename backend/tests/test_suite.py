@@ -233,7 +233,32 @@ class DistributedCommerceTestSuite(unittest.TestCase):
         addresses = res_get.get_json()
         self.assertTrue(any(a["address_id"] == addr_id for a in addresses))
 
-    def run_all_tests(self):
+    def test_tc14_wishlist_admin_access(self):
+        """TC14 - Wishlist & Admin Access: Admin superuser can manage wishlist without 403 errors"""
+        # 1. Unauthenticated request rejected
+        unauth_res = self.client.get("/api/wishlist")
+        self.assertEqual(unauth_res.status_code, 401)
+
+        # 2. Admin can access wishlist (no 403 Forbidden)
+        admin_get = self.client.get("/api/wishlist", headers=self.admin_headers)
+        self.assertEqual(admin_get.status_code, 200)
+
+        # 3. Admin can add product to wishlist
+        add_res = self.client.post("/api/wishlist", json={"product_id": "prod_lap_01"}, headers=self.admin_headers)
+        self.assertEqual(add_res.status_code, 201)
+
+        # 4. Verify product in admin's wishlist
+        verify_res = self.client.get("/api/wishlist", headers=self.admin_headers)
+        self.assertEqual(verify_res.status_code, 200)
+        items = verify_res.get_json()
+        self.assertTrue(any(i["product_id"] == "prod_lap_01" for i in items))
+
+        # 5. Admin can remove product from wishlist
+        del_res = self.client.delete("/api/wishlist/prod_lap_01", headers=self.admin_headers)
+        self.assertEqual(del_res.status_code, 200)
+
+    @classmethod
+    def run_all_tests(cls):
         """Runs all tests and returns structured JSON results for presentation / UI"""
         test_instance = DistributedCommerceTestSuite()
         DistributedCommerceTestSuite.setUpClass()
@@ -252,7 +277,8 @@ class DistributedCommerceTestSuite(unittest.TestCase):
             ("TC10", "Service Integration", "End-to-end multi-service workflow & AI forecast", "test_tc10_service_integration"),
             ("TC11", "Coupon Validation", "Valid coupon reduces order total atomically", "test_tc11_coupon_validation"),
             ("TC12", "Payment Link", "Payment process moves PENDING order to CONFIRMED", "test_tc12_payment_order_acid_link"),
-            ("TC13", "Address Validation", "Manage shipping profiles in relational core", "test_tc13_address_validation")
+            ("TC13", "Address Validation", "Manage shipping profiles in relational core", "test_tc13_address_validation"),
+            ("TC14", "Wishlist & Admin Superuser", "Admin access to wishlist with zero permission errors", "test_tc14_wishlist_admin_access")
         ]
 
         test_results = []

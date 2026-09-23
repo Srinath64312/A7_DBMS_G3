@@ -15,16 +15,36 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend import config
 from backend.db import postgres_db, mongo_db, cache_manager
-from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service
+from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service
+from backend.services.rate_limiter import rate_limit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("DistributedCommerceApp")
 
-# Static frontend folder
-frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+# Static frontend folder (Vite React + TSX build prioritized, with classic fallback)
+frontend_base = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+frontend_dist = os.path.join(frontend_base, "dist")
+frontend_dir = frontend_dist if os.path.exists(os.path.join(frontend_dist, "index.html")) else frontend_base
 app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
 CORS(app)
 swagger = Swagger(app)
+
+@app.route("/")
+def serve_root():
+    """Serves compiled React + TSX application if available, falling back to classic UI"""
+    if os.path.exists(os.path.join(frontend_dist, "index.html")):
+        return send_from_directory(frontend_dist, "index.html")
+    return send_from_directory(frontend_base, "index.html")
+
+@app.route("/react")
+def serve_react_app():
+    if os.path.exists(os.path.join(frontend_dist, "index.html")):
+        return send_from_directory(frontend_dist, "index.html")
+    return send_from_directory(frontend_base, "index.html")
+
+@app.route("/classic")
+def serve_classic_app():
+    return send_from_directory(frontend_base, "index.html")
 
 # ==============================================================================
 # Interactive Swagger UI (OpenAPI 3.0) - /docs & /swagger
@@ -383,7 +403,7 @@ def get_openapi_spec():
                                         "state": {"type": "string", "example": "Telangana"},
                                         "zip": {"type": "string", "example": "500001"},
                                         "country": {"type": "string", "example": "India"},
-                                        "is_default": {"type": "boolean", "example": true}
+                                        "is_default": {"type": "boolean", "example": True}
                                     },
                                     "required": ["address_line1", "city", "state", "zip"]
                                 }
@@ -423,6 +443,29 @@ def get_openapi_spec():
                     "summary": "Track order shipment",
                     "parameters": [{"name": "order_id", "in": "path", "required": True, "schema": {"type": "string"}}],
                     "responses": {"200": {"description": "Shipping status"}}
+                }
+            },
+            "/api/payments/key": {
+                "get": {
+                    "tags": ["04. Orders & ACID Transactions"],
+                    "summary": "Get Razorpay Key ID",
+                    "responses": {"200": {"description": "Razorpay Key ID"}}
+                }
+            },
+            "/api/payments/create-order": {
+                "post": {
+                    "tags": ["04. Orders & ACID Transactions"],
+                    "summary": "Create Razorpay Order",
+                    "security": [{"BearerAuth": []}],
+                    "responses": {"201": {"description": "Order created"}}
+                }
+            },
+            "/api/payments/verify": {
+                "post": {
+                    "tags": ["04. Orders & ACID Transactions"],
+                    "summary": "Verify Razorpay Payment",
+                    "security": [{"BearerAuth": []}],
+                    "responses": {"200": {"description": "Payment verified"}}
                 }
             },
             "/api/reviews": {
@@ -484,23 +527,43 @@ def get_openapi_spec():
     return jsonify(spec)
 
 # ==============================================================================
-# Static Frontend Routes
+# Static Frontend Routes (React Production Build / Dynamic Fallback)
 # ==============================================================================
+dist_dir = os.path.join(frontend_dir, "dist")
+
 @app.route("/")
 def serve_index():
+    if os.path.exists(os.path.join(dist_dir, "index.html")):
+        return send_from_directory(dist_dir, "index.html")
     return send_from_directory(frontend_dir, "index.html")
+
+@app.route("/robots.txt")
+def serve_robots():
+    return send_from_directory(frontend_dir, "robots.txt")
+
+@app.route("/sitemap.xml")
+def serve_sitemap():
+    return send_from_directory(frontend_dir, "sitemap.xml")
 
 @app.route("/<path:path>")
 def serve_static(path):
-    return send_from_directory(frontend_dir, path)
+    if os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+    if os.path.exists(os.path.join(frontend_dir, path)):
+        return send_from_directory(frontend_dir, path)
+    if os.path.exists(os.path.join(dist_dir, "index.html")):
+        return send_from_directory(dist_dir, "index.html")
+    return send_from_directory(frontend_dir, "index.html")
 
 # ==============================================================================
-# 01. Authentication & RBAC APIs (Slide 5)
+# ==============================================================================
+# 01. Authentication, OAuth 2.0 & RBAC APIs (Slide 5)
 # ==============================================================================
 @app.route("/api/auth/register", methods=["POST"])
+@rate_limit(limit=20, window_seconds=60, key_prefix="auth_register")
 def register():
     """
-    Register a new user account
+    Register a new user account with bcrypt hashing & JWT
     ---
     tags: [Authentication]
     parameters:
@@ -520,8 +583,10 @@ def register():
         description: User registered successfully
       400:
         description: Invalid input or user already exists
+      429:
+        description: Rate limit exceeded
     """
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
@@ -540,9 +605,10 @@ def register():
         return jsonify({"error": "Registration failed"}), 500
 
 @app.route("/api/auth/login", methods=["POST"])
+@rate_limit(limit=30, window_seconds=60, key_prefix="auth_login")
 def login():
     """
-    Authenticate user & issue JWT token
+    Authenticate user & issue RFC 7519 JWT token
     ---
     tags: [Authentication]
     parameters:
@@ -560,16 +626,18 @@ def login():
         description: Login successful, JWT returned
       401:
         description: Invalid credentials
+      429:
+        description: Rate limit exceeded
     """
-    data = request.get_json(silent=True) or {}
-    email = data.get("email")
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    identifier = data.get("email") or data.get("username")
     password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+    if not identifier or not password:
+        return jsonify({"error": "Email/Username and password are required"}), 400
 
     try:
-        user = auth_service.login_user(email, password)
+        user = auth_service.login_user(identifier, password)
         return jsonify(user), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 401
@@ -577,10 +645,137 @@ def login():
         logger.error(f"Login error: {e}")
         return jsonify({"error": "Login failed"}), 500
 
+# ------------------------------------------------------------------------------
+# Standard OAuth2 Password Grant Endpoint (RFC 6749 Section 4.3)
+# Directly compatible with OAuth2PasswordRequestForm and Swagger Authorize
+# ------------------------------------------------------------------------------
+@app.route("/api/auth/token", methods=["POST"])
+@app.route("/token", methods=["POST"])
+@rate_limit(limit=30, window_seconds=60, key_prefix="oauth2_token")
+def oauth2_token():
+    """
+    Standard OAuth 2.0 Password Grant Token Endpoint
+    Accepts application/x-www-form-urlencoded or JSON.
+    Returns: {"access_token": token, "token_type": "bearer", "expires_in": 86400, "user": {...}}
+    """
+    data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
+    username = data.get("username") or data.get("email")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({
+            "error": "invalid_request",
+            "error_description": "Missing required parameters: 'username' and 'password'."
+        }), 400
+
+    try:
+        user_response = auth_service.login_user(username, password)
+        return jsonify(auth_service.build_token_response(user_response)), 200
+    except ValueError as ve:
+        return jsonify({
+            "error": "invalid_grant",
+            "error_description": str(ve)
+        }), 401
+    except Exception as e:
+        logger.error(f"OAuth2 token grant error: {e}")
+        return jsonify({
+            "error": "server_error",
+            "error_description": "Failed to issue access token."
+        }), 500
+
+# ------------------------------------------------------------------------------
+# OAuth 2.0 Third-Party SSO (Google & GitHub)
+# ------------------------------------------------------------------------------
+@app.route("/api/auth/oauth/<provider>", methods=["GET"])
+def oauth_authorize(provider):
+    """
+    Initiate OAuth 2.0 authorization redirect URL for Google or GitHub
+    """
+    try:
+        info = auth_service.get_oauth_authorization_url(provider)
+        return jsonify(info), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+
+@app.route("/api/auth/oauth/<provider>/callback", methods=["GET", "POST"])
+def oauth_callback(provider):
+    """
+    OAuth 2.0 callback endpoint.
+    Exchanges code for user profile, auto-provisions in PostgreSQL, and returns JWT.
+    """
+    code = request.args.get("code") or (request.get_json(silent=True) or {}).get("code")
+    email = request.args.get("email") or (request.get_json(silent=True) or {}).get("email")
+    name = request.args.get("name") or (request.get_json(silent=True) or {}).get("name")
+
+    try:
+        auth_data = auth_service.handle_oauth_callback(provider, code=code, email=email, name=name)
+        return jsonify(auth_data), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        logger.error(f"OAuth callback error: {e}")
+        return jsonify({"error": "OAuth authentication failed"}), 500
+
+# ------------------------------------------------------------------------------
+# Protected Profile Endpoints (Matches Reference Implementation)
+# ------------------------------------------------------------------------------
 @app.route("/api/auth/me", methods=["GET"])
+@app.route("/api/auth/profile", methods=["GET"])
+@app.route("/profile", methods=["GET"])
 @auth_service.auth_required()
 def get_current_user_profile():
-    return jsonify(request.current_user), 200
+    """Returns authenticated user profile verified from JWT claims and database"""
+    user_id = request.current_user["user_id"]
+    profile = auth_service.get_user_by_id(user_id)
+    if not profile:
+        return jsonify(request.current_user), 200
+
+    return jsonify({
+        "id": profile["user_id"],
+        "user_id": profile["user_id"],
+        "username": profile["email"].split("@")[0],
+        "name": profile["name"],
+        "email": profile["email"],
+        "role": profile["role"],
+        "created_at": profile["created_at"].isoformat() if hasattr(profile["created_at"], "isoformat") else str(profile["created_at"])
+    }), 200
+
+# ------------------------------------------------------------------------------
+# Rate Limiter Telemetry Endpoint
+# ------------------------------------------------------------------------------
+@app.route("/api/system/rate-limits", methods=["GET"])
+def get_system_rate_limits():
+    """Live telemetry of rate limit evaluations, blocks, and active tracking windows"""
+    return jsonify(rate_limiter.get_rate_limit_stats()), 200
+
+@app.route("/api/users", methods=["GET"])
+@auth_service.auth_required()
+def list_users():
+    """Retrieve all users and managers from PostgreSQL"""
+    users = auth_service.get_all_users()
+    return jsonify(users), 200
+
+@app.route("/api/users", methods=["POST"])
+@auth_service.auth_required(roles=["ADMIN", "WAREHOUSE_MANAGER"])
+def create_user_endpoint():
+    """Create a new user, warehouse manager, or admin"""
+    data = request.get_json(silent=True) or {}
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get("role", "CUSTOMER")
+
+    if not name or not email or not password:
+        return jsonify({"error": "Missing required fields: name, email, password"}), 400
+
+    try:
+        user = auth_service.register_user(name, email, password, role)
+        return jsonify(user), 201
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        logger.error(f"User creation error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # ==============================================================================
 # 02. Catalog & Hybrid Persistence APIs (Slide 4 & 5)
@@ -605,7 +800,7 @@ def get_product(product_id):
     return jsonify(prod), 200
 
 @app.route("/api/products", methods=["POST"])
-@auth_service.auth_required(roles=["ADMIN"])
+@auth_service.auth_required(roles=["ADMIN", "WAREHOUSE_MANAGER"])
 def create_product():
     data = request.get_json(silent=True) or {}
     if not data or not data.get("name") or not data.get("sku") or "price" not in data:
@@ -621,7 +816,9 @@ def create_product():
             description=data.get("description", ""),
             supplier_id=data.get("supplier_id", ""),
             tags=data.get("tags", []),
-            image_url=data.get("image_url", "")
+            image_url=data.get("image_url", ""),
+            initial_stock=data.get("initial_stock", 0),
+            warehouse_id=data.get("warehouse_id")
         )
         return jsonify(new_prod), 201
     except Exception as e:
@@ -702,6 +899,7 @@ def get_audit_log():
 # 04. Orders & ACID Transaction APIs (Slide 5, 6, 7)
 # ==============================================================================
 @app.route("/api/orders", methods=["POST"])
+@rate_limit(limit=60, window_seconds=60, key_prefix="order_checkout")
 @auth_service.auth_required()
 def place_order():
     """
@@ -836,6 +1034,49 @@ def delete_address(address_id):
         return jsonify({"error": str(e)}), 400
 
 # ==============================================================================
+# 08B. User Wishlist APIs (Accessible by Customer, Manager & Admin)
+# ==============================================================================
+@app.route("/api/wishlist", methods=["GET"])
+@auth_service.auth_required()
+def get_wishlist():
+    """Fetch active user's wishlist items with product details"""
+    user_id = request.current_user["user_id"]
+    return jsonify(wishlist_service.get_user_wishlist(user_id)), 200
+
+@app.route("/api/wishlist", methods=["POST"])
+@auth_service.auth_required()
+def add_to_wishlist():
+    """Add product to user's wishlist"""
+    data = request.get_json(silent=True) or {}
+    product_id = data.get("product_id")
+    if not product_id:
+        return jsonify({"error": "product_id is required"}), 400
+    try:
+        user_id = request.current_user["user_id"]
+        res = wishlist_service.add_to_wishlist(user_id, product_id)
+        return jsonify(res), 201
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/wishlist/<product_id>", methods=["DELETE"])
+@auth_service.auth_required()
+def remove_from_wishlist(product_id):
+    """Remove product from user's wishlist"""
+    user_id = request.current_user["user_id"]
+    success = wishlist_service.remove_from_wishlist(user_id, product_id)
+    return jsonify({"success": success, "product_id": product_id}), 200
+
+@app.route("/api/wishlist", methods=["DELETE"])
+@auth_service.auth_required()
+def clear_wishlist():
+    """Clear all items from user's wishlist"""
+    user_id = request.current_user["user_id"]
+    count = wishlist_service.clear_wishlist(user_id)
+    return jsonify({"message": "Wishlist cleared", "deleted_count": count}), 200
+
+# ==============================================================================
 # 09. Payments & Shipping Logistics APIs
 # ==============================================================================
 @app.route("/api/payments/process", methods=["POST"])
@@ -843,25 +1084,81 @@ def delete_address(address_id):
 def process_payment():
     data = request.get_json(silent=True) or {}
     payment_id = data.get("payment_id")
-    method = data.get("method")
-    txn_id = data.get("transaction_id")
+    order_id = data.get("order_id")
+    method = data.get("method", "UPI")
+    txn_id = data.get("transaction_id") or f"txn_{uuid.uuid4().hex[:12]}"
 
-    if not payment_id or not method or not txn_id:
-        return jsonify({"error": "Missing payment details"}), 400
+    if not payment_id and order_id:
+        payment_record = payment_service.get_payment_by_order(order_id)
+        if payment_record:
+            payment_id = payment_record.get("payment_id")
+
+    if not payment_id:
+        return jsonify({"error": "Missing payment_id or order_id"}), 400
 
     try:
         payment_service.process_payment(payment_id, method, txn_id)
         # Once payment is COMPLETED, update order status to CONFIRMED
         payment = payment_service.get_payment_status(payment_id)
-        order_id = payment["order_id"]
-        order_service.update_order_status(order_id, "CONFIRMED")
+        if payment and payment.get("order_id"):
+            ord_id = payment["order_id"]
+            order_service.update_order_status(ord_id, "CONFIRMED")
+            # Trigger shipping creation
+            shipping_service.create_shipment(ord_id)
 
-        # Trigger shipping creation
-        shipping_service.create_shipment(order_id)
-
-        return jsonify({"message": "Payment processed and order confirmed", "payment_id": payment_id}), 200
+        return jsonify({
+            "message": "Payment processed and order confirmed",
+            "payment_id": payment_id,
+            "transaction_id": txn_id,
+            "status": "COMPLETED"
+        }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/api/payments/key", methods=["GET"])
+def get_razorpay_key():
+    return jsonify({
+        "key_id": os.getenv('RAZORPAY_KEY_ID', ''),
+        "enabled": payment_service.is_razorpay_enabled()
+    }), 200
+
+@app.route("/api/payments/create-order", methods=["POST"])
+@app.route("/api/payments/razorpay/create-order", methods=["POST"])
+@auth_service.auth_required()
+def create_rp_order():
+    data = request.get_json(silent=True) or {}
+    amount = data.get("amount")
+    receipt_id = data.get("receipt_id", f"rcpt_{request.current_user['user_id'][:8]}")
+    if not amount:
+        return jsonify({"error": "amount is required"}), 400
+    
+    order = payment_service.create_razorpay_order(amount, receipt_id)
+    if not order:
+        return jsonify({"error": "Razorpay not enabled"}), 500
+    return jsonify(order), 201
+
+@app.route("/api/payments/verify", methods=["POST"])
+@auth_service.auth_required()
+def verify_rp_payment():
+    data = request.get_json(silent=True) or {}
+    rp_order_id = data.get("razorpay_order_id")
+    rp_payment_id = data.get("razorpay_payment_id")
+    rp_signature = data.get("razorpay_signature")
+    order_id = data.get("order_id")
+    
+    if not all([rp_order_id, rp_payment_id, rp_signature, order_id]):
+        return jsonify({"error": "Missing parameters"}), 400
+        
+    is_valid = payment_service.verify_razorpay_payment(rp_order_id, rp_payment_id, rp_signature)
+    if is_valid:
+        payment = payment_service.get_payment_by_order(order_id)
+        if payment:
+            payment_service.process_payment(payment["payment_id"], "RAZORPAY", rp_payment_id)
+            order_service.update_order_status(order_id, "CONFIRMED")
+            shipping_service.create_shipment(order_id)
+        return jsonify({"status": "Payment verified"}), 200
+    else:
+        return jsonify({"error": "Invalid signature"}), 400
 
 @app.route("/api/shipping/<order_id>", methods=["GET"])
 def get_shipping_track(order_id):

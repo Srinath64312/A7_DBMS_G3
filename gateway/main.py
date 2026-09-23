@@ -2,7 +2,9 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 import httpx
 import logging
+import time
 from shared.config_base import settings
+from shared import metrics
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
@@ -14,8 +16,26 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# --- Observability: Prometheus Metrics ---
+# Mount the prometheus metrics app
+app.mount("/metrics", metrics.create_metrics_app())
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    # Record the metric
+    metrics.track_request(
+        method=request.method,
+        endpoint=request.url.path,
+        status_code=response.status_code,
+        duration=duration
+    )
+    return response
+
 # Service Mapping: Path Prefix -> Service URL
-# In production/Docker, these would be the container names
 SERVICES = {
     "/api/v1/identity": "http://localhost:8001",
     "/api/v1/catalog": "http://localhost:8002",
@@ -27,17 +47,14 @@ async def forward_request(target_url: str, request: Request):
     """
     Forwards the incoming request to the target microservice.
     """
-    # Extract path and query params
     path = request.url.path
     query_params = request.url.query
     url = f"{target_url}{path}"
     if query_params:
         url += f"?{query_params}"
 
-    # Extract body
     body = await request.body()
     headers = dict(request.headers)
-    # Remove 'host' header to avoid conflicts with the target service
     headers.pop("host", None)
 
     async with httpx.AsyncClient() as client:
@@ -67,9 +84,6 @@ async def root():
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def gateway_route(request: Request, path: str):
-    """
-    Dynamic router that forwards requests to microservices based on the URL prefix.
-    """
     full_path = f"/{path}"
 
     for prefix, target_url in SERVICES.items():

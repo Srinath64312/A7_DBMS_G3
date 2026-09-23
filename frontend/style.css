@@ -1,366 +1,761 @@
-/* Premium Enterprise Design System - NexCommerce Platform 2.0 */
+/* =========================================================================
+   NEXCOMMERCE DESIGN SYSTEM - Inspired Directly by Amazon.com
+   Enterprise Distributed Digital Commerce Platform
+   Course: 25CS1302E - DBS-DBD (KL University)
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-    --bg-primary: #0a0f1a;
-    --bg-secondary: #111827;
-    --bg-tertiary: #1f2937;
-    --bg-card: rgba(31, 41, 55, 0.7);
-    --bg-input: #111827;
-    --border-color: #374151;
-    --border-subtle: #1f2937;
-    --accent-amber: #fbbf24;
-    --accent-orange: #f59e0b;
-    --accent-blue: #3b82f6;
-    --text-primary: #f9fafb;
-    --text-secondary: #d1d5db;
-    --text-muted: #9ca3af;
-    --table-header-bg: #1f2937;
-    --table-row-hover: rgba(55, 65, 81, 0.4);
-    --modal-bg: rgba(17, 24, 39, 0.95);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    /* Amazon Signature Palette */
+    --amazon-nav-dark: #131921;
+    --amazon-nav-sub: #232f3e;
+    --amazon-nav-hover: #37475a;
+    --amazon-orange: #ff9900;
+    --amazon-orange-light: #febd69;
+    --amazon-orange-hover: #f3a847;
+    --amazon-orange-dark: #e47911;
+
+    /* Amazon Buttons */
+    --amazon-btn-primary: #ffd814;
+    --amazon-btn-primary-hover: #f7ca00;
+    --amazon-btn-primary-active: #f0b800;
+    --amazon-btn-primary-border: #fcd200;
+
+    --amazon-btn-secondary: #ffa41c;
+    --amazon-btn-secondary-hover: #fa8900;
+    --amazon-btn-secondary-active: #ee7e00;
+    --amazon-btn-secondary-border: #ff8f00;
+
+    --amazon-btn-subtle: #ffffff;
+    --amazon-btn-subtle-hover: #f7fafa;
+    --amazon-btn-subtle-border: #d5d9d9;
+
+    /* Typography & Surfaces */
+    --amazon-bg: #eaeded;
+    --amazon-card: #ffffff;
+    --amazon-border: #d5d9d9;
+    --amazon-border-subtle: #e7e7e7;
+    
+    --amazon-text-main: #0f1111;
+    --amazon-text-muted: #565959;
+    --amazon-text-link: #007185;
+    --amazon-text-link-hover: #c7511f;
+
+    /* Status & Price Colors */
+    --amazon-price-red: #b12704;
+    --amazon-stock-green: #007600;
+    --amazon-prime-blue: #00a8e1;
+    --amazon-star-gold: #de7921;
+    --amazon-alert-red: #cc0c39;
+
+    /* Shadows */
+    --amazon-shadow-sm: 0 1px 2px rgba(15, 17, 17, 0.15);
+    --amazon-shadow-card: 0 2px 5px rgba(213, 217, 217, 0.5);
+    --amazon-shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --amazon-focus-glow: 0 0 0 3px rgba(228, 121, 17, 0.35);
 }
 
-/* Light Theme Overrides */
-body.light-theme {
-    --bg-primary: #f3f4f6;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f9fafb;
-    --bg-card: rgba(255, 255, 255, 0.8);
-    --bg-input: #ffffff;
-    --border-color: #d1d5db;
-    --border-subtle: #e5e7eb;
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
-    --table-header-bg: #f9fafb;
-    --table-row-hover: #f3f4f6;
-    --modal-bg: rgba(255, 255, 255, 0.95);
-    background-color: #f3f4f6 !important;
-    color: #111827 !important;
+/* Amazon Dark Console Mode (Redone High-Contrast OLED Theme) */
+body.dark-theme {
+    --amazon-bg: #0b0f19;
+    --amazon-card: #111827;
+    --amazon-border: #1e293b;
+    --amazon-border-subtle: #243248;
+    --amazon-text-main: #f8fafc;
+    --amazon-text-muted: #94a3b8;
+    --amazon-text-link: #38bdf8;
+    --amazon-text-link-hover: #febd69;
+    --amazon-shadow-card: 0 4px 14px rgba(0, 0, 0, 0.5);
+    --amazon-btn-subtle: #1e293b;
+    --amazon-btn-subtle-border: #334155;
+    --amazon-btn-subtle-hover: #334155;
+    background-color: #0b0f19;
+    color: #f8fafc;
+}
+
+body.dark-theme .bg-white {
+    background-color: #111827 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-theme .bg-\[\#eaeded\] {
+    background-color: #0b0f19 !important;
+}
+
+body.dark-theme .bg-\[\#f0f2f2\] {
+    background-color: #1a2234 !important;
+    border-color: #283548 !important;
+}
+
+body.dark-theme .text-\[\#0f1111\] {
+    color: #f8fafc !important;
+}
+
+body.dark-theme .text-\[\#565959\] {
+    color: #94a3b8 !important;
+}
+
+body.dark-theme .border-\[\#d5d9d9\],
+body.dark-theme .border-\[\#e7e7e7\] {
+    border-color: #283548 !important;
+}
+
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+    background-color: #1a2234 !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: var(--amazon-bg);
+    color: var(--amazon-text-main);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
 }
 
-/* Glassmorphism Effect */
-.glass-panel {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* Monospace font utility for SKU and Database IDs */
+.font-mono {
+    font-family: 'JetBrains Mono', Consolas, Menlo, Monaco, monospace;
 }
 
-/* Light theme glass overrides */
-body.light-theme .glass-panel {
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--amazon-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: #a2a6a6;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #6e7373;
 }
 
-/* Modal Modernization */
-.modal-container {
-    background: var(--modal-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color);
-    border-radius: 1rem;
-}
+/* =========================================================================
+   1. AMAZON TOP HEADER & NAVIGATION
+   ========================================================================= */
 
-/* Payment Gateway simulation styles */
-.payment-method-card {
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-}
-.payment-method-card.selected {
-    border-color: var(--accent-amber);
-    background: rgba(251, 191, 36, 0.1);
-}
-
-/* Shipping Timeline Styles */
-.shipping-timeline {
+.amazon-header-top {
+    background-color: var(--amazon-nav-dark);
+    color: #ffffff;
+    height: 60px;
     display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.amazon-nav-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.1s ease;
+    user-select: none;
+    color: #ffffff;
+    text-decoration: none;
+}
+.amazon-nav-item:hover {
+    border-color: #ffffff;
+}
+
+/* Amazon Omnisearch Bar */
+.amazon-search-container {
+    flex: 1;
+    display: flex;
+    height: 40px;
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    position: relative;
+}
+.amazon-search-container:focus-within {
+    box-shadow: 0 0 0 3px #f90, 0 0 0 2px #fff;
+}
+
+.amazon-search-dropdown {
+    background: #e6e6e6;
+    color: #555555;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    border-right: 1px solid #cdcdcd;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 0 10px;
+    cursor: pointer;
+    outline: none;
+    max-width: 170px;
+}
+.amazon-search-dropdown:hover {
+    background: #dadada;
+    color: #111111;
+}
+
+.amazon-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #111111;
+    background: transparent;
+}
+.amazon-search-input::placeholder {
+    color: #757575;
+    font-size: 13px;
+}
+
+.amazon-search-btn {
+    width: 45px;
+    background: var(--amazon-orange-light);
+    border: none;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #111111;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.amazon-search-btn:hover {
+    background: var(--amazon-orange-hover);
+}
+
+/* Amazon Sub-Nav Bar */
+.amazon-subnav {
+    background-color: var(--amazon-nav-sub);
+    color: #ffffff;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #19222d;
+    z-index: 90;
+}
+.amazon-subnav::-webkit-scrollbar {
+    height: 0;
+}
+
+.amazon-subnav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #ffffff;
+    padding: 6px 9px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.1s ease;
+}
+.amazon-subnav-link:hover {
+    border-color: #ffffff;
+}
+.amazon-subnav-link.active {
+    font-weight: 700;
+    color: var(--amazon-orange-light);
+    border-bottom: 2px solid var(--amazon-orange-light);
+}
+
+/* =========================================================================
+   2. AMAZON TACTILE BUTTONS
+   ========================================================================= */
+
+.a-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s ease,
+                background-color 0.15s ease,
+                border-color 0.15s ease,
+                filter 0.2s ease;
+    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+}
+
+.a-button:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.a-button:active {
+    transform: scale(0.96) translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Shimmer Light-Sweep Animation across Primary/Secondary Buttons */
+.a-button-primary::after,
+.a-button-secondary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -75%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(25deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.a-button-primary:hover::after,
+.a-button-secondary:hover::after {
+    opacity: 1;
+    animation: btn-shimmer-sweep 1.2s infinite;
+}
+
+@keyframes btn-shimmer-sweep {
+    0% { left: -75%; }
+    100% { left: 130%; }
+}
+
+/* Yellow Add to Cart Button */
+.a-button-primary {
+    background: var(--amazon-btn-primary);
+    border: 1px solid var(--amazon-btn-primary-border);
+    color: #0f1111;
+}
+.a-button-primary:hover {
+    background: var(--amazon-btn-primary-hover);
+    border-color: #a88734 #9c7e31 #846a29;
+}
+.a-button-primary:active {
+    background: var(--amazon-btn-primary-active);
+}
+
+/* Orange Buy Now Button with Ambient Pulse */
+.a-button-secondary {
+    background: var(--amazon-btn-secondary);
+    border: 1px solid var(--amazon-btn-secondary-border);
+    color: #0f1111;
+    box-shadow: 0 2px 6px rgba(255, 164, 28, 0.35);
+}
+.a-button-secondary:hover {
+    background: var(--amazon-btn-secondary-hover);
+    box-shadow: 0 4px 14px rgba(255, 164, 28, 0.5);
+    filter: brightness(1.03);
+}
+.a-button-secondary:active {
+    background: var(--amazon-btn-secondary-active);
+}
+
+/* Subtle White / Gray Button */
+.a-button-subtle {
+    background: var(--amazon-btn-subtle);
+    border: 1px solid var(--amazon-btn-subtle-border);
+    color: var(--amazon-text-main);
+}
+.a-button-subtle:hover {
+    background: var(--amazon-btn-subtle-hover);
+    border-color: #a2a6a6;
+}
+.a-button-subtle:active {
+    transform: scale(0.97);
+}
+
+.a-button-sm {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 8px;
+}
+
+/* =========================================================================
+   3. AMAZON PRODUCT CARD & GRID
+   ========================================================================= */
+
+.amazon-product-card {
+    background: var(--amazon-card);
+    border: 1px solid var(--amazon-border-subtle);
+    border-radius: 4px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
     position: relative;
-    margin: 2rem 0;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
-.shipping-step {
-    z-index: 1;
-    text-align: center;
-    width: 25%;
+.amazon-product-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
 }
-.shipping-step::before {
-    content: "";
-    position: absolute;
-    top: 15px;
-    left: 50%;
+
+.amazon-product-image-container {
     width: 100%;
-    height: 2px;
-    background: var(--border-color);
-    z-index: -1;
+    aspect-ratio: 1 / 1;
+    background: #f7f7f7;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.shipping-step:last-child::before { display: none; }
-.shipping-step.completed .step-icon { color: #10b981; }
-.shipping-step.active .step-icon { color: var(--accent-amber); animation: pulse 2s infinite; }
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Review Stars */
-.star-rating {
-    color: #fbbf24;
-    font-size: 1.1rem;
+body.dark-theme .amazon-product-image-container {
+    background: #111822;
 }
 
-/*-Rest of the existing logic (Simplified for replacement) */
-body.light-theme main .bg-\[\#131921\] { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
-body.light-theme main .border-\[\#2a384c\] { border-color: #e2e8f0 !important; }
-body.light-theme main .text-white, body.light-theme main .text-slate-100 { color: #0f172a !important; }
-body.light-theme main .text-slate-200 { color: #1e293b !important; }
-body.light-theme main .text-slate-300 { color: #334155 !important; }
-body.light-theme main .text-slate-400 { color: #64748b !important; }
-body.light-theme main .bg-\[\#232f3e\] { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
-body.light-theme main .divide-slate-800\/60 > * { border-color: #e2e8f0 !important; }
-body.light-theme main thead.bg-\[\#232f3e\], body.light-theme main thead.bg-\[\#131921\] { background-color: #f8fafc !important; color: #475569 !important; border-color: #e2e8f0 !important; }
-body.light-theme main tr:hover { background-color: #f8fafc !important; }
-body.light-theme .cat-btn:not(.active) { background-color: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #334155 !important; }
-body.light-theme .cat-btn:not(.active):hover { background-color: #f1f5f9 !important; color: #0f172a !important; }
-body.light-theme .product-card { background-color: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-body.light-theme .product-card:hover { border-color: var(--accent-amber) !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; }
-
-body.light-theme #productDetailModal > div, body.light-theme #authModal > div, body.light-theme #restockModal > div, body.light-theme #newProductModal > div, body.light-theme #ordersModal > div, body.light-theme #privacyModal > div, body.light-theme #termsModal > div {
-    background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important;
+.amazon-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    transition: transform 0.25s ease;
 }
-body.light-theme .border-slate-800, body.light-theme .border-slate-700 { border-color: #e2e8f0 !important; }
-body.light-theme input, body.light-theme select, body.light-theme textarea { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #37475a; }
-
-.sub-nav-item { border-radius: 4px; transition: background-color 0.15s ease, color 0.15s ease; }
-.sub-nav-item.active { background-color: #37475a !important; color: var(--accent-amber) !important; font-weight: 700; }
-.cat-btn { border-radius: 4px; transition: all 0.15s ease; }
-.cat-btn.active { background-color: var(--accent-amber) !important; color: #131921 !important; font-weight: 700; }
-.product-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-.product-card:hover { border-color: var(--accent-amber); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-amber) !important; box-shadow: 0 0 0 1px var(--accent-amber) !important; }
-.legal-content h2, .legal-content h3 { font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; font-size: 0.95rem; }
-.legal-content p, .legal-content ul { font-size: 0.825rem; line-height: 1.6; margin-bottom: 0.75rem; }
-.legal-content ul { list-style-type: disc; padding-left: 1.25rem; }
-
-/* Light Theme Overrides */
-body.light-theme {
-    --bg-primary: #f1f5f9;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f8fafc;
-    --bg-card: #ffffff;
-    --bg-input: #ffffff;
-    --border-color: #e2e8f0;
-    --border-subtle: #cbd5e1;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --table-header-bg: #f8fafc;
-    --table-row-hover: #f1f5f9;
-    --modal-bg: #ffffff;
-    background-color: #f1f5f9 !important;
-    color: #0f172a !important;
+.amazon-product-card:hover .amazon-product-image {
+    transform: scale(1.04);
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    transition: background-color 0.15s ease, color 0.15s ease;
+/* Amazon Split-Price Component */
+.a-price {
+    color: var(--amazon-text-main);
+    display: inline-flex;
+    align-items: baseline;
+    font-family: 'Inter', sans-serif;
+}
+.a-price-symbol {
+    font-size: 12px;
+    font-weight: 500;
+    vertical-align: top;
+    position: relative;
+    top: -0.4em;
+    margin-right: 1px;
+}
+.a-price-whole {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.a-price-fraction {
+    font-size: 12px;
+    font-weight: 500;
+    vertical-align: top;
+    position: relative;
+    top: -0.4em;
+    margin-left: 1px;
 }
 
-/* Light theme overrides for panels & cards */
-body.light-theme main .bg-\[\#131921\] {
-    background-color: #ffffff !important;
-    border-color: #e2e8f0 !important;
-    color: #0f172a !important;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+/* Prime Delivery Badge */
+.prime-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #00a8e1;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: -0.03em;
+}
+.prime-check {
+    color: var(--amazon-orange);
+    font-style: normal;
+    font-weight: 900;
+    font-size: 11px;
 }
 
-body.light-theme main .border-\[\#2a384c\] {
-    border-color: #e2e8f0 !important;
+/* Amazon Star Rating */
+.a-star-rating {
+    color: var(--amazon-star-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+}
+.a-review-count {
+    color: var(--amazon-text-link);
+    font-size: 12px;
+    margin-left: 4px;
+}
+.a-review-count:hover {
+    color: var(--amazon-text-link-hover);
+    text-decoration: underline;
 }
 
-body.light-theme main .text-white {
-    color: #0f172a !important;
-}
-
-body.light-theme main .text-slate-100 {
-    color: #0f172a !important;
-}
-
-body.light-theme main .text-slate-200 {
-    color: #1e293b !important;
-}
-
-body.light-theme main .text-slate-300 {
-    color: #334155 !important;
-}
-
-body.light-theme main .text-slate-400 {
-    color: #64748b !important;
-}
-
-body.light-theme main .bg-\[\#232f3e\] {
-    background-color: #f8fafc !important;
-    border-color: #e2e8f0 !important;
-    color: #0f172a !important;
-}
-
-body.light-theme main .divide-slate-800\/60 > * {
-    border-color: #e2e8f0 !important;
-}
-
-body.light-theme main thead.bg-\[\#232f3e\],
-body.light-theme main thead.bg-\[\#131921\] {
-    background-color: #f8fafc !important;
-    color: #475569 !important;
-    border-color: #e2e8f0 !important;
-}
-
-body.light-theme main tr:hover {
-    background-color: #f8fafc !important;
-}
-
-body.light-theme .cat-btn:not(.active) {
-    background-color: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    color: #334155 !important;
-}
-
-body.light-theme .cat-btn:not(.active):hover {
-    background-color: #f1f5f9 !important;
-    color: #0f172a !important;
-}
-
-body.light-theme .product-card {
-    background-color: #ffffff !important;
-    border-color: #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-body.light-theme .product-card:hover {
-    border-color: var(--accent-amber) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* Modals Light Theme */
-body.light-theme #productDetailModal > div,
-body.light-theme #authModal > div,
-body.light-theme #restockModal > div,
-body.light-theme #newProductModal > div,
-body.light-theme #ordersModal > div,
-body.light-theme #privacyModal > div,
-body.light-theme #termsModal > div {
-    background-color: #ffffff !important;
-    border-color: #cbd5e1 !important;
-    color: #0f172a !important;
-}
-
-body.light-theme .border-slate-800,
-body.light-theme .border-slate-700 {
-    border-color: #e2e8f0 !important;
-}
-
-body.light-theme input,
-body.light-theme select,
-body.light-theme textarea {
-    background-color: #ffffff !important;
-    border-color: #cbd5e1 !important;
-    color: #0f172a !important;
-}
-
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--bg-tertiary);
+/* Best Seller / Amazon Choice Ribbon */
+.a-badge-choice {
+    display: inline-block;
+    background: #232f3e;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
     border-radius: 2px;
+    letter-spacing: 0.02em;
+}
+.a-badge-choice-highlight {
+    color: var(--amazon-orange);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #37475a;
-}
+/* =========================================================================
+   4. AMAZON 4-CARD FEATURE WIDGETS (Homepage Grid)
+   ========================================================================= */
 
-/* Standard Crisp Button & Tab Styles */
-.sub-nav-item {
+.amazon-feature-box {
+    background: var(--amazon-card);
+    border: 1px solid var(--amazon-border-subtle);
     border-radius: 4px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
 }
-
-.sub-nav-item.active {
-    background-color: #37475a !important;
-    color: var(--accent-amber) !important;
+.amazon-feature-box h3 {
+    font-size: 16px;
     font-weight: 700;
+    color: var(--amazon-text-main);
+    line-height: 1.25;
+    margin-bottom: 12px;
+}
+.amazon-feature-box .see-more-link {
+    color: var(--amazon-text-link);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 12px;
+}
+.amazon-feature-box .see-more-link:hover {
+    color: var(--amazon-text-link-hover);
+    text-decoration: underline;
 }
 
-.cat-btn {
+/* =========================================================================
+   5. AMAZON BUY BOX (Product Details Page & Modal)
+   ========================================================================= */
+
+.a-buybox {
+    background: var(--amazon-card);
+    border: 1px solid var(--amazon-border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.a-buybox-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--amazon-text-muted);
+}
+.a-buybox-row span:last-child {
+    color: var(--amazon-text-main);
+    font-weight: 500;
+}
+
+/* =========================================================================
+   6. AMAZON 5-STAR RATING BREAKDOWN BARS
+   ========================================================================= */
+
+.rating-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--amazon-text-link);
+    cursor: pointer;
+}
+.rating-bar-row:hover {
+    color: var(--amazon-text-link-hover);
+}
+.rating-bar-container {
+    flex: 1;
+    height: 16px;
+    background: #f0f2f2;
     border-radius: 4px;
-    transition: all 0.15s ease;
+    border: 1px solid #d5d9d9;
+    overflow: hidden;
+}
+.rating-bar-fill {
+    height: 100%;
+    background: #ffa41c;
+    border-radius: 3px 0 0 3px;
 }
 
-.cat-btn.active {
-    background-color: var(--accent-amber) !important;
-    color: #131921 !important;
+/* =========================================================================
+   7. AMAZON MULTI-TIER FOOTER
+   ========================================================================= */
+
+.amazon-footer-backtotop {
+    background: var(--amazon-nav-hover);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.amazon-footer-backtotop:hover {
+    background: #485769;
+}
+
+.amazon-footer-main {
+    background: var(--amazon-nav-sub);
+    color: #dddddd;
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid #3a4553;
+}
+.amazon-footer-col h4 {
+    color: #ffffff;
+    font-size: 14px;
     font-weight: 700;
+    margin-bottom: 12px;
+}
+.amazon-footer-col ul {
+    list-style: none;
+    space-y: 6px;
+}
+.amazon-footer-col li {
+    margin-bottom: 8px;
+}
+.amazon-footer-col a {
+    color: #dddddd;
+    font-size: 12px;
+    text-decoration: none;
+}
+.amazon-footer-col a:hover {
+    text-decoration: underline;
+    color: #ffffff;
 }
 
-/* Enterprise Product Cards */
-.product-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+.amazon-footer-bottom {
+    background: var(--amazon-nav-dark);
+    color: #999999;
+    padding: 24px 20px;
+    text-align: center;
+    font-size: 11px;
 }
 
-.product-card:hover {
-    border-color: var(--accent-amber);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+/* =========================================================================
+   8. TOAST NOTIFICATIONS & TIMELINE
+   ========================================================================= */
+
+.amazon-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1px solid var(--amazon-border);
+    border-left: 4px solid var(--amazon-orange);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    font-size: 13px;
+    color: #0f1111;
+    pointer-events: auto;
+    animation: toast-slide-in 0.2s ease forwards;
+}
+@keyframes toast-slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
-/* Crisp Input Focus */
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--accent-amber) !important;
-    box-shadow: 0 0 0 1px var(--accent-amber) !important;
+/* 5-Step Order Tracking Timeline */
+.amazon-order-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 16px 0;
 }
-
-/* Policy & Legal Styling */
-.legal-content h2, .legal-content h3 {
-    font-weight: 700;
-    margin-top: 1.25rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+.timeline-track {
+    position: absolute;
+    top: 26px;
+    left: 20px;
+    right: 20px;
+    height: 4px;
+    background: #e7e7e7;
+    z-index: 1;
 }
-
-.legal-content p, .legal-content ul {
-    font-size: 0.825rem;
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
+.timeline-track-fill {
+    height: 100%;
+    background: #007600;
+    transition: width 0.4s ease;
 }
-
-.legal-content ul {
-    list-style-type: disc;
-    padding-left: 1.25rem;
+.timeline-node {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.timeline-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #d5d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+.timeline-node.completed .timeline-dot {
+    background: #007600;
+    border-color: #007600;
+}
+.timeline-node.active .timeline-dot {
+    background: var(--amazon-orange);
+    border-color: var(--amazon-orange);
+}
+.timeline-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--amazon-text-muted);
+    margin-top: 6px;
+}
+.timeline-node.completed .timeline-label {
+    color: #007600;
 }

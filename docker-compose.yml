@@ -31,75 +31,38 @@ services:
     ports:
       - "6379:6379"
 
-  # --- MICROSERVICES ---
-  gateway:
+  # --- MAIN APPLICATION ---
+  backend_app:
     build:
       context: .
-      dockerfile: Dockerfile.gateway
-    container_name: api_gateway
+      dockerfile: Dockerfile
+    container_name: nexcommerce_backend
     restart: always
     ports:
       - "5000:5000"
     depends_on:
-      - identity_service
-      - catalog_service
-      - inventory_service
-      - order_service
-    env_file: .env
-
-  identity_service:
-    build:
-      context: .
-      dockerfile: Dockerfile.identity
-    container_name: identity_service
-    restart: always
-    ports:
-      - "8001:8001"
-    depends_on:
-      - db_postgres
-    env_file: .env
-
-  catalog_service:
-    build:
-      context: .
-      dockerfile: Dockerfile.catalog
-    container_name: catalog_service
-    restart: always
-    ports:
-      - "8002:8002"
-    depends_on:
       - db_postgres
       - db_mongo
       - db_redis
-    env_file: .env
-
-  inventory_service:
-    build:
-      context: .
-      dockerfile: Dockerfile.inventory
-    container_name: inventory_service
-    restart: always
-    ports:
-      - "8003:8003"
-    depends_on:
-      - db_postgres
-      - db_redis
-    env_file: .env
-
-  order_service:
-    build:
-      context: .
-      dockerfile: Dockerfile.order
-    container_name: order_service
-    restart: always
-    ports:
-      - "8004:8004"
-    depends_on:
-      - db_postgres
-      - identity_service
-      - catalog_service
-      - inventory_service
-    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:Admin%40123@db_postgres:5432/klhdb
+      - PG_HOST=db_postgres
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASSWORD=Admin@123
+      - PG_DATABASE=klhdb
+      - MONGO_URI=mongodb://db_mongo:27017
+      - MONGO_DB_NAME=distributed_commerce_db
+      - REDIS_URI=redis://db_redis:6379/0
+      - REDIS_HOST=db_redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=kl_university_dbs_dbd_secret_key_2026
+      - RAZORPAY_KEY_ID=rzp_test_placeholder
+      - RAZORPAY_KEY_SECRET=placeholder_secret
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:

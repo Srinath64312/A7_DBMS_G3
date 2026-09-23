@@ -411,5 +411,25 @@
     ],
     "image_url": "",
     "rating": 5.0
+  },
+  "prod_97c399830d9b": {
+    "product_id": "prod_97c399830d9b",
+    "name": "Robotics Edge Controller Kit",
+    "category_id": "cat_elec_02",
+    "price": 349.99,
+    "description": "High throughput MCU controller for autonomous ground robotics.",
+    "attributes": {
+      "can_bus": true,
+      "gpio_pins": 40,
+      "mcu": "ARM Cortex-M7"
+    },
+    "supplier_id": "",
+    "tags": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+    "image_url": "",
+    "rating": 5.0
   }
 }

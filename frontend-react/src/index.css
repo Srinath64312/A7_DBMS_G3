@@ -1,0 +1,171 @@
+:root {
+  --bg-page: #eaeded;
+  --bg-card: #ffffff;
+  --text-main: #0f1111;
+  --text-muted: #565959;
+  --border-subtle: #d5d9d9;
+  --color-brand: #ff9900;
+  --color-primary: #ffd814;
+  --color-primary-hover: #f7ca00;
+  --color-secondary: #ffa41c;
+  --color-secondary-hover: #fa8900;
+  --color-price: #b12704;
+  --color-link: #007185;
+}
+
+body.dark, html.dark {
+  --bg-page: #0b0f19;
+  --bg-card: #111827;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-subtle: #1e293b;
+  --color-price: #f87171;
+  --color-link: #38bdf8;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Amazon Nav Items */
+.amazon-nav-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 9px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.amazon-nav-item:hover {
+  border-color: #ffffff;
+}
+
+/* Tactile Button Animations (Amazon Design Standard) */
+.a-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.a-button:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.a-button:active {
+  transform: scale(0.96) translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Shimmer Wave Sweep on Primary / Secondary */
+@keyframes btn-shimmer-sweep {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  50%, 100% { transform: translateX(250%) skewX(-20deg); }
+}
+
+.a-button-primary {
+  background-color: var(--color-primary);
+  color: #0f1111;
+  border: 1px solid #fcd200;
+  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+}
+
+.a-button-primary:hover {
+  background-color: var(--color-primary-hover);
+  border-color: #a88734 #9c7e31 #846a29;
+}
+
+.a-button-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+  pointer-events: none;
+}
+
+.a-button-primary:hover::after {
+  animation: btn-shimmer-sweep 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ambient Pulse Glow for High-Priority Secondary CTA (Buy Now) */
+@keyframes cta-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 164, 28, 0.65), 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.a-button-secondary {
+  background-color: var(--color-secondary);
+  color: #0f1111;
+  border: 1px solid #ffa41c;
+  animation: cta-pulse-glow 3s infinite ease-in-out;
+}
+
+.a-button-secondary:hover {
+  background-color: var(--color-secondary-hover);
+  border-color: #a88734 #9c7e31 #846a29;
+  animation: none;
+}
+
+.a-button-secondary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+  pointer-events: none;
+}
+
+.a-button-secondary:hover::after {
+  animation: btn-shimmer-sweep 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.a-button-subtle {
+  background-color: #ffffff;
+  color: #0f1111;
+  border: 1px solid #d5d9d9;
+}
+.a-button-subtle:hover {
+  background-color: #f7fafa;
+  border-color: #a6acac;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}

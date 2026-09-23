@@ -1,0 +1,29 @@
+# Git Ignore File
+# Ignore environment variables and secrets
+.env
+*.log
+
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore local database files (crucial for security)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE settings
+.vscode/
+.idea/
+
+# Ignore Node.js dependencies and build caches
+node_modules/
+frontend-react/node_modules/
+.tmp/
+

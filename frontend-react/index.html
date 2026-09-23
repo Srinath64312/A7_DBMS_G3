@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexCommerce | Enterprise Distributed Digital Commerce</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              amazon: {
+                nav: '#131921',
+                subnav: '#232f3e',
+                yellow: '#febd69',
+                orange: '#f08804',
+                darkorange: '#e47911',
+                btnYellow: '#ffd814',
+                btnOrange: '#ffa41c',
+                card: '#ffffff',
+                border: '#d5d9d9',
+                text: '#0f1111',
+                subtext: '#565959',
+                link: '#007185',
+                price: '#b12704',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <!-- FontAwesome 6 Pro CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#eaeded] text-[#0f1111] font-['Inter',sans-serif] antialiased selection:bg-amber-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

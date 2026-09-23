@@ -5,7 +5,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Absolute beast of a machine!",
-    "created_at": "2026-09-18T15:15:35.529375"
+    "created_at": "2026-09-22T09:12:13.685810"
   },
   "rev_02": {
     "review_id": "rev_02",
@@ -13,7 +13,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Fast, but gets a bit warm under load.",
-    "created_at": "2026-09-18T15:15:35.529389"
+    "created_at": "2026-09-22T09:12:13.685829"
   },
   "rev_03": {
     "review_id": "rev_03",
@@ -21,6 +21,351 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Best ANC I have ever used.",
-    "created_at": "2026-09-18T15:15:35.529392"
+    "created_at": "2026-09-22T09:12:13.685833"
+  },
+  "rev_001": {
+    "review_id": "rev_001",
+    "product_id": "prod_elec_14",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Exceeded all my expectations.",
+    "created_at": "2026-09-23T21:11:24.613570"
+  },
+  "rev_002": {
+    "review_id": "rev_002",
+    "product_id": "prod_elec_14",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Best I have ever used.",
+    "created_at": "2026-09-23T21:11:24.613590"
+  },
+  "rev_003": {
+    "review_id": "rev_003",
+    "product_id": "prod_periph_20",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Very reliable and fast.",
+    "created_at": "2026-09-23T21:11:24.613598"
+  },
+  "rev_004": {
+    "review_id": "rev_004",
+    "product_id": "prod_power_21",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613605"
+  },
+  "rev_005": {
+    "review_id": "rev_005",
+    "product_id": "prod_storage_13",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613612"
+  },
+  "rev_006": {
+    "review_id": "rev_006",
+    "product_id": "prod_storage_13",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613617"
+  },
+  "rev_007": {
+    "review_id": "rev_007",
+    "product_id": "prod_storage_10",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613623"
+  },
+  "rev_008": {
+    "review_id": "rev_008",
+    "product_id": "prod_storage_10",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613628"
+  },
+  "rev_009": {
+    "review_id": "rev_009",
+    "product_id": "prod_audio_14",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613636"
+  },
+  "rev_010": {
+    "review_id": "rev_010",
+    "product_id": "prod_audio_14",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613644"
+  },
+  "rev_011": {
+    "review_id": "rev_011",
+    "product_id": "prod_periph_21",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Exceeded all my expectations.",
+    "created_at": "2026-09-23T21:11:24.613649"
+  },
+  "rev_012": {
+    "review_id": "rev_012",
+    "product_id": "prod_periph_21",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613655"
+  },
+  "rev_013": {
+    "review_id": "rev_013",
+    "product_id": "prod_audio_12",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Setup was a breeze.",
+    "created_at": "2026-09-23T21:11:24.613661"
+  },
+  "rev_014": {
+    "review_id": "rev_014",
+    "product_id": "prod_power_18",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "The best purchase I made this year.",
+    "created_at": "2026-09-23T21:11:24.613667"
+  },
+  "rev_015": {
+    "review_id": "rev_015",
+    "product_id": "prod_power_18",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613673"
+  },
+  "rev_016": {
+    "review_id": "rev_016",
+    "product_id": "prod_power_18",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613677"
+  },
+  "rev_017": {
+    "review_id": "rev_017",
+    "product_id": "prod_display_20",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613683"
+  },
+  "rev_018": {
+    "review_id": "rev_018",
+    "product_id": "prod_display_20",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Solid product, no complaints.",
+    "created_at": "2026-09-23T21:11:24.613688"
+  },
+  "rev_019": {
+    "review_id": "rev_019",
+    "product_id": "prod_audio_16",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613695"
+  },
+  "rev_020": {
+    "review_id": "rev_020",
+    "product_id": "prod_audio_16",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Absolute beast of a machine!",
+    "created_at": "2026-09-23T21:11:24.613700"
+  },
+  "rev_021": {
+    "review_id": "rev_021",
+    "product_id": "prod_periph_23",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Incredible performance for the price.",
+    "created_at": "2026-09-23T21:11:24.613706"
+  },
+  "rev_022": {
+    "review_id": "rev_022",
+    "product_id": "prod_periph_23",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Solid product, no complaints.",
+    "created_at": "2026-09-23T21:11:24.613711"
+  },
+  "rev_023": {
+    "review_id": "rev_023",
+    "product_id": "prod_periph_23",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Incredible performance for the price.",
+    "created_at": "2026-09-23T21:11:24.613716"
+  },
+  "rev_024": {
+    "review_id": "rev_024",
+    "product_id": "prod_power_10",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Best I have ever used.",
+    "created_at": "2026-09-23T21:11:24.613722"
+  },
+  "rev_025": {
+    "review_id": "rev_025",
+    "product_id": "prod_storage_19",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613728"
+  },
+  "rev_026": {
+    "review_id": "rev_026",
+    "product_id": "prod_storage_19",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Best I have ever used.",
+    "created_at": "2026-09-23T21:11:24.613733"
+  },
+  "rev_027": {
+    "review_id": "rev_027",
+    "product_id": "prod_storage_15",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613740"
+  },
+  "rev_028": {
+    "review_id": "rev_028",
+    "product_id": "prod_storage_15",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613745"
+  },
+  "rev_029": {
+    "review_id": "rev_029",
+    "product_id": "prod_storage_15",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Very reliable and fast.",
+    "created_at": "2026-09-23T21:11:24.613750"
+  },
+  "rev_030": {
+    "review_id": "rev_030",
+    "product_id": "prod_display_19",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Fast, but gets a bit warm under load.",
+    "created_at": "2026-09-23T21:11:24.613757"
+  },
+  "rev_031": {
+    "review_id": "rev_031",
+    "product_id": "prod_audio_11",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Solid product, no complaints.",
+    "created_at": "2026-09-23T21:11:24.613764"
+  },
+  "rev_032": {
+    "review_id": "rev_032",
+    "product_id": "prod_audio_11",
+    "user_id": "usr_cust_02",
+    "rating": 4,
+    "comment": "Looks great and works perfectly.",
+    "created_at": "2026-09-23T21:11:24.613770"
+  },
+  "rev_033": {
+    "review_id": "rev_033",
+    "product_id": "prod_audio_11",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Fast, but gets a bit warm under load.",
+    "created_at": "2026-09-23T21:11:24.613775"
+  },
+  "rev_034": {
+    "review_id": "rev_034",
+    "product_id": "prod_net_23",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613782"
+  },
+  "rev_035": {
+    "review_id": "rev_035",
+    "product_id": "prod_net_23",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "A bit pricey, but worth every penny.",
+    "created_at": "2026-09-23T21:11:24.613786"
+  },
+  "rev_036": {
+    "review_id": "rev_036",
+    "product_id": "prod_net_23",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Very reliable and fast.",
+    "created_at": "2026-09-23T21:11:24.613791"
+  },
+  "rev_037": {
+    "review_id": "rev_037",
+    "product_id": "prod_comp_16",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Very reliable and fast.",
+    "created_at": "2026-09-23T21:11:24.613797"
+  },
+  "rev_038": {
+    "review_id": "rev_038",
+    "product_id": "prod_periph_16",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Highly recommended for professionals.",
+    "created_at": "2026-09-23T21:11:24.613804"
+  },
+  "rev_039": {
+    "review_id": "rev_039",
+    "product_id": "prod_periph_16",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Exceeded all my expectations.",
+    "created_at": "2026-09-23T21:11:24.613810"
+  },
+  "rev_040": {
+    "review_id": "rev_040",
+    "product_id": "prod_periph_16",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Build quality is top notch.",
+    "created_at": "2026-09-23T21:11:24.613815"
+  },
+  "rev_041": {
+    "review_id": "rev_041",
+    "product_id": "prod_power_13",
+    "user_id": "usr_cust_01",
+    "rating": 4,
+    "comment": "Exceeded all my expectations.",
+    "created_at": "2026-09-22T11:10:39.681819"
+  },
+  "rev_042": {
+    "review_id": "rev_042",
+    "product_id": "prod_power_13",
+    "user_id": "usr_cust_02",
+    "rating": 5,
+    "comment": "Fast, but gets a bit warm under load.",
+    "created_at": "2026-09-22T11:10:39.681824"
+  },
+  "rev_d0e56de7a262": {
+    "review_id": "rev_d0e56de7a262",
+    "product_id": "prod_elec_18",
+    "user_id": "usr_cust_01",
+    "rating": 5,
+    "comment": "Hey",
+    "created_at": "2026-09-23T18:25:12.092146",
+    "helpful_count": 0
   }
 }

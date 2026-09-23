@@ -1,5 +1,6 @@
 Flask==3.0.3
 flask-cors==4.0.1
+flasgger==0.9.7.1
 psycopg2-binary==2.9.9
 SQLAlchemy==2.0.32
 pymongo==4.7.2
@@ -7,3 +8,5 @@ redis==5.0.4
 PyJWT==2.8.0
 bcrypt==4.2.1
 python-dotenv==1.0.1
+prometheus-client==0.21.0
+razorpay==1.4.2

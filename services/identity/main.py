@@ -1,12 +1,31 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import List, Optional
+import time
 from shared.config_base import settings
+from shared import metrics
 from services.identity import auth, address
 
 app = FastAPI(title="Identity Microservice")
 security = HTTPBearer()
+
+# --- Observability: Prometheus Metrics ---
+app.mount("/metrics", metrics.create_metrics_app())
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    metrics.track_request(
+        method=request.method,
+        endpoint=request.url.path,
+        status_code=response.status_code,
+        duration=duration
+    )
+    return response
 
 # --- Schemas ---
 class UserRegister(BaseModel):

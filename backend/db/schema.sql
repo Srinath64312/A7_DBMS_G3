@@ -190,3 +190,14 @@ CREATE INDEX IF NOT EXISTS idx_payments_order ON payments(order_id);
 CREATE INDEX IF NOT EXISTS idx_shipping_order ON shipping_details(order_id);
 CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
 
+-- 17. User Wishlists Table
+CREATE TABLE IF NOT EXISTS user_wishlists (
+    wishlist_id VARCHAR(64) PRIMARY KEY,
+    user_id VARCHAR(64) NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    product_id VARCHAR(64) NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_wishlists_user ON user_wishlists(user_id);
+

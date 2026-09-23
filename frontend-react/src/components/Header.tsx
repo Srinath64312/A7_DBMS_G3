@@ -1,0 +1,191 @@
+import React from 'react';
+import { User, Category } from '../types';
+
+interface HeaderProps {
+  user: User | null;
+  categories: Category[];
+  selectedCategory: string;
+  onSelectCategory: (catId: string) => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
+  cartCount: number;
+  wishlistCount: number;
+  onOpenCart: () => void;
+  onOpenWishlist: () => void;
+  onOpenOrders: () => void;
+  onOpenAuth: () => void;
+  onLogout: () => void;
+  isDark: boolean;
+  onToggleTheme: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  user,
+  categories,
+  selectedCategory,
+  onSelectCategory,
+  searchQuery,
+  onSearchChange,
+  cartCount,
+  wishlistCount,
+  onOpenCart,
+  onOpenWishlist,
+  onOpenOrders,
+  onOpenAuth,
+  onLogout,
+  isDark,
+  onToggleTheme
+}) => {
+  return (
+    <header className="bg-[#131921] text-white sticky top-0 z-40 select-none shadow-md">
+      <div className="max-w-[1700px] mx-auto flex items-center gap-2 px-3 py-1.5 md:gap-4 md:px-4">
+        
+        {/* Logo */}
+        <div 
+          onClick={() => { onSelectCategory(''); onSearchChange(''); }}
+          className="amazon-nav-item flex items-center gap-1 group py-1"
+        >
+          <div className="flex items-center text-xl md:text-2xl font-black tracking-tight">
+            <span className="text-white">Nex</span>
+            <span className="text-[#febd69]">Commerce</span>
+          </div>
+          <span className="text-[10px] text-gray-400 font-mono hidden sm:inline -mt-2 ml-0.5">.dist</span>
+        </div>
+
+        {/* Deliver To */}
+        <div className="amazon-nav-item hidden lg:flex items-center gap-1.5 text-xs">
+          <i className="fa-solid fa-location-dot text-[#febd69] text-base mt-1"></i>
+          <div className="leading-tight">
+            <span className="text-gray-400 text-[11px] block">Deliver to {user ? user.name.split(' ')[0] : 'Campus'}</span>
+            <span className="font-bold text-white text-xs">KL University 500075</span>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="flex-1 flex items-center h-10 rounded-md overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#e47911] shadow-inner">
+          <select 
+            value={selectedCategory} 
+            onChange={(e) => onSelectCategory(e.target.value)}
+            className="h-full bg-[#f3f3f3] hover:bg-[#dadada] text-[#0f1111] text-xs px-2.5 border-r border-[#cdcdcd] outline-none cursor-pointer hidden md:block max-w-[150px] truncate"
+          >
+            <option value="">All Departments</option>
+            {categories.map(c => (
+              <option key={c.category_id} value={c.category_id}>{c.name}</option>
+            ))}
+          </select>
+          <input 
+            type="text"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search Amazon Hardware, Nodes, GPUs, Storage, ASINs..."
+            className="flex-1 h-full px-3 text-[#0f1111] text-sm outline-none placeholder:text-gray-500"
+          />
+          <button 
+            type="button"
+            className="h-full px-5 bg-[#febd69] hover:bg-[#f3a847] text-[#131921] transition flex items-center justify-center cursor-pointer"
+            title="Search"
+          >
+            <i className="fa-solid fa-magnifying-glass text-lg"></i>
+          </button>
+        </div>
+
+        {/* Right Navigation Controls */}
+        <div className="flex items-center gap-1 md:gap-2">
+
+          {/* Theme Toggle (Dark OLED / Light) */}
+          <button
+            onClick={onToggleTheme}
+            className="amazon-nav-item flex items-center gap-1.5 text-xs text-white"
+            title={isDark ? "Switch to Amazon Light Theme" : "Switch to Amazon Dark OLED Theme"}
+          >
+            <i className={`fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-300'} text-base`}></i>
+            <span className="hidden xl:inline text-[11px] font-bold">{isDark ? 'Light' : 'OLED Dark'}</span>
+          </button>
+
+          {/* Account & Lists */}
+          {user ? (
+            <div className="amazon-nav-item group relative">
+              <span className="text-[11px] text-gray-300 leading-tight">Hello, {user.name.split(' ')[0]}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-bold text-white flex items-center gap-1">
+                  Account & Lists <i className="fa-solid fa-caret-down text-[10px]"></i>
+                </span>
+                <span className="text-[10px] uppercase font-mono px-1 py-0.5 rounded bg-emerald-600 text-white ml-1">
+                  {user.role === 'ADMIN' ? 'ADMIN' : user.role === 'WAREHOUSE_MANAGER' ? 'MGR' : 'USER'}
+                </span>
+              </div>
+              {/* Dropdown Menu on hover */}
+              <div className="absolute top-full right-0 w-52 bg-white text-[#0f1111] shadow-xl border border-gray-200 rounded-b p-3 hidden group-hover:block z-50 animate-fadeIn">
+                <div className="text-xs pb-2 border-b border-gray-200">
+                  <div className="font-bold text-sm truncate">{user.name}</div>
+                  <div className="text-gray-500 truncate text-[11px]">{user.email}</div>
+                  <div className="text-emerald-700 font-semibold text-[11px] mt-0.5">Role: {user.role}</div>
+                </div>
+                <div className="py-2 space-y-1.5 text-xs">
+                  <div onClick={onOpenOrders} className="hover:text-[#e47911] hover:underline cursor-pointer">Your Orders</div>
+                  <div onClick={onOpenWishlist} className="hover:text-[#e47911] hover:underline cursor-pointer">Your Wishlist ({wishlistCount})</div>
+                  <a href="/docs" target="_blank" rel="noreferrer" className="block hover:text-[#e47911] hover:underline">Interactive Swagger API</a>
+                </div>
+                <div className="pt-2 border-t border-gray-200">
+                  <button 
+                    onClick={onLogout}
+                    className="w-full text-center py-1.5 bg-[#f0f2f2] hover:bg-[#e3e6e6] border border-[#d5d9d9] rounded text-xs font-medium cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div onClick={onOpenAuth} className="amazon-nav-item">
+              <span className="text-[11px] text-gray-300 leading-tight">Hello, Sign in</span>
+              <span className="text-xs font-bold text-white flex items-center gap-1">
+                Account & Lists <i className="fa-solid fa-caret-down text-[10px]"></i>
+              </span>
+            </div>
+          )}
+
+          {/* Orders */}
+          <div onClick={onOpenOrders} className="amazon-nav-item hidden sm:flex">
+            <span className="text-[11px] text-gray-300 leading-tight">Returns</span>
+            <span className="text-xs font-bold text-white">& Orders</span>
+          </div>
+
+          {/* Wishlist Header Icon */}
+          <div 
+            onClick={onOpenWishlist} 
+            className="amazon-nav-item relative flex items-center gap-1"
+            title="Your Wishlist"
+          >
+            <div className="relative">
+              <i className="fa-solid fa-heart text-xl text-rose-500 hover:scale-110 transition-transform"></i>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-rose-600 text-white font-black text-[10px] rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-1 ring-[#131921]">
+                  {wishlistCount}
+                </span>
+              )}
+            </div>
+            <span className="text-xs font-bold text-white hidden md:inline ml-1">Wishlist</span>
+          </div>
+
+          {/* Cart Icon & Count */}
+          <div 
+            onClick={onOpenCart} 
+            className="amazon-nav-item relative flex items-center gap-1.5 cursor-pointer"
+            title="Shopping Cart"
+          >
+            <div className="relative flex items-center">
+              <i className="fa-solid fa-cart-shopping text-2xl text-[#febd69]"></i>
+              <span className="absolute -top-1.5 left-3 text-[#f08804] font-black text-sm text-center min-w-[18px]">
+                {cartCount}
+              </span>
+            </div>
+            <span className="text-xs font-bold text-white hidden md:inline mt-2">Cart</span>
+          </div>
+
+        </div>
+
+      </div>
+    </header>
+  );
+};

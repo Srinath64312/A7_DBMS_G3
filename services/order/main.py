@@ -1,10 +1,29 @@
-from fastapi import FastAPI, HTTPException, Body, Depends
+from fastapi import FastAPI, HTTPException, Body, Depends, Request
 from pydantic import BaseModel
 from typing import List, Optional
+import time
 from shared.config_base import settings
+from shared import metrics
 from services.order import order, payment
 
 app = FastAPI(title="Order Microservice")
+
+# --- Observability: Prometheus Metrics ---
+app.mount("/metrics", metrics.create_metrics_app())
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    metrics.track_request(
+        method=request.method,
+        endpoint=request.url.path,
+        status_code=response.status_code,
+        duration=duration
+    )
+    return response
 
 # --- Schemas ---
 class OrderItem(BaseModel):
