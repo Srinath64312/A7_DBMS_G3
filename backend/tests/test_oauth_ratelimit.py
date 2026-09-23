@@ -12,8 +12,14 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from backend.app import app
 from backend.services import auth_service, rate_limiter
+from seeds.seed_data import seed_database
 
 class TestOAuthRateLimitRBAC(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        seed_database()
+        cls.client = app.test_client()
+
     def setUp(self):
         self.client = app.test_client()
         rate_limiter.reset_rate_limits()

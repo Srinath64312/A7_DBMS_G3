@@ -58,6 +58,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Seed Database Schema and Data
+        env:
+          PG_HOST: localhost
+          PG_PORT: 5432
+          PG_DATABASE: klhdb
+          PG_USER: postgres
+          PG_PASSWORD: Admin@123
+          DATABASE_URL: postgresql://postgres:Admin%40123@localhost:5432/klhdb
+          MONGO_URI: mongodb://localhost:27017
+          MONGO_DB_NAME: distributed_commerce_db
+          REDIS_URI: redis://localhost:6379/0
+        run: |
+          python seeds/seed_data.py
+
       - name: Run Automated Tests
         env:
           PG_HOST: localhost
