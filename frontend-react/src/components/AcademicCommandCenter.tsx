@@ -7,12 +7,42 @@ import {
   SystemTelemetryData,
   VivaGuideData
 } from '../types';
+import {
+  DEFAULT_SQL_LAB_QUESTIONS,
+  DEFAULT_SCHEMA_TABLES,
+  DEFAULT_MONGO_COLLECTIONS,
+  DEFAULT_TELEMETRY,
+  DEFAULT_VIVA_GUIDE,
+  simulateAcademicSql
+} from '../data/academicData';
 
 interface AcademicCommandCenterProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTab?: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide';
 }
+
+const renderTableCell = (row: any, col: string, colIdx: number): React.ReactNode => {
+  if (row === null || row === undefined) {
+    return <span className="text-slate-500 italic">NULL</span>;
+  }
+  let val: any = undefined;
+  if (Array.isArray(row)) {
+    val = row[colIdx];
+  } else if (typeof row === 'object') {
+    val = (row as any)[col] !== undefined ? (row as any)[col] : (row as any)[colIdx];
+  } else {
+    val = row;
+  }
+  if (val === null || val === undefined) {
+    return <span className="text-slate-500 italic">NULL</span>;
+  }
+  if (typeof val === 'object') {
+    return JSON.stringify(val);
+  }
+  return String(val);
+};
+
 
 const PRESET_QUERIES = [
   {
@@ -115,7 +145,7 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
   const [queryError, setQueryError] = useState<string | null>(null);
 
   // 35 Questions state
-  const [questions, setQuestions] = useState<SqlLabQuestion[]>([]);
+  const [questions, setQuestions] = useState<SqlLabQuestion[]>(DEFAULT_SQL_LAB_QUESTIONS);
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<string>('ALL');
   const [questionSearch, setQuestionSearch] = useState<string>('');
   const [expandedSolutions, setExpandedSolutions] = useState<Record<number, boolean>>({});
@@ -123,8 +153,8 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
   const [runningQuestionId, setRunningQuestionId] = useState<number | null>(null);
 
   // Schema & ERD state
-  const [schemaTables, setSchemaTables] = useState<TableMeta[]>([]);
-  const [mongoCollections, setMongoCollections] = useState<MongoCollectionMeta[]>([]);
+  const [schemaTables, setSchemaTables] = useState<TableMeta[]>(DEFAULT_SCHEMA_TABLES);
+  const [mongoCollections, setMongoCollections] = useState<MongoCollectionMeta[]>(DEFAULT_MONGO_COLLECTIONS);
   const [isLoadingSchema, setIsLoadingSchema] = useState<boolean>(false);
   const [schemaFilter, setSchemaFilter] = useState<string>('');
 
@@ -134,11 +164,11 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
   const [isSimulatingAcid, setIsSimulatingAcid] = useState<boolean>(false);
 
   // Telemetry state
-  const [telemetry, setTelemetry] = useState<SystemTelemetryData | null>(null);
+  const [telemetry, setTelemetry] = useState<SystemTelemetryData | null>(DEFAULT_TELEMETRY);
   const [isLoadingTelemetry, setIsLoadingTelemetry] = useState<boolean>(false);
 
   // Viva Guide state
-  const [vivaData, setVivaData] = useState<VivaGuideData | null>(null);
+  const [vivaData, setVivaData] = useState<VivaGuideData | null>(DEFAULT_VIVA_GUIDE);
   const [expandedFaq, setExpandedFaq] = useState<Record<number, boolean>>({});
 
   // Switch default tab on prop change
@@ -156,9 +186,9 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
     fetch('/api/db/sql-lab/questions')
       .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
       .then(data => {
-        if (data && data.questions) setQuestions(data.questions);
+        if (data && data.questions && data.questions.length > 0) setQuestions(data.questions);
       })
-      .catch(err => console.warn('Questions fetch fallback:', err));
+      .catch(err => console.warn('Questions fetch fallback to defaults:', err));
 
     // Fetch telemetry
     fetchTelemetry();
@@ -167,9 +197,9 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
     fetch('/api/db/viva-defense')
       .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
       .then(data => {
-        if (data) setVivaData(data);
+        if (data && data.team) setVivaData(data);
       })
-      .catch(err => console.warn('Viva guide fetch fallback:', err));
+      .catch(err => console.warn('Viva guide fetch fallback to defaults:', err));
 
     // Fetch Schema
     fetchSchema();
@@ -180,11 +210,11 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
     fetch('/api/db/telemetry')
       .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
       .then(data => {
-        if (data) setTelemetry(data);
+        if (data && data.postgres) setTelemetry(data);
         setIsLoadingTelemetry(false);
       })
       .catch(err => {
-        console.warn('Telemetry fetch fallback:', err);
+        console.warn('Telemetry fetch fallback to defaults:', err);
         setIsLoadingTelemetry(false);
       });
   }, []);
@@ -194,12 +224,12 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
     fetch('/api/db/schema')
       .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
       .then(data => {
-        if (data && data.tables) setSchemaTables(data.tables);
-        if (data && data.mongo_collections) setMongoCollections(data.mongo_collections);
+        if (data && data.tables && data.tables.length > 0) setSchemaTables(data.tables);
+        if (data && data.mongo_collections && data.mongo_collections.length > 0) setMongoCollections(data.mongo_collections);
         setIsLoadingSchema(false);
       })
       .catch(err => {
-        console.warn('Schema fetch fallback:', err);
+        console.warn('Schema fetch fallback to defaults:', err);
         setIsLoadingSchema(false);
       });
   }, []);
@@ -226,24 +256,11 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
           setQueryResult(data);
         }
       } else {
-        // Client-side simulation fallback (GitHub Pages demo)
-        setQueryResult({
-          success: true,
-          columns: ['status', 'query_plan', 'execution_time_ms', 'engine'],
-          rows: [['EXECUTED', isExplain ? 'Seq Scan on table (cost=0.00..1.25 rows=20 width=64)' : '14 rows returned', 1.84, 'PostgreSQL 16 ACID Core']],
-          row_count: 1,
-          execution_time_ms: 1.84,
-          is_explain: isExplain
-        });
+        // High-fidelity client-side simulation (GitHub Pages demo)
+        setQueryResult(simulateAcademicSql(sqlQuery, isExplain));
       }
     } catch (err: any) {
-      setQueryResult({
-        success: true,
-        columns: ['status', 'result', 'execution_time_ms'],
-        rows: [['SIMULATED', 'Query executed successfully against offline academic benchmark ledger', 2.1]],
-        row_count: 1,
-        execution_time_ms: 2.1
-      });
+      setQueryResult(simulateAcademicSql(sqlQuery, isExplain));
     } finally {
       setIsExecutingSql(false);
     }
@@ -263,20 +280,14 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
         const data = await res.json();
         setQuestionOutputs(prev => ({ ...prev, [qid]: data }));
       } else {
-        // Fallback result for static presentation demo
-        setQuestionOutputs(prev => ({
-          ...prev,
-          [qid]: {
-            success: true,
-            columns: ['status', 'benchmark_output', 'concurrency_mode'],
-            rows: [['VALIDATED', `Lab Question #${qid} SQL benchmark verified. All constraints and joins satisfied.`, 'READ COMMITTED']],
-            row_count: 1,
-            execution_time_ms: 2.45
-          }
-        }));
+        const targetQ = questions.find(q => q.id === qid);
+        const sim = simulateAcademicSql(targetQ ? targetQ.sql : `SELECT * FROM emp WHERE empno = ${qid};`, false);
+        setQuestionOutputs(prev => ({ ...prev, [qid]: sim }));
       }
     } catch (err) {
-      console.warn('Lab question runner offline fallback:', err);
+      const targetQ = questions.find(q => q.id === qid);
+      const sim = simulateAcademicSql(targetQ ? targetQ.sql : `SELECT * FROM emp WHERE empno = ${qid};`, false);
+      setQuestionOutputs(prev => ({ ...prev, [qid]: sim }));
     } finally {
       setRunningQuestionId(null);
     }
@@ -328,8 +339,16 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
     const csvRows = [
       cols.join(','),
       ...queryResult.rows.map((row: any) =>
-        cols.map((col: string) => {
-          const val = row[col] === null || row[col] === undefined ? '' : String(row[col]);
+        cols.map((col: string, colIdx: number) => {
+          let val = '';
+          if (row !== null && row !== undefined) {
+            const raw = (typeof row === 'object' && !Array.isArray(row))
+              ? (row[col] !== undefined ? row[col] : row[colIdx])
+              : (Array.isArray(row) ? row[colIdx] : row);
+            if (raw !== null && raw !== undefined) {
+              val = typeof raw === 'object' ? JSON.stringify(raw) : String(raw);
+            }
+          }
           return `"${val.replace(/"/g, '""')}"`;
         }).join(',')
       )
@@ -616,13 +635,9 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
                         {queryResult.rows.map((row: any, idx: number) => (
                           <tr key={idx} className="hover:bg-slate-800/50 transition">
                             <td className="py-2 px-3 text-slate-500 text-center text-[10px]">{idx + 1}</td>
-                            {queryResult.columns.map((col: string) => (
+                            {queryResult.columns.map((col: string, colIdx: number) => (
                               <td key={col} className="py-2 px-3 text-slate-200">
-                                {row[col] === null ? (
-                                  <span className="text-slate-500 italic">NULL</span>
-                                ) : (
-                                  String(row[col])
-                                )}
+                                {renderTableCell(row, col, colIdx)}
                               </td>
                             ))}
                           </tr>
@@ -781,9 +796,9 @@ export const AcademicCommandCenter: React.FC<AcademicCommandCenterProps> = ({
                                   <tbody className="divide-y divide-slate-800">
                                     {output.rows.slice(0, 5).map((row: any, rIdx: number) => (
                                       <tr key={rIdx} className="hover:bg-slate-800/40">
-                                        {output.columns.slice(0, 5).map((col: string) => (
+                                        {output.columns.slice(0, 5).map((col: string, cIdx: number) => (
                                           <td key={col} className="p-1 px-2 text-slate-200">
-                                            {String(row[col] ?? 'NULL')}
+                                            {renderTableCell(row, col, cIdx)}
                                           </td>
                                         ))}
                                       </tr>

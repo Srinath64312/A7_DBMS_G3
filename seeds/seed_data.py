@@ -36,7 +36,8 @@ def seed_database():
     for uid, name, email, pw, role in users_data:
         pw_hash = auth_service.hash_password(pw)
         postgres_db.execute(
-            "INSERT INTO users (user_id, name, email, password_hash, role) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO users (user_id, name, email, password_hash, role) VALUES (%s, %s, %s, %s, %s) "
+            "ON CONFLICT (user_id) DO NOTHING",
             (uid, name, email, pw_hash, role)
         )
     logger.info("✅ Seeded 4 Users.")
@@ -49,7 +50,8 @@ def seed_database():
     ]
     for aid, uid, line, city, state, zip_c, country, is_def in addresses_data:
         postgres_db.execute(
-            "INSERT INTO user_addresses (address_id, user_id, address_line1, city, state, zip, country, is_default) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO user_addresses (address_id, user_id, address_line1, city, state, zip, country, is_default) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (address_id) DO NOTHING",
             (aid, uid, line, city, state, zip_c, country, is_def)
         )
     logger.info("✅ Seeded User Addresses.")
@@ -63,7 +65,8 @@ def seed_database():
     ]
     for wid, name, code, loc, cap in warehouses_data:
         postgres_db.execute(
-            "INSERT INTO warehouses (warehouse_id, name, code, location, capacity) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO warehouses (warehouse_id, name, code, location, capacity) VALUES (%s, %s, %s, %s, %s) "
+            "ON CONFLICT (warehouse_id) DO NOTHING",
             (wid, name, code, loc, cap)
         )
     logger.info("✅ Seeded 4 Regional Warehouses.")
@@ -84,10 +87,11 @@ def seed_database():
     ]
     for cid, name, desc in categories_data:
         postgres_db.execute(
-            "INSERT INTO categories (category_id, name, description) VALUES (%s, %s, %s)",
+            "INSERT INTO categories (category_id, name, description) VALUES (%s, %s, %s) "
+            "ON CONFLICT (category_id) DO NOTHING",
             (cid, name, desc)
         )
-    logger.info("✅ Seeded 8 Categories.")
+    logger.info("✅ Seeded Categories.")
 
     # 5. Seed Products (Hybrid)
     raw_products = {
@@ -277,7 +281,10 @@ def seed_database():
     ]
 
     for cid, items in raw_products.items():
-        cat_suffix = cid.split('_')[1]
+        parts = cid.split('_')
+        cat_suffix = parts[1]
+        if len(parts) > 2 and parts[1] == 'daily':
+            cat_suffix = f"daily_{parts[2]}"
         for i, (name, price, tags) in enumerate(items):
             pid = f"prod_{cat_suffix}_{i+10:02d}"
             brand = name.split()[0]
@@ -297,7 +304,11 @@ def seed_database():
     for p in products_catalog:
         emb = intelligence_service.generate_embedding(f"{p['name']} {p['description']}")
         postgres_db.execute(
-            "INSERT INTO products (product_id, category_id, name, sku, price, is_active, embedding) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO products (product_id, category_id, name, sku, price, is_active, embedding) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (product_id) DO UPDATE SET "
+            "category_id = EXCLUDED.category_id, name = EXCLUDED.name, sku = EXCLUDED.sku, "
+            "price = EXCLUDED.price, embedding = EXCLUDED.embedding",
             (p["product_id"], p["category_id"], p["name"], p["sku"], p["price"], True if postgres_db.is_postgres() else 1, json.dumps(emb))
         )
         # Assign a random rating between 3.5 and 5.0 for seeding
@@ -327,7 +338,9 @@ def seed_database():
 
     for inv_id, pid, wid, qty, rsv in inventory_allocations:
         postgres_db.execute(
-            "INSERT INTO inventory (inventory_id, product_id, warehouse_id, quantity, reserved_qty, low_stock_threshold) VALUES (%s, %s, %s, %s, %s, 10)",
+            "INSERT INTO inventory (inventory_id, product_id, warehouse_id, quantity, reserved_qty, low_stock_threshold) "
+            "VALUES (%s, %s, %s, %s, %s, 10) "
+            "ON CONFLICT (inventory_id) DO UPDATE SET quantity = EXCLUDED.quantity, reserved_qty = EXCLUDED.reserved_qty",
             (inv_id, pid, wid, qty, rsv)
         )
     logger.info(f"✅ Seeded {len(inventory_allocations)} Inventory Records.")
@@ -340,7 +353,9 @@ def seed_database():
     ]
     for cid, code, dtype, val, min_amt, exp, lim, used in coupons_data:
         postgres_db.execute(
-            "INSERT INTO coupons (coupon_id, code, discount_type, discount_value, min_order_amount, expiry_date, usage_limit, times_used) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO coupons (coupon_id, code, discount_type, discount_value, min_order_amount, expiry_date, usage_limit, times_used) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (coupon_id) DO NOTHING",
             (cid, code, dtype, val, min_amt, exp, lim, used)
         )
     logger.info("✅ Seeded 3 Coupons.")

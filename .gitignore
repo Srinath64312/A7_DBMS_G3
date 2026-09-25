@@ -9,7 +9,7 @@ __pycache__/
 *$py.class
 
 # Ignore local database files (crucial for security)
-data/
+/data/
 *.db
 *.db-shm
 *.db-wal
