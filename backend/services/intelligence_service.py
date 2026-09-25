@@ -19,23 +19,38 @@ STOP_WORDS = {
 }
 
 SEMANTIC_DIMENSIONS = {
-    0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis'],
-    1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model'],
+    0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis', 'workstation', 'enterprise', 'iot', 'sensor', 'esp32', 'raspberry', 'microcontroller', 'embedded', 'gateway', 'arduino'],
+    1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model', 'llm', 'chatgpt'],
     2: ['ram', 'ecc', 'ddr5', 'ddr4', 'memory', 'bandwidth', 'dimm', 'gb', 'registered', 'channel', 'buffering'],
-    3: ['ssd', 'nvme', 'pcie', 'disk', 'storage', 'drive', 'tb', 'flash', 'raid', 'san', 'nas', 'hdd', 'ironwolf', 'sata', 'micron', 'samsung', 'solid', 'state'],
-    4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency'],
-    5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'gaming', 'hdr', 'refresh', 'aspect'],
-    6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture'],
-    7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music', 'listen', 'listening', 'hear', 'song', 'songs', 'tunes', 'earphones', 'earbuds', 'anc', 'spatial', 'playback', 'podcast', 'recording'],
-    8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge'],
-    9: ['coffee', 'roast', 'bean', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'hot', 'cup'],
-    10: ['protein', 'bar', 'almond', 'nutrition', 'snack', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food'],
-    11: ['stationery', 'notebook', 'journal', 'pen', 'gel', 'paper', 'student', 'office', 'campus', 'dot', 'grid', 'rollerball', 'writing', 'desk', 'organizer', 'book', 'notes', 'study'],
-    12: ['toothbrush', 'dental', 'hygiene', 'sonic', 'clean', 'oral', 'personal', 'care', 'travel', 'glasses', 'blue', 'light', 'anti-glare', 'wellness', 'teeth'],
-    13: ['iot', 'sensor', 'esp32', 'raspberry', 'microcontroller', 'embedded', 'gateway', 'arduino', 'gpio', 'telemetry', 'edge'],
-    14: ['enterprise', 'pro', 'ultra', 'premium', 'titanium', 'gold', 'flagship', 'industrial', 'military', 'grade', 'resilient', 'high-throughput', 'durable'],
-    15: ['portable', 'cable', 'magnetic', 'bottle', 'insulated', 'silicone', 'compact', 'water', 'desktop', 'accessory', 'case', 'gear', 'weight']
+    3: ['ssd', 'nvme', 'pcie', 'disk', 'storage', 'drive', 'tb', 'flash', 'raid', 'san', 'nas', 'hdd', 'ironwolf', 'sata', 'micron', 'samsung', 'solid', 'state', 'backup', 'files'],
+    4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency', 'wifi', 'internet', 'mesh'],
+    5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'hdr', 'refresh', 'aspect', 'visual', 'view', 'watch', 'movies'],
+    6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture', 'sitting', 'back', 'pain', 'lumbar', 'comfort', 'spine'],
+    7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music', 'listen', 'listening', 'hear', 'song', 'songs', 'tunes', 'earphones', 'earbuds', 'anc', 'spatial', 'playback', 'podcast', 'recording', 'tracks'],
+    8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge', 'charging', 'adapter', 'plug'],
+    9: ['coffee', 'roast', 'bean', 'beans', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'drinking', 'hot', 'cup', 'latte', 'energy', 'wake'],
+    10: ['protein', 'bar', 'bars', 'almond', 'almonds', 'nutrition', 'snack', 'snacks', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food', 'eat', 'eating', 'hungry', 'pantry', 'groceries', 'grocery'],
+    11: ['stationery', 'notebook', 'journal', 'pen', 'pens', 'gel', 'paper', 'student', 'office', 'campus', 'dot', 'grid', 'rollerball', 'writing', 'write', 'desk', 'organizer', 'book', 'notes', 'study', 'studying', 'college', 'class', 'homework', 'exam'],
+    12: ['toothbrush', 'dental', 'hygiene', 'sonic', 'clean', 'oral', 'personal', 'care', 'travel', 'teeth', 'tooth', 'brush', 'brushing', 'plaque', 'mouth', 'floss'],
+    13: ['glasses', 'blue', 'light', 'anti-glare', 'wellness', 'eyes', 'eye', 'glare', 'vision', 'uv', 'uv400', 'strain', 'spectacles'],
+    14: ['gaming', 'game', 'gamer', 'games', 'play', 'playing', 'esports', 'fps', 'rtx', 'rgb', 'geforce', 'steam', 'arcade', 'joystick', 'controller', 'low-latency', 'multiplayer', 'competitive', 'rog', 'zephyrus', 'rig', 'setup'],
+    15: ['portable', 'cable', 'cables', 'magnetic', 'bottle', 'insulated', 'silicone', 'compact', 'water', 'desktop', 'accessory', 'case', 'gear', 'weight', 'daily', 'essentials', 'everyday', 'wires', 'mess', 'organize', 'hydration', 'flask']
 }
+
+def token_matches_keyword(token: str, kw: str) -> bool:
+    if token == kw:
+        return True
+    if token.endswith("ing") and kw.endswith("e") and token[:-3] == kw[:-1]:
+        return True
+    if kw.endswith("ing") and token.endswith("e") and kw[:-3] == token[:-1]:
+        return True
+    if token in (kw + "s", kw + "es", kw + "ing", kw + "ed", kw + "er"):
+        return True
+    if kw in (token + "s", token + "es", token + "ing", token + "ed"):
+        return True
+    if len(kw) >= 5 and (token.startswith(kw) or kw.startswith(token)):
+        return True
+    return False
 
 def generate_embedding(text: str, dim: int = 16) -> list:
     """
@@ -62,7 +77,7 @@ def generate_embedding(text: str, dim: int = 16) -> list:
         for d in range(dim):
             keywords = SEMANTIC_DIMENSIONS.get(d, [])
             for kw in keywords:
-                if token == kw or token.startswith(kw) or kw.startswith(token):
+                if token_matches_keyword(token, kw):
                     vector[d] += 3.0
                     break
 

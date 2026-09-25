@@ -77,7 +77,10 @@ def seed_database():
         ("cat_storage_05", "Storage and Memory", "High speed NVMe SSDs, NAS HDDs, and RAM"),
         ("cat_display_06", "Displays and Monitors", "High refresh rate gaming monitors and color accurate displays"),
         ("cat_periph_07", "Peripherals and Input Devices", "Keyboards, mice, and controller accessories"),
-        ("cat_power_08", "Power and Cooling Systems", "UPS, Power supplies, and thermal cooling solutions")
+        ("cat_power_08", "Power and Cooling Systems", "UPS, Power supplies, and thermal cooling solutions"),
+        ("cat_daily_09", "Daily Essentials & Groceries", "Fresh roast coffee, protein snacks, hydration & pantry necessities"),
+        ("cat_daily_10", "Campus & Office Stationery", "Journals, gel pens, fast GaN chargers, and desktop organizers"),
+        ("cat_daily_11", "Personal Care & Wellness", "Electric toothbrushes, blue light glasses, and ergonomics")
     ]
     for cid, name, desc in categories_data:
         postgres_db.execute(
@@ -213,6 +216,24 @@ def seed_database():
             ("Phanteks T30-120", 30.00, ["cooling", "fan", "performance", "thick"]),
             ("Noctua NF-A12x25 PWM", 32.00, ["cooling", "fan", "quiet", "premium"]),
             ("APC SurgeArrest Performance 11-Outlet", 35.00, ["power", "surge-protector", "strip"])
+        ],
+        "cat_daily_09": [
+            ("Colombian Whole Bean Dark Roast Coffee", 18.99, ["coffee", "roast", "caffeine", "morning", "beverage", "groceries", "drink", "daily"]),
+            ("Organic Whey Protein & Almond Energy Bars", 24.50, ["protein", "snack", "healthy", "food", "eat", "nutrition", "groceries", "daily"]),
+            ("Smart Temperature Display Insulated Water Bottle", 22.99, ["bottle", "hydration", "water", "gym", "flask", "daily", "essentials"]),
+            ("Ceremonial Grade Uji Japanese Matcha Green Tea", 19.99, ["tea", "matcha", "green tea", "caffeine", "beverage", "morning", "groceries"]),
+            ("Roasted Himalayan Salted California Almonds", 13.49, ["almonds", "nuts", "healthy snack", "food", "eat", "groceries", "pantry"])
+        ],
+        "cat_daily_10": [
+            ("Hardcover Dot-Grid Spiral Notebook Journal", 16.99, ["notebook", "stationery", "journal", "campus", "study", "notes", "write"]),
+            ("Quick-Dry Japanese Gel Ink Rollerball Pens", 11.99, ["pens", "stationery", "gel pen", "writing", "office", "student", "exam"]),
+            ("65W GaN III 3-Port Fast Wall Charger", 32.99, ["charger", "gan", "usb-c", "fast charge", "adapter", "power", "travel", "phone"]),
+            ("Magnetic Weighted Silicone Desktop Cable Organizer", 13.99, ["desk", "organizer", "cable", "wires", "clean setup", "office", "cables"])
+        ],
+        "cat_daily_11": [
+            ("Sonic Pulse Electric Toothbrush with Travel Case", 29.99, ["toothbrush", "oral care", "teeth", "brushing", "hygiene", "clean", "dental"]),
+            ("Blue Light Blocking Computer Glasses", 18.50, ["glasses", "blue light", "anti-glare", "eyes", "eye strain", "vision", "screen"]),
+            ("Orthopedic Memory Foam Ergonomic Chair Cushion", 26.99, ["cushion", "ergonomic", "seat", "back pain", "posture", "chair", "sitting"])
         ]
     }
 
