@@ -20,6 +20,7 @@ interface HeaderProps {
   isDark?: boolean;
   onToggleTheme?: () => void;
   onOpenAcademicLab?: () => void;
+  onOpenSidebar?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -38,7 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   theme,
   onSelectTheme,
-  onOpenAcademicLab
+  onOpenAcademicLab,
+  onOpenSidebar
 }) => {
   return (
     <header className={`${
@@ -50,6 +52,18 @@ export const Header: React.FC<HeaderProps> = ({
     } text-white sticky top-0 z-40 select-none shadow-md transition-colors duration-250`}>
       <div className="max-w-[1700px] mx-auto flex items-center gap-2 px-3 py-1.5 md:gap-4 md:px-4">
         
+        {/* Hamburger Menu Toggle (RBAC Sidebar) */}
+        {onOpenSidebar && (
+          <button
+            type="button"
+            onClick={onOpenSidebar}
+            className="amazon-nav-item flex items-center justify-center p-2 rounded hover:border-white text-white cursor-pointer mr-1"
+            title="Open RBAC Navigation Sidebar"
+          >
+            <i className="fa-solid fa-bars text-lg text-[#febd69]"></i>
+          </button>
+        )}
+
         {/* Logo */}
         <div 
           onClick={() => { onSelectCategory(''); onSearchChange(''); }}

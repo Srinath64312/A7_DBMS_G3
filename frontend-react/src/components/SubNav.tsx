@@ -10,6 +10,7 @@ interface SubNavProps {
   onOpenRestock: () => void;
   onOpenAcademicLab: (tab?: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide') => void;
   theme?: 'light' | 'dark' | 'forest';
+  onOpenSidebar?: () => void;
 }
 
 export const SubNav: React.FC<SubNavProps> = ({
@@ -20,7 +21,8 @@ export const SubNav: React.FC<SubNavProps> = ({
   onOpenTestRunner,
   onOpenRestock,
   onOpenAcademicLab,
-  theme = 'light'
+  theme = 'light',
+  onOpenSidebar
 }) => {
   const isStaff = user && (user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER');
 
@@ -34,14 +36,13 @@ export const SubNav: React.FC<SubNavProps> = ({
     } text-white text-xs select-none shadow-sm transition-colors duration-250`}>
       <div className="max-w-[1700px] mx-auto flex items-center gap-1.5 px-4 overflow-x-auto whitespace-nowrap py-1">
         
-        {/* All / Clear Filter */}
+        {/* All / Open RBAC Sidebar */}
         <button
-          onClick={() => onSelectCategory('')}
-          className={`amazon-nav-item flex items-center gap-1.5 py-1 px-2.5 font-bold ${
-            selectedCategory === '' ? 'border-white bg-[#37475a]' : ''
-          }`}
+          onClick={onOpenSidebar || (() => onSelectCategory(''))}
+          className="amazon-nav-item flex items-center gap-1.5 py-1 px-2.5 font-bold hover:border-white cursor-pointer"
+          title="Open Role-Based Menu (Customer / Staff / Admin)"
         >
-          <i className="fa-solid fa-bars text-sm"></i>
+          <i className="fa-solid fa-bars text-sm text-[#febd69]"></i>
           <span>All Departments</span>
         </button>
 

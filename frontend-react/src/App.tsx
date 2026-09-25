@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { User, Product, Category, Warehouse, WishlistItem, CartItem } from './types';
+import { User, Product, Category, Warehouse, WishlistItem, CartItem, Role } from './types';
 import { Header } from './components/Header';
 import { SubNav } from './components/SubNav';
+import { Sidebar } from './components/Sidebar';
 import { HeroBanner } from './components/HeroBanner';
 import { ProductCard } from './components/ProductCard';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -78,11 +79,45 @@ export function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isAcademicLabOpen, setIsAcademicLabOpen] = useState(false);
   const [academicLabDefaultTab, setAcademicLabDefaultTab] = useState<'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide'>('sql_workbench');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openAcademicLab = useCallback((tab: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide' = 'sql_workbench') => {
     setAcademicLabDefaultTab(tab);
     setIsAcademicLabOpen(true);
   }, []);
+
+  // Quick Role Switcher for demonstration & viva defense
+  const handleSwitchRole = (newRole: Role) => {
+    let targetUser: User;
+    if (newRole === 'ADMIN') {
+      targetUser = {
+        user_id: 'usr_admin_01',
+        name: 'Admin Srinath',
+        email: 'admin@commerce.kluniversity.in',
+        role: 'ADMIN',
+        token: user?.token || sessionStorage.getItem('nex_token') || ''
+      };
+    } else if (newRole === 'WAREHOUSE_MANAGER') {
+      targetUser = {
+        user_id: 'usr_mgr_01',
+        name: 'Manager Poli Naidu',
+        email: 'manager@commerce.kluniversity.in',
+        role: 'WAREHOUSE_MANAGER',
+        token: user?.token || sessionStorage.getItem('nex_token') || ''
+      };
+    } else {
+      targetUser = {
+        user_id: 'usr_cust_01',
+        name: 'Abhinay Sai',
+        email: 'abhinay@klh.edu.in',
+        role: 'CUSTOMER',
+        token: user?.token || sessionStorage.getItem('nex_token') || ''
+      };
+    }
+    setUser(targetUser);
+    sessionStorage.setItem('nex_user', JSON.stringify(targetUser));
+    addToast(`Switched active session view to ${newRole} mode`, 'success');
+  };
 
   // Payment Modal State
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -396,6 +431,7 @@ export function App() {
         theme={theme}
         onSelectTheme={setTheme}
         onOpenAcademicLab={() => openAcademicLab('sql_workbench')}
+        onOpenSidebar={() => setIsSidebarOpen(true)}
       />
 
       {/* Amazon SubNav */}
@@ -408,6 +444,7 @@ export function App() {
         onOpenRestock={() => setIsRestockOpen(true)}
         onOpenAcademicLab={openAcademicLab}
         theme={theme}
+        onOpenSidebar={() => setIsSidebarOpen(true)}
       />
 
       {/* Main Page Body */}
@@ -605,6 +642,28 @@ export function App() {
         isOpen={isAcademicLabOpen}
         onClose={() => setIsAcademicLabOpen(false)}
         defaultTab={academicLabDefaultTab}
+      />
+
+      {/* RBAC Flyout Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        user={user}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        cartCount={totalCartCount}
+        wishlistCount={wishlist.length}
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
+        onOpenOrders={() => setIsOrdersOpen(true)}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        onLogout={handleLogout}
+        onOpenAcademicLab={openAcademicLab}
+        onOpenTestRunner={() => setIsTestRunnerOpen(true)}
+        onOpenRestock={() => setIsRestockOpen(true)}
+        onSwitchRole={handleSwitchRole}
+        theme={theme}
       />
 
       {/* Footer */}
