@@ -9,6 +9,7 @@ interface SubNavProps {
   onOpenTestRunner: () => void;
   onOpenRestock: () => void;
   onOpenAcademicLab: (tab?: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide') => void;
+  theme?: 'light' | 'dark' | 'forest';
 }
 
 export const SubNav: React.FC<SubNavProps> = ({
@@ -18,12 +19,19 @@ export const SubNav: React.FC<SubNavProps> = ({
   onSelectCategory,
   onOpenTestRunner,
   onOpenRestock,
-  onOpenAcademicLab
+  onOpenAcademicLab,
+  theme = 'light'
 }) => {
   const isStaff = user && (user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER');
 
   return (
-    <nav className="bg-[#232f3e] text-white text-xs select-none shadow-sm">
+    <nav className={`${
+      theme === 'forest' 
+        ? 'bg-[#081d14] border-b border-emerald-950/90' 
+        : theme === 'dark' 
+          ? 'bg-[#0f172a] border-b border-slate-800/90' 
+          : 'bg-[#232f3e]'
+    } text-white text-xs select-none shadow-sm transition-colors duration-250`}>
       <div className="max-w-[1700px] mx-auto flex items-center gap-1.5 px-4 overflow-x-auto whitespace-nowrap py-1">
         
         {/* All / Clear Filter */}

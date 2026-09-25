@@ -10,7 +10,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
   return (
     <div className="relative mb-6">
       {/* Background Graphic with Live WebGL Accretion Disc */}
-      <div className="h-80 sm:h-96 md:h-[420px] w-full bg-[#070b14] flex items-center justify-between px-6 md:px-16 text-white relative overflow-hidden rounded-xl shadow-2xl">
+      <div className="min-h-[390px] md:min-h-[420px] w-full bg-[#070b14] flex items-center justify-between px-6 md:px-14 py-8 text-white relative overflow-hidden rounded-2xl shadow-2xl border border-slate-800/60">
         
         {/* Accretion Disc WebGL Canvas */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-85">
@@ -26,28 +26,28 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
         </div>
 
         {/* Ambient atmospheric lighting overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070b14]/90 via-[#070b14]/40 to-transparent z-[1] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070b14]/95 via-[#070b14]/60 to-transparent z-[1] pointer-events-none"></div>
 
         {/* Hero Title & Description */}
-        <div className="max-w-2xl z-10 space-y-3 relative">
-          <div className="inline-flex items-center gap-2 bg-[#febd69]/20 text-[#febd69] border border-[#febd69]/40 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm backdrop-blur-md">
+        <div className="max-w-2xl z-10 space-y-4 relative py-2">
+          <div className="inline-flex items-center gap-2 bg-[#febd69]/15 text-[#febd69] border border-[#febd69]/30 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm backdrop-blur-md">
             <i className="fa-solid fa-atom animate-spin" style={{ animationDuration: '8s' }}></i> Next-Gen Enterprise Hardware
           </div>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
             Distributed Compute, AI Acceleration & Resilient Storage
           </h1>
-          <p className="text-gray-200 text-xs sm:text-sm max-w-xl leading-relaxed drop-shadow">
+          <p className="text-gray-300 text-xs sm:text-sm max-w-xl leading-relaxed drop-shadow">
             Powered by ACID Transactions on PostgreSQL, Flexible NoSQL Catalog on MongoDB, Distributed Locks on Redis, and Vector Similarity Search.
           </p>
 
           {/* Action Orbit Border Buttons */}
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center gap-4 pt-1">
             <OrbitBorderButton
               label="Explore Compute Nodes"
               stroke={{ color: "#febd69", size: 30, speed: 60 }}
               colors={{ fill: "#131921", textColor: "#febd69" }}
               rounded={9999}
-              padding="8px 20px"
+              padding="8px 22px"
               onClick={() => onSelectCategory('cat_comp_01')}
             />
             <OrbitBorderButton
@@ -55,7 +55,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
               stroke={{ color: "#38bdf8", size: 30, speed: 50 }}
               colors={{ fill: "#0f172a", textColor: "#38bdf8" }}
               rounded={9999}
-              padding="8px 20px"
+              padding="8px 22px"
               onClick={() => onSelectCategory('cat_elec_02')}
             />
           </div>
@@ -78,104 +78,113 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
             </div>
           </div>
         </div>
-
-        {/* Gradient bottom fade into page body */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg-page)] to-transparent pointer-events-none z-[2]"></div>
       </div>
 
-      {/* 4 Feature Quick Cards overlapping banner */}
-      <div className="max-w-[1700px] mx-auto px-4 -mt-16 sm:-mt-24 z-20 relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 4 Feature Quick Cards directly below banner (no awkward button overlap) */}
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1 */}
         <div 
           onClick={() => onSelectCategory('cat_comp_01')}
-          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer flex flex-col justify-between group"
+          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
         >
           <div>
-            <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
-              Compute & Server Nodes
-            </h3>
-            <p className="text-xs text-[#565959] dark:text-slate-400 mt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
+                Compute & Server Nodes
+              </h3>
+              <span className="text-[10px] font-mono uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-semibold">Rackmount</span>
+            </div>
+            <p className="text-xs text-[#565959] dark:text-slate-400">
               Multi-socket Xeon & EPYC rack-mount nodes for scalable microservices.
             </p>
           </div>
-          <div className="mt-3 overflow-hidden rounded bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
+          <div className="mt-3 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
             <img 
               src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&auto=format&fit=crop&q=80" 
               alt="Compute Nodes" 
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2 block">Explore Servers &rarr;</span>
+          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">Explore Servers <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
         </div>
 
         {/* Card 2 */}
         <div 
           onClick={() => onSelectCategory('cat_elec_02')}
-          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer flex flex-col justify-between group"
+          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
         >
           <div>
-            <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
-              Hardware Accelerators
-            </h3>
-            <p className="text-xs text-[#565959] dark:text-slate-400 mt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
+                Hardware Accelerators
+              </h3>
+              <span className="text-[10px] font-mono uppercase bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded font-semibold">AI Tensor</span>
+            </div>
+            <p className="text-xs text-[#565959] dark:text-slate-400">
               High-throughput Tensor Core GPUs for AI vector indexing & inference.
             </p>
           </div>
-          <div className="mt-3 overflow-hidden rounded bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
+          <div className="mt-3 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
             <img 
               src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&auto=format&fit=crop&q=80" 
               alt="Hardware Accelerators" 
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2 block">Shop Accelerators &rarr;</span>
+          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">Shop Accelerators <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
         </div>
 
         {/* Card 3 */}
         <div 
           onClick={() => onSelectCategory('cat_storage_05')}
-          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer flex flex-col justify-between group"
+          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
         >
           <div>
-            <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
-              Storage & NVMe Fabrics
-            </h3>
-            <p className="text-xs text-[#565959] dark:text-slate-400 mt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
+                Storage & NVMe Fabrics
+              </h3>
+              <span className="text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-semibold">Gen5 PCIe</span>
+            </div>
+            <p className="text-xs text-[#565959] dark:text-slate-400">
               PCIe Gen5 enterprise SSDs, SAN/NAS arrays, and high-IOPS caches.
             </p>
           </div>
-          <div className="mt-3 overflow-hidden rounded bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
+          <div className="mt-3 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
             <img 
               src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400&auto=format&fit=crop&q=80" 
               alt="Storage" 
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2 block">View Storage Arrays &rarr;</span>
+          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">View Storage Arrays <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
         </div>
 
         {/* Card 4 */}
         <div 
           onClick={() => onSelectCategory('cat_net_04')}
-          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer flex flex-col justify-between group"
+          className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
         >
           <div>
-            <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
-              Networking & Spine Switches
-            </h3>
-            <p className="text-xs text-[#565959] dark:text-slate-400 mt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
+                Networking & Spine Switches
+              </h3>
+              <span className="text-[10px] font-mono uppercase bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded font-semibold">400GbE</span>
+            </div>
+            <p className="text-xs text-[#565959] dark:text-slate-400">
               100GbE / 400GbE low-latency optical interconnects and managed fabric switches.
             </p>
           </div>
-          <div className="mt-3 overflow-hidden rounded bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
+          <div className="mt-3 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
             <img 
               src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&auto=format&fit=crop&q=80" 
               alt="Networking" 
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2 block">Browse Network Gear &rarr;</span>
+          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">Browse Network Gear <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
         </div>
 
       </div>

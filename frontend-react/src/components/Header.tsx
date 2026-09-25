@@ -15,8 +15,10 @@ interface HeaderProps {
   onOpenOrders: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
-  isDark: boolean;
-  onToggleTheme: () => void;
+  theme: 'light' | 'dark' | 'forest';
+  onSelectTheme: (theme: 'light' | 'dark' | 'forest') => void;
+  isDark?: boolean;
+  onToggleTheme?: () => void;
   onOpenAcademicLab?: () => void;
 }
 
@@ -34,12 +36,18 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenOrders,
   onOpenAuth,
   onLogout,
-  isDark,
-  onToggleTheme,
+  theme,
+  onSelectTheme,
   onOpenAcademicLab
 }) => {
   return (
-    <header className="bg-[#131921] text-white sticky top-0 z-40 select-none shadow-md">
+    <header className={`${
+      theme === 'forest' 
+        ? 'bg-[#04100b] border-b border-emerald-950/80 shadow-emerald-950/20' 
+        : theme === 'dark' 
+          ? 'bg-[#080c14] border-b border-slate-800/80 shadow-black/40' 
+          : 'bg-[#131921] border-b border-transparent'
+    } text-white sticky top-0 z-40 select-none shadow-md transition-colors duration-250`}>
       <div className="max-w-[1700px] mx-auto flex items-center gap-2 px-3 py-1.5 md:gap-4 md:px-4">
         
         {/* Logo */}
@@ -106,15 +114,50 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Theme Toggle (Dark OLED / Light) */}
-          <button
-            onClick={onToggleTheme}
-            className="amazon-nav-item flex items-center gap-1.5 text-xs text-white"
-            title={isDark ? "Switch to Amazon Light Theme" : "Switch to Amazon Dark OLED Theme"}
-          >
-            <i className={`fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-300'} text-base`}></i>
-            <span className="hidden xl:inline text-[11px] font-bold">{isDark ? 'Light' : 'OLED Dark'}</span>
-          </button>
+          {/* 3-Mode Theme Selector (Light / Dark / Forest) */}
+          <div className="flex items-center bg-black/40 border border-slate-700/60 rounded-lg p-0.5 shadow-inner">
+            <button
+              type="button"
+              onClick={() => onSelectTheme('light')}
+              className={`px-2 py-1 rounded text-xs flex items-center gap-1 transition ${
+                theme === 'light'
+                  ? 'bg-[#ffd814] text-[#0f1111] shadow-sm font-bold scale-[1.02]'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              title="Switch to Light Theme"
+            >
+              <i className="fa-solid fa-sun text-xs text-amber-500"></i>
+              <span className="hidden xl:inline text-[11px]">Light</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectTheme('dark')}
+              className={`px-2 py-1 rounded text-xs flex items-center gap-1 transition ${
+                theme === 'dark'
+                  ? 'bg-sky-500 text-white shadow-sm font-bold scale-[1.02]'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              title="Switch to OLED Dark Theme"
+            >
+              <i className="fa-solid fa-moon text-xs text-sky-200"></i>
+              <span className="hidden xl:inline text-[11px]">Dark</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectTheme('forest')}
+              className={`px-2 py-1 rounded text-xs flex items-center gap-1 transition ${
+                theme === 'forest'
+                  ? 'bg-emerald-500 text-slate-950 shadow-sm font-black scale-[1.02]'
+                  : 'text-gray-400 hover:text-emerald-300'
+              }`}
+              title="Switch to Forest Theme"
+            >
+              <i className="fa-solid fa-tree text-xs text-emerald-400"></i>
+              <span className="hidden xl:inline text-[11px]">Forest</span>
+            </button>
+          </div>
 
           {/* Account & Lists */}
           {user ? (

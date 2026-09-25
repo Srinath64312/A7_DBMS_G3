@@ -1,9 +1,11 @@
-:root {
+:root, html.light, body.light {
   --bg-page: #eaeded;
   --bg-card: #ffffff;
+  --bg-card-subtle: #f8fafc;
   --text-main: #0f1111;
   --text-muted: #565959;
   --border-subtle: #d5d9d9;
+  --border-card: #e2e8f0;
   --color-brand: #ff9900;
   --color-primary: #ffd814;
   --color-primary-hover: #f7ca00;
@@ -11,22 +13,55 @@
   --color-secondary-hover: #fa8900;
   --color-price: #b12704;
   --color-link: #007185;
+  --header-bg: #131921;
+  --subnav-bg: #232f3e;
+  --toolbar-bg: #ffffff;
 }
 
-body.dark, html.dark {
-  --bg-page: #0b0f19;
-  --bg-card: #111827;
+html.dark:not(.forest), body.dark:not(.forest) {
+  --bg-page: #080c14;
+  --bg-card: #0f172a;
+  --bg-card-subtle: #1e293b;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-subtle: #1e293b;
+  --border-card: #334155;
+  --color-brand: #38bdf8;
+  --color-primary: #38bdf8;
+  --color-primary-hover: #0ea5e9;
+  --color-secondary: #f59e0b;
+  --color-secondary-hover: #d97706;
   --color-price: #f87171;
   --color-link: #38bdf8;
+  --header-bg: #0b0f19;
+  --subnav-bg: #111827;
+  --toolbar-bg: #0f172a;
+}
+
+html.forest, body.forest {
+  --bg-page: #05130d;
+  --bg-card: #092016;
+  --bg-card-subtle: #0f2c20;
+  --text-main: #ecfdf5;
+  --text-muted: #a7f3d0;
+  --border-subtle: #143829;
+  --border-card: #1c4b38;
+  --color-brand: #10b981;
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
+  --color-secondary: #f59e0b;
+  --color-secondary-hover: #d97706;
+  --color-price: #34d399;
+  --color-link: #10b981;
+  --header-bg: #04100b;
+  --subnav-bg: #081d14;
+  --toolbar-bg: #092016;
 }
 
 body {
-  background-color: var(--bg-page);
+  background-color: var(--bg-page) !important;
   color: var(--text-main);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Amazon Nav Items */

@@ -18,8 +18,9 @@ import { Footer } from './components/Footer';
 
 export function App() {
   // Theme state
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    return localStorage.getItem('nexcommerce_theme') === 'dark';
+  const [theme, setTheme] = useState<'light' | 'dark' | 'forest'>((): 'light' | 'dark' | 'forest' => {
+    const stored = localStorage.getItem('nexcommerce_theme') as 'light' | 'dark' | 'forest' | null;
+    return stored ?? 'light';
   });
 
   // User Auth state
@@ -104,18 +105,23 @@ export function App() {
 
   // Theme effect
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-      localStorage.setItem('nexcommerce_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark');
-      localStorage.setItem('nexcommerce_theme', 'light');
-    }
-  }, [isDark]);
+    const root = document.documentElement;
+    const body = document.body;
+    root.classList.remove('light', 'dark', 'forest');
+    body.classList.remove('light', 'dark', 'forest');
 
-  const toggleTheme = () => setIsDark(prev => !prev);
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      body.classList.add('dark');
+    } else if (theme === 'forest') {
+      root.classList.add('dark', 'forest');
+      body.classList.add('dark', 'forest');
+    } else {
+      root.classList.add('light');
+      body.classList.add('light');
+    }
+    localStorage.setItem('nexcommerce_theme', theme);
+  }, [theme]);
 
   // Persist cart
   useEffect(() => {
@@ -387,8 +393,8 @@ export function App() {
         onOpenOrders={() => setIsOrdersOpen(true)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
+        theme={theme}
+        onSelectTheme={setTheme}
         onOpenAcademicLab={() => openAcademicLab('sql_workbench')}
       />
 
@@ -401,6 +407,7 @@ export function App() {
         onOpenTestRunner={() => setIsTestRunnerOpen(true)}
         onOpenRestock={() => setIsRestockOpen(true)}
         onOpenAcademicLab={openAcademicLab}
+        theme={theme}
       />
 
       {/* Main Page Body */}
@@ -409,16 +416,16 @@ export function App() {
         <HeroBanner onSelectCategory={setSelectedCategory} />
 
         {/* Filter and Storefront Toolbar */}
-        <div className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 rounded-md p-3 mb-5 flex flex-wrap items-center justify-between gap-3 shadow-sm text-xs">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl p-3 mb-5 flex flex-wrap items-center justify-between gap-3 shadow-sm text-xs transition-colors">
           <div className="flex items-center gap-3">
-            <span className="font-bold text-gray-700 dark:text-gray-300">
-              Showing <span className="text-[#0f1111] dark:text-white font-extrabold">{filteredProducts.length}</span> results
+            <span className="font-bold text-[var(--text-muted)]">
+              Showing <span className="text-[var(--text-main)] font-extrabold">{filteredProducts.length}</span> results
               {selectedCategory && ` in ${categories.find(c => c.category_id === selectedCategory)?.name || selectedCategory}`}
             </span>
             {selectedCategory && (
               <button
                 onClick={() => setSelectedCategory('')}
-                className="text-xs text-[#007185] dark:text-sky-400 hover:underline flex items-center gap-1 font-semibold"
+                className="text-xs text-[var(--color-link)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
               >
                 Clear filter <i className="fa-solid fa-xmark"></i>
               </button>
@@ -427,7 +434,7 @@ export function App() {
 
           <div className="flex flex-wrap items-center gap-3">
             {/* In stock toggle */}
-            <label className="flex items-center gap-1.5 cursor-pointer font-medium">
+            <label className="flex items-center gap-1.5 cursor-pointer font-medium text-[var(--text-main)]">
               <input
                 type="checkbox"
                 checked={inStockOnly}
@@ -438,12 +445,12 @@ export function App() {
             </label>
 
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-gray-500">Sort by:</span>
+            <div className="flex items-center gap-1.5 text-[var(--text-muted)]">
+              <span>Sort by:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="p-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 outline-none font-medium cursor-pointer"
+                className="p-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-subtle)] text-[var(--text-main)] outline-none font-medium cursor-pointer"
               >
                 <option value="default">Featured</option>
                 <option value="price_low">Price: Low to High</option>
