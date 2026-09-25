@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { User, Product, Category, Warehouse, WishlistItem, CartItem, Role } from './types';
+import { User, Product, Category, Warehouse, WishlistItem, CartItem, Role, Address } from './types';
 import { Header } from './components/Header';
 import { SubNav } from './components/SubNav';
 import { Sidebar } from './components/Sidebar';
@@ -13,10 +13,49 @@ import { OrdersModal } from './components/OrdersModal';
 import { TestRunnerModal } from './components/TestRunnerModal';
 import { RestockModal } from './components/RestockModal';
 import { AuthModal } from './components/AuthModal';
+import { AddressModal } from './components/AddressModal';
+import { AddProductModal } from './components/AddProductModal';
 import { AcademicCommandCenter } from './components/AcademicCommandCenter';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { Footer } from './components/Footer';
 import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES, FALLBACK_WAREHOUSES } from './utils/fallbackData';
+
+// 3 Default saved delivery addresses for university campus, faculty residence, and tech park
+export const DEFAULT_ADDRESSES: Address[] = [
+  {
+    id: 'addr_campus_01',
+    label: 'Campus Hostel (Block A)',
+    fullName: 'Abhinay Sai',
+    street: 'Room 304, Boys Hostel Block-A, KL University Campus, Aziz Nagar',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    postalCode: '500075',
+    phone: '+91 98480 12345',
+    isDefault: true
+  },
+  {
+    id: 'addr_faculty_02',
+    label: 'Faculty Residence / Staff Quarters',
+    fullName: 'Srinath (Admin)',
+    street: 'Quarter Q-12, Staff Enclave, KL University Off-Campus, Aziz Nagar',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    postalCode: '500075',
+    phone: '+91 98480 54321',
+    isDefault: false
+  },
+  {
+    id: 'addr_lab_03',
+    label: 'Aziz Nagar R&D Tech Lab',
+    fullName: 'Poli Naidu (Lab Manager)',
+    street: 'Distributed Systems & Cloud Computing Lab, CSE Dept, 3rd Floor',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    postalCode: '500075',
+    phone: '+91 98480 99887',
+    isDefault: false
+  }
+];
 
 export function App() {
   // Theme state
@@ -81,6 +120,38 @@ export function App() {
   const [isAcademicLabOpen, setIsAcademicLabOpen] = useState(false);
   const [academicLabDefaultTab, setAcademicLabDefaultTab] = useState<'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide'>('sql_workbench');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+
+  // Delivery Addresses State (3 default saved locations)
+  const [addresses, setAddresses] = useState<Address[]>(() => {
+    try {
+      const saved = localStorage.getItem('nex_addresses');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // fallback
+    }
+    return DEFAULT_ADDRESSES;
+  });
+
+  const [activeAddressId, setActiveAddressId] = useState<string>(() => {
+    return localStorage.getItem('nex_active_address_id') || 'addr_campus_01';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('nex_addresses', JSON.stringify(addresses));
+  }, [addresses]);
+
+  useEffect(() => {
+    localStorage.setItem('nex_active_address_id', activeAddressId);
+  }, [activeAddressId]);
+
+  const activeAddress = useMemo(() => {
+    return addresses.find(a => a.id === activeAddressId) || addresses[0] || null;
+  }, [addresses, activeAddressId]);
 
   const openAcademicLab = useCallback((tab: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide' = 'sql_workbench') => {
     setAcademicLabDefaultTab(tab);
@@ -179,11 +250,23 @@ export function App() {
         fetch('/api/warehouses')
       ]);
 
+      // Retrieve custom products added via the website
+      const customProducts: Product[] = (() => {
+        try {
+          return JSON.parse(localStorage.getItem('nex_custom_products') || '[]');
+        } catch {
+          return [];
+        }
+      })();
+
       if (prodsRes.status === 'fulfilled' && prodsRes.value.ok && prodsRes.value.headers.get('content-type')?.includes('application/json')) {
         const pData = await prodsRes.value.json().catch(() => null);
-        setProducts(Array.isArray(pData) && pData.length > 0 ? pData : FALLBACK_PRODUCTS);
+        const base = Array.isArray(pData) && pData.length > 0 ? pData : FALLBACK_PRODUCTS;
+        const merged = [...customProducts, ...base.filter((b: Product) => !customProducts.some(c => c.product_id === b.product_id))];
+        setProducts(merged);
       } else {
-        setProducts(FALLBACK_PRODUCTS);
+        const merged = [...customProducts, ...FALLBACK_PRODUCTS.filter(b => !customProducts.some(c => c.product_id === b.product_id))];
+        setProducts(merged);
       }
 
       if (catsRes.status === 'fulfilled' && catsRes.value.ok && catsRes.value.headers.get('content-type')?.includes('application/json')) {
@@ -395,6 +478,44 @@ export function App() {
     addToast('Signed out of NexCommerce', 'info');
   };
 
+  // Delivery Address Handlers
+  const handleSelectAddress = (id: string) => {
+    setActiveAddressId(id);
+    const selected = addresses.find(a => a.id === id);
+    if (selected) {
+      addToast(`Delivery destination set to: ${selected.label}`, 'info');
+    }
+  };
+
+  const handleAddAddress = (newAddr: Address) => {
+    setAddresses(prev => [newAddr, ...prev]);
+    setActiveAddressId(newAddr.id);
+    addToast(`Saved new delivery address: ${newAddr.label}`, 'success');
+  };
+
+  const handleDeleteAddress = (id: string) => {
+    setAddresses(prev => prev.filter(a => a.id !== id));
+    if (activeAddressId === id) {
+      const remaining = addresses.filter(a => a.id !== id);
+      if (remaining.length > 0) {
+        setActiveAddressId(remaining[0].id);
+      }
+    }
+    addToast('Address removed', 'info');
+  };
+
+  // Product Created Handler (persists in localStorage + state)
+  const handleProductCreated = (newProd: Product) => {
+    setProducts(prev => [newProd, ...prev]);
+    try {
+      const existing: Product[] = JSON.parse(localStorage.getItem('nex_custom_products') || '[]');
+      localStorage.setItem('nex_custom_products', JSON.stringify([newProd, ...existing.filter(p => p.product_id !== newProd.product_id)]));
+    } catch (e) {
+      console.warn('Could not persist product to local storage:', e);
+    }
+    addToast(`"${newProd.name}" added to catalog successfully!`, 'success');
+  };
+
   // Filtered Products
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
@@ -445,6 +566,9 @@ export function App() {
         onOpenAcademicLab={() => openAcademicLab('sql_workbench')}
         onOpenRestock={() => setIsRestockOpen(true)}
         onOpenSidebar={() => setIsSidebarOpen(true)}
+        onOpenAddressModal={() => setIsAddressModalOpen(true)}
+        activeAddress={activeAddress}
+        onOpenAddProduct={() => setIsAddProductOpen(true)}
       />
 
       {/* Amazon SubNav */}
@@ -483,6 +607,16 @@ export function App() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* Direct Add Product Button */}
+            <button
+              onClick={() => setIsAddProductOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg shadow-sm transition cursor-pointer text-xs"
+              title="Add a new product directly to the website catalog"
+            >
+              <i className="fa-solid fa-plus text-xs"></i>
+              <span>Add Product</span>
+            </button>
+
             {/* In stock toggle */}
             <label className="flex items-center gap-1.5 cursor-pointer font-medium text-[var(--text-main)]">
               <input
@@ -620,6 +754,9 @@ export function App() {
         user={user}
         onClose={() => setIsPaymentOpen(false)}
         onPaymentSuccess={handlePaymentSuccess}
+        addresses={addresses}
+        activeAddressId={activeAddressId}
+        onOpenAddressModal={() => setIsAddressModalOpen(true)}
       />
 
       <OrdersModal
@@ -657,6 +794,25 @@ export function App() {
         defaultTab={academicLabDefaultTab}
       />
 
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        addresses={addresses}
+        activeAddressId={activeAddressId}
+        onSelectAddress={handleSelectAddress}
+        onAddAddress={handleAddAddress}
+        onDeleteAddress={handleDeleteAddress}
+      />
+
+      <AddProductModal
+        isOpen={isAddProductOpen}
+        onClose={() => setIsAddProductOpen(false)}
+        categories={categories}
+        warehouses={warehouses}
+        user={user}
+        onProductCreated={handleProductCreated}
+      />
+
       {/* RBAC Flyout Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
@@ -677,6 +833,8 @@ export function App() {
         onOpenRestock={() => setIsRestockOpen(true)}
         onSwitchRole={handleSwitchRole}
         theme={theme}
+        onOpenAddressModal={() => setIsAddressModalOpen(true)}
+        onOpenAddProduct={() => setIsAddProductOpen(true)}
       />
 
       {/* Footer */}

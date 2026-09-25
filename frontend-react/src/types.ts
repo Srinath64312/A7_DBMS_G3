@@ -96,6 +96,18 @@ export interface Order {
   };
 }
 
+export interface Address {
+  id: string;
+  label: string;
+  fullName: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  phone: string;
+  isDefault?: boolean;
+}
+
 export interface TestResultItem {
   name: string;
   description: string;

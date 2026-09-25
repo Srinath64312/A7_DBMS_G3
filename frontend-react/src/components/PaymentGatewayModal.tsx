@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CartItem, User } from '../types';
+import { CartItem, User, Address } from '../types';
 
 interface PaymentGatewayModalProps {
   isOpen: boolean;
@@ -7,6 +7,9 @@ interface PaymentGatewayModalProps {
   user: User | null;
   onClose: () => void;
   onPaymentSuccess: (orderId: string) => void;
+  addresses?: Address[];
+  activeAddressId?: string;
+  onOpenAddressModal?: () => void;
 }
 
 export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
@@ -14,9 +17,13 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
   items,
   user,
   onClose,
-  onPaymentSuccess
+  onPaymentSuccess,
+  addresses = [],
+  activeAddressId = '',
+  onOpenAddressModal
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<'RAZORPAY' | 'UPI' | 'CARD' | 'NET_BANKING'>('RAZORPAY');
+  const [selectedAddrId, setSelectedAddrId] = useState<string>(activeAddressId || addresses[0]?.id || '');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [step, setStep] = useState<'PAY' | 'SUCCESS'>('PAY');
@@ -53,6 +60,11 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
         }
       }
 
+      const activeAddr = addresses.find(a => a.id === selectedAddrId) || addresses[0];
+      const shippingAddress = activeAddr
+        ? `${activeAddr.fullName}, ${activeAddr.street}, ${activeAddr.city}, ${activeAddr.state} ${activeAddr.postalCode} (Ph: ${activeAddr.phone})`
+        : 'Department of CSE, KL University Campus, Aziz Nagar, Hyderabad 500075';
+
       // 1. Place order atomically via ACID transaction
       const orderPayload = {
         items: items.map(i => ({
@@ -60,7 +72,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           warehouse_id: i.warehouse_id || 'wh_hyd_01',
           quantity: i.quantity
         })),
-        shipping_address: 'Department of CSE, KL University Campus, Aziz Nagar, Hyderabad 500075'
+        shipping_address: shippingAddress
       };
 
       let orderId = `ord_acid_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
@@ -171,7 +183,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           total_amount: totalAmount,
           status: 'CONFIRMED',
           payment_method: selectedMethod,
-          shipping_address: 'Department of CSE, KL University Campus, Aziz Nagar, Hyderabad 500075',
+          shipping_address: shippingAddress,
           created_at: new Date().toISOString(),
           tracking_number: tracking,
           items: items.map(i => ({
@@ -199,7 +211,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 rounded-lg max-w-2xl w-full p-6 shadow-2xl space-y-5 text-[#0f1111] dark:text-slate-100">
+      <div className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 rounded-lg max-w-2xl w-full p-6 shadow-2xl space-y-4 text-[#0f1111] dark:text-slate-100 max-h-[92vh] overflow-y-auto">
         
         {step === 'PAY' ? (
           <>
@@ -225,7 +237,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             )}
 
             {/* Order Items Preview */}
-            <div className="space-y-2 max-h-40 overflow-y-auto bg-slate-50 dark:bg-slate-800/60 p-3 rounded border border-slate-200 dark:border-slate-700">
+            <div className="space-y-2 max-h-36 overflow-y-auto bg-slate-50 dark:bg-slate-800/60 p-3 rounded border border-slate-200 dark:border-slate-700">
               <div className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
                 Order Summary ({items.length} item{items.length > 1 ? 's' : ''}):
               </div>
@@ -240,6 +252,51 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 <span>${totalAmount.toFixed(2)}</span>
               </div>
             </div>
+
+            {/* Delivery Destination Selector (3 Saved Locations) */}
+            {addresses && addresses.length > 0 && (
+              <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-700 dark:text-gray-300">
+                  <div className="flex items-center gap-1.5">
+                    <i className="fa-solid fa-location-dot text-amber-500"></i>
+                    <span>Delivery Destination ({addresses.length} Saved Addresses):</span>
+                  </div>
+                  {onOpenAddressModal && (
+                    <button
+                      type="button"
+                      onClick={onOpenAddressModal}
+                      className="text-amber-600 dark:text-amber-400 hover:underline font-bold text-[11px] cursor-pointer"
+                    >
+                      + Manage / Add
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {addresses.slice(0, 3).map(addr => {
+                    const isSelected = (selectedAddrId || activeAddressId) === addr.id;
+                    return (
+                      <div
+                        key={addr.id}
+                        onClick={() => setSelectedAddrId(addr.id)}
+                        className={`p-2.5 rounded-lg border text-left cursor-pointer transition ${
+                          isSelected
+                            ? 'border-amber-500 bg-amber-500/10 font-bold'
+                            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 text-gray-600 dark:text-gray-300 bg-white dark:bg-slate-800'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[11px] mb-0.5">
+                          <span className="font-bold text-gray-900 dark:text-white truncate">{addr.label}</span>
+                          {isSelected && <i className="fa-solid fa-circle-check text-amber-500"></i>}
+                        </div>
+                        <div className="text-[10px] text-gray-500 truncate">{addr.street}</div>
+                        <div className="text-[10px] font-mono text-gray-400">{addr.city} {addr.postalCode}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Payment Method Selector */}
             <div className="space-y-2">

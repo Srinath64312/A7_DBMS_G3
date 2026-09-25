@@ -20,6 +20,8 @@ interface SidebarProps {
   onOpenRestock: () => void;
   onSwitchRole: (role: Role) => void;
   theme: 'light' | 'dark' | 'forest';
+  onOpenAddressModal?: () => void;
+  onOpenAddProduct?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -40,7 +42,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenTestRunner,
   onOpenRestock,
   onSwitchRole,
-  theme
+  theme,
+  onOpenAddressModal,
+  onOpenAddProduct
 }) => {
   if (!isOpen) return null;
 
@@ -254,6 +258,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                   <i className="fa-solid fa-angle-right text-[10px] opacity-40"></i>
                 </button>
+
+                {onOpenAddressModal && (
+                  <button
+                    onClick={() => { onOpenAddressModal(); onClose(); }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <i className="fa-solid fa-location-dot w-4 text-center text-amber-500"></i>
+                      <span>Delivery Addresses (3 Saved)</span>
+                    </div>
+                    <i className="fa-solid fa-angle-right text-[10px] opacity-40"></i>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -273,6 +290,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
 
               <div className="space-y-0.5 text-xs">
+                {onOpenAddProduct && (
+                  <button
+                    onClick={() => { onOpenAddProduct(); onClose(); }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 font-bold transition mb-1"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <i className="fa-solid fa-plus w-4 text-center text-amber-500"></i>
+                      <span>+ Add New Product to Catalog</span>
+                    </div>
+                    <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-1.5 py-0.5 rounded">Catalog</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => { onOpenOrders(); onClose(); }}
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:bg-sky-500/20 font-bold transition mb-1"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Category } from '../types';
+import { User, Category, Address } from '../types';
 
 interface HeaderProps {
   user: User | null;
@@ -22,6 +22,9 @@ interface HeaderProps {
   onOpenAcademicLab?: () => void;
   onOpenRestock?: () => void;
   onOpenSidebar?: () => void;
+  onOpenAddressModal?: () => void;
+  activeAddress?: Address | null;
+  onOpenAddProduct?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -42,7 +45,10 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectTheme,
   onOpenAcademicLab,
   onOpenRestock,
-  onOpenSidebar
+  onOpenSidebar,
+  onOpenAddressModal,
+  activeAddress,
+  onOpenAddProduct
 }) => {
   return (
     <header className={`${
@@ -78,12 +84,20 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="text-[10px] text-gray-400 font-mono hidden sm:inline -mt-2 ml-0.5">.dist</span>
         </div>
 
-        {/* Deliver To */}
-        <div className="amazon-nav-item hidden lg:flex items-center gap-1.5 text-xs">
+        {/* Deliver To (Opens Address Modal) */}
+        <div 
+          onClick={onOpenAddressModal}
+          className="amazon-nav-item hidden lg:flex items-center gap-1.5 text-xs cursor-pointer hover:border-white transition"
+          title="Click to choose from saved delivery addresses or add new location"
+        >
           <i className="fa-solid fa-location-dot text-[#febd69] text-base mt-1"></i>
           <div className="leading-tight">
-            <span className="text-gray-400 text-[11px] block">Deliver to {user ? user.name.split(' ')[0] : 'Campus'}</span>
-            <span className="font-bold text-white text-xs">KL University 500075</span>
+            <span className="text-gray-400 text-[11px] block">
+              Deliver to {activeAddress?.fullName ? activeAddress.fullName.split(' ')[0] : (user ? user.name.split(' ')[0] : 'Campus')}
+            </span>
+            <span className="font-bold text-white text-xs">
+              {activeAddress ? `${activeAddress.city} ${activeAddress.postalCode}` : 'KL University 500075'}
+            </span>
           </div>
         </div>
 
@@ -217,6 +231,18 @@ export const Header: React.FC<HeaderProps> = ({
                     <div onClick={onOpenWishlist} className="hover:text-[#e47911] hover:underline cursor-pointer flex items-center justify-between">
                       <span>Your Wishlist ({wishlistCount})</span>
                       <i className="fa-solid fa-heart text-[10px] text-rose-500"></i>
+                    </div>
+                  )}
+                  {onOpenAddressModal && (
+                    <div onClick={onOpenAddressModal} className="hover:text-[#e47911] hover:underline cursor-pointer flex items-center justify-between">
+                      <span>Delivery Addresses (3 Saved)</span>
+                      <i className="fa-solid fa-location-dot text-[10px] text-amber-500"></i>
+                    </div>
+                  )}
+                  {(user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER') && onOpenAddProduct && (
+                    <div onClick={onOpenAddProduct} className="hover:text-[#e47911] hover:underline cursor-pointer text-amber-600 font-bold flex items-center justify-between">
+                      <span>+ Add New Product</span>
+                      <i className="fa-solid fa-plus text-[10px]"></i>
                     </div>
                   )}
                   {(user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER') && onOpenRestock && (
