@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [react()],
   build: {
     outDir: fileURLToPath(new URL('../frontend/dist', import.meta.url)),

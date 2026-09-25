@@ -16,6 +16,7 @@ import { AuthModal } from './components/AuthModal';
 import { AcademicCommandCenter } from './components/AcademicCommandCenter';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { Footer } from './components/Footer';
+import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES, FALLBACK_WAREHOUSES } from './utils/fallbackData';
 
 export function App() {
   // Theme state
@@ -172,26 +173,37 @@ export function App() {
   const fetchData = useCallback(async () => {
     setIsLoadingProducts(true);
     try {
-      const [prodsRes, catsRes, whsRes] = await Promise.all([
+      const [prodsRes, catsRes, whsRes] = await Promise.allSettled([
         fetch('/api/products'),
         fetch('/api/categories'),
         fetch('/api/warehouses')
       ]);
 
-      if (prodsRes.ok) {
-        const pData = await prodsRes.json();
-        setProducts(Array.isArray(pData) ? pData : []);
+      if (prodsRes.status === 'fulfilled' && prodsRes.value.ok) {
+        const pData = await prodsRes.value.json();
+        setProducts(Array.isArray(pData) && pData.length > 0 ? pData : FALLBACK_PRODUCTS);
+      } else {
+        setProducts(FALLBACK_PRODUCTS);
       }
-      if (catsRes.ok) {
-        const cData = await catsRes.json();
-        setCategories(Array.isArray(cData) ? cData : []);
+
+      if (catsRes.status === 'fulfilled' && catsRes.value.ok) {
+        const cData = await catsRes.value.json();
+        setCategories(Array.isArray(cData) && cData.length > 0 ? cData : FALLBACK_CATEGORIES);
+      } else {
+        setCategories(FALLBACK_CATEGORIES);
       }
-      if (whsRes.ok) {
-        const wData = await whsRes.json();
-        setWarehouses(Array.isArray(wData) ? wData : []);
+
+      if (whsRes.status === 'fulfilled' && whsRes.value.ok) {
+        const wData = await whsRes.value.json();
+        setWarehouses(Array.isArray(wData) && wData.length > 0 ? wData : FALLBACK_WAREHOUSES);
+      } else {
+        setWarehouses(FALLBACK_WAREHOUSES);
       }
     } catch (e) {
-      console.error('Data fetch error:', e);
+      console.warn('Backend unavailable, using static catalog datasets (GitHub Pages fallback):', e);
+      setProducts(FALLBACK_PRODUCTS);
+      setCategories(FALLBACK_CATEGORIES);
+      setWarehouses(FALLBACK_WAREHOUSES);
     } finally {
       setIsLoadingProducts(false);
     }

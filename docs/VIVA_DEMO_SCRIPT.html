@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIVA DEMO SCRIPT • NexCommerce Academic Docs</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background: #080c14; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px 10px; }
+    .container { max-width: 1040px; margin: 0 auto; background: #0f172a; padding: 36px; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #1e293b; }
+    .btn { background: #ffd814; color: #0f1111; font-weight: 700; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+    .btn:hover { background: #f7ca00; }
+    .markdown-body { background: transparent !important; color: #e2e8f0 !important; font-size: 14px; line-height: 1.6; }
+    .markdown-body table { display: table; width: 100%; border-collapse: collapse; margin: 16px 0; }
+    .markdown-body table th, .markdown-body table td { border: 1px solid #334155; padding: 8px 12px; }
+    .markdown-body table th { background: #1e293b; color: #38bdf8; font-weight: 700; }
+    .markdown-body table tr:nth-child(even) { background: #111827; }
+    .markdown-body code { background: #1e293b; color: #f43f5e; padding: 2px 6px; border-radius: 4px; }
+    .markdown-body pre { background: #070b14 !important; border: 1px solid #1e293b; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="../" class="btn"><i class="fa-solid fa-arrow-left"></i> Back to NexCommerce App</a>
+      <div style="font-size: 12px; color: #94a3b8; font-family: monospace;">
+        KL University • 25CS1302E DBS-DBD
+      </div>
+    </div>
+    <div id="content" class="markdown-body"></div>
+  </div>
+  <script>
+    const rawMd = "# Evaluation & Viva Demonstration Guide\n## Distributed Digital Commerce and Inventory Intelligence Platform\n**Course**: 25CS1302E \u2014 DBS\u2013DBD (Database Systems & Distributed Backend Development)  \n**Department of CSE \u2014 KL University (Off-Campus Aziz Nagar)**  \n**Target URL**: `http://127.0.0.1:5000` | **Swagger API**: `http://127.0.0.1:5000/docs`\n\n---\n\n## \ud83d\udc68\u200d\ud83c\udf93 Project Team Details (Slide 1 & 9)\n- **2510030106 \u2014 Srinath**: Backend & Database Engineering (Relational Schema in PostgreSQL `klhdb`, MongoDB Document Modeling)\n- **2510030103 \u2014 Abhinay Sai**: API Development & Security (RESTful Endpoints, JWT Authentication, RBAC, Swagger/OpenAPI)\n- **2510030160 \u2014 Poli Naidu**: Microservices Architecture & Consistency (TTL Reservation Locks, Cache-Aside Read Pattern)\n- **2510030083 \u2014 Chandu**: Testing & Evaluation (Automated TC01\u2013TC10 Test Suite, Immutable Audit Logging)\n\n---\n\n## \ud83d\udccb 5-Minute Professor Demo Flow (Matches Slide 10 in Presentation)\n\n### Step 1: Open the Application\n1. Double-click `start.bat` in `E:\\KLH\\2nd year\\DBMS\\Distributed_Commerce_Platform`.\n2. Browser opens **`http://127.0.0.1:5000`**.\n3. **Point out to Professor**:\n   - Header shows live PostgreSQL connection to **`klhdb`** (`postgresql://postgres:Admin%40123@localhost:5432/klhdb`), MongoDB document persistence, and Redis-compatible TTL lock manager.\n\n---\n\n### Step 2: Demonstrate Hybrid Data Model (Slide 3 & 4)\n1. In the **Storefront & Dynamic Catalog** tab:\n   - Show the products loaded through the hybrid query pipeline.\n2. Click **\"Specs\"** on any product (e.g. *UltraBook Pro 16 AI Workstation*):\n   - **Explain**: *\"PostgreSQL stores the core relational columns (product ID, category, SKU, price). The nested technical attributes (processor, memory, warranty, TDP) are retrieved dynamically from the MongoDB document collection.\"*\n   - **Show AI Feature**: Point out the **AI Recommended Similar Products** generated using vector cosine similarity embeddings.\n\n---\n\n### Step 3: Demonstrate Live ACID Transaction & Atomic Commit (Slide 6 & 10)\n1. Go to the **ACID Transaction Simulator** tab.\n2. Click **\"Commit Order (TC06)\"**:\n   - Show the real-time transaction execution console:\n     - Step 1: JWT Authenticated user initiates checkout.\n     - Step 2: Cache acquires temporary 10-minute stock reservation lock (`stock:{prod_id}:{user_id}`).\n     - Step 3: PostgreSQL executes isolated transaction with `SELECT FOR UPDATE` row locks.\n     - Step 4: Available stock is verified and atomically deducted.\n     - Step 5: Order and OrderItems rows are inserted into PostgreSQL.\n     - Step 6: Immutable record logged in `inventory_transactions`.\n     - Step 7: Transaction committed with strict ACID safety.\n\n---\n\n### Step 4: Demonstrate ACID Rollback & Oversell Prevention (Slide 7: TC07)\n1. In the same **ACID Transaction Simulator** tab, click **\"Fail & Rollback (TC07)\"**:\n   - Injects an over-order request (exceeding warehouse stock).\n   - **Show the console log**: PostgreSQL catches the constraint violation and immediately executes `ROLLBACK`.\n   - **Explain**: *\"Zero partial stock is deducted, row locks are released, and database state remains 100% consistent.\"*\n\n---\n\n### Step 5: Multi-Warehouse Inventory & RBAC (Slide 5 & Slide 9)\n1. Switch to the **Multi-Warehouse Inventory** tab.\n2. Show stock distributed across **Hyderabad**, **Bangalore**, **Mumbai**, and **Delhi**.\n3. Use the Role Switcher dropdown at the top right to select **Warehouse Manager (Poli Naidu)** or **Admin (Srinath)**.\n4. Click **\"Restock Inventory (TC04)\"**, add 20 units to any item, and show the instant table update and the new row in the **Live Database & Audit Log** tab.\n\n---\n\n### Step 6: Inventory Intelligence & AI Demand Forecasting\n1. Switch to the **Inventory Intelligence & AI** tab.\n2. Show real-time calculations:\n   - **Daily Velocity**: Units sold per day based on real transaction history.\n   - **Days Remaining**: Projected stockout runway.\n   - **Automated Restock Recommendation**: Calculated using lead times (5 days) + safety stock threshold.\n\n---\n\n### Step 7: Interactive Swagger UI / OpenAPI (Slide 5)\n1. Click the green **\"Swagger API\"** button (or open **`http://127.0.0.1:5000/docs`**).\n2. Show all 15 endpoints organized cleanly under Auth, Catalog, Multi-Warehouse Inventory, Orders, AI Intelligence, and System Health.\n3. Click **\"Authorize\"**, enter the JWT token, and execute any endpoint live in front of the professor.\n\n---\n\n### Step 8: Automated Test Suite (Slide 7: TC01 to TC10)\n1. In the dashboard, switch to the **Test Suite (TC01\u2013TC10)** tab.\n2. Click **\"Run All 10 Test Cases\"**:\n   - All 10 tests execute live against `klhdb` and display **100% PASSED** green badges matching the exact table in Slide 7 of your presentation.\n\n---\n\n## \ud83c\udfaf Quick Reference: Test Credentials\n| Role | Email | Password |\n| :--- | :--- | :--- |\n| **Admin** | `admin@commerce.kluniversity.in` | `Admin@123` |\n| **Warehouse Manager** | `manager@commerce.kluniversity.in` | `Manager@123` |\n| **Customer** | `abhinay@klh.edu.in` | `Customer@123` |\n| **Customer 2** | `chandu@klh.edu.in` | `Customer@123` |\n";
+    document.getElementById('content').innerHTML = marked.parse(rawMd);
+  </script>
+</body>
+</html>
