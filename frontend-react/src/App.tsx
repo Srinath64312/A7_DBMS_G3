@@ -179,22 +179,22 @@ export function App() {
         fetch('/api/warehouses')
       ]);
 
-      if (prodsRes.status === 'fulfilled' && prodsRes.value.ok) {
-        const pData = await prodsRes.value.json();
+      if (prodsRes.status === 'fulfilled' && prodsRes.value.ok && prodsRes.value.headers.get('content-type')?.includes('application/json')) {
+        const pData = await prodsRes.value.json().catch(() => null);
         setProducts(Array.isArray(pData) && pData.length > 0 ? pData : FALLBACK_PRODUCTS);
       } else {
         setProducts(FALLBACK_PRODUCTS);
       }
 
-      if (catsRes.status === 'fulfilled' && catsRes.value.ok) {
-        const cData = await catsRes.value.json();
+      if (catsRes.status === 'fulfilled' && catsRes.value.ok && catsRes.value.headers.get('content-type')?.includes('application/json')) {
+        const cData = await catsRes.value.json().catch(() => null);
         setCategories(Array.isArray(cData) && cData.length > 0 ? cData : FALLBACK_CATEGORIES);
       } else {
         setCategories(FALLBACK_CATEGORIES);
       }
 
-      if (whsRes.status === 'fulfilled' && whsRes.value.ok) {
-        const wData = await whsRes.value.json();
+      if (whsRes.status === 'fulfilled' && whsRes.value.ok && whsRes.value.headers.get('content-type')?.includes('application/json')) {
+        const wData = await whsRes.value.json().catch(() => null);
         setWarehouses(Array.isArray(wData) && wData.length > 0 ? wData : FALLBACK_WAREHOUSES);
       } else {
         setWarehouses(FALLBACK_WAREHOUSES);
@@ -219,7 +219,7 @@ export function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: 'abhinay@klh.edu.in', password: 'Customer@123' })
       })
-        .then(res => res.ok ? res.json() : null)
+        .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
         .then(data => {
           if (data) {
             sessionStorage.setItem('nex_token', data.token);

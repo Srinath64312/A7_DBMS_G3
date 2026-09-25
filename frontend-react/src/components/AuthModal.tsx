@@ -45,15 +45,57 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-      if (!res.ok) {
+      const isJson = res.headers.get('content-type')?.includes('application/json');
+
+      if (res.ok && isJson) {
+        const data = await res.json();
+        sessionStorage.setItem('nex_token', data.token || data.access_token || '');
+        sessionStorage.setItem('nex_user', JSON.stringify(data));
+        onLoginSuccess(data);
+        onClose();
+        return;
+      }
+
+      if (!res.ok && isJson) {
+        const data = await res.json().catch(() => ({}));
         throw new Error(data.error || 'Authentication failed.');
       }
 
-      onLoginSuccess(data);
+      // If response is not JSON or 404 (e.g. running on static GitHub Pages), authenticate locally
+      const matchedDemo = Object.values(DEMO_USERS).find(u => u.email.toLowerCase() === email.toLowerCase());
+      const fallbackUser: User = {
+        user_id: matchedDemo ? (matchedDemo.role === 'ADMIN' ? 'usr_100' : matchedDemo.role === 'WAREHOUSE_MANAGER' ? 'usr_102' : 'usr_101') : 'usr_999',
+        email: email || 'user@klh.edu.in',
+        name: name || (matchedDemo ? matchedDemo.name : email.split('@')[0] || 'User'),
+        role: matchedDemo ? matchedDemo.role : (role || 'CUSTOMER'),
+        token: `sim_token_${Date.now()}`,
+        access_token: `sim_token_${Date.now()}`
+      };
+
+      sessionStorage.setItem('nex_token', fallbackUser.token!);
+      sessionStorage.setItem('nex_user', JSON.stringify(fallbackUser));
+      onLoginSuccess(fallbackUser);
       onClose();
     } catch (err: any) {
-      setErrorMsg(err.message || 'Login error');
+      if (err.message && !err.message.includes('JSON') && !err.message.includes('fetch')) {
+        setErrorMsg(err.message || 'Login error');
+      } else {
+        // Fallback for static GitHub Pages or offline execution
+        const matchedDemo = Object.values(DEMO_USERS).find(u => u.email.toLowerCase() === email.toLowerCase());
+        const fallbackUser: User = {
+          user_id: matchedDemo ? (matchedDemo.role === 'ADMIN' ? 'usr_100' : matchedDemo.role === 'WAREHOUSE_MANAGER' ? 'usr_102' : 'usr_101') : 'usr_999',
+          email: email || 'user@klh.edu.in',
+          name: name || (matchedDemo ? matchedDemo.name : email.split('@')[0] || 'User'),
+          role: matchedDemo ? matchedDemo.role : (role || 'CUSTOMER'),
+          token: `sim_token_${Date.now()}`,
+          access_token: `sim_token_${Date.now()}`
+        };
+
+        sessionStorage.setItem('nex_token', fallbackUser.token!);
+        sessionStorage.setItem('nex_user', JSON.stringify(fallbackUser));
+        onLoginSuccess(fallbackUser);
+        onClose();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -69,12 +111,50 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: creds.email, password: creds.password })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Demo login failed');
-      onLoginSuccess(data);
+
+      const isJson = res.headers.get('content-type')?.includes('application/json');
+
+      if (res.ok && isJson) {
+        const data = await res.json();
+        sessionStorage.setItem('nex_token', data.token || data.access_token || '');
+        sessionStorage.setItem('nex_user', JSON.stringify(data));
+        onLoginSuccess(data);
+        onClose();
+        return;
+      }
+
+      if (!res.ok && isJson) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Demo login failed');
+      }
+
+      // Offline GitHub Pages fallback for 1-Click Demo Login
+      const demoUser: User = {
+        user_id: demoKey === 'CUSTOMER' ? 'usr_101' : demoKey === 'WAREHOUSE_MANAGER' ? 'usr_102' : 'usr_100',
+        email: creds.email,
+        name: creds.name,
+        role: creds.role,
+        token: `sim_token_${demoKey.toLowerCase()}`,
+        access_token: `sim_token_${demoKey.toLowerCase()}`
+      };
+      sessionStorage.setItem('nex_token', demoUser.token!);
+      sessionStorage.setItem('nex_user', JSON.stringify(demoUser));
+      onLoginSuccess(demoUser);
       onClose();
-    } catch (err: any) {
-      setErrorMsg(err.message);
+    } catch (_err: any) {
+      // Offline fallback on network error or 404
+      const demoUser: User = {
+        user_id: demoKey === 'CUSTOMER' ? 'usr_101' : demoKey === 'WAREHOUSE_MANAGER' ? 'usr_102' : 'usr_100',
+        email: creds.email,
+        name: creds.name,
+        role: creds.role,
+        token: `sim_token_${demoKey.toLowerCase()}`,
+        access_token: `sim_token_${demoKey.toLowerCase()}`
+      };
+      sessionStorage.setItem('nex_token', demoUser.token!);
+      sessionStorage.setItem('nex_user', JSON.stringify(demoUser));
+      onLoginSuccess(demoUser);
+      onClose();
     } finally {
       setIsLoading(false);
     }
