@@ -12,6 +12,12 @@ from backend.db import postgres_db
 
 logger = logging.getLogger("IntelligenceService")
 
+STOP_WORDS = {
+    'a', 'an', 'the', 'is', 'it', 'in', 'on', 'for', 'to', 'of', 'and', 'or', 'i', 'can',
+    'things', 'thing', 'buy', 'bug', 'with', 'that', 'this', 'me', 'my', 'you', 'your',
+    'do', 'does', 'want', 'need', 'looking', 'some', 'any', 'get', 'product', 'items', 'item'
+}
+
 SEMANTIC_DIMENSIONS = {
     0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis'],
     1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model'],
@@ -20,7 +26,7 @@ SEMANTIC_DIMENSIONS = {
     4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency'],
     5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'gaming', 'hdr', 'refresh', 'aspect'],
     6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture'],
-    7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music'],
+    7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music', 'listen', 'listening', 'hear', 'song', 'songs', 'tunes', 'earphones', 'earbuds', 'anc', 'spatial', 'playback', 'podcast', 'recording'],
     8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge'],
     9: ['coffee', 'roast', 'bean', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'hot', 'cup'],
     10: ['protein', 'bar', 'almond', 'nutrition', 'snack', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food'],
@@ -41,6 +47,14 @@ def generate_embedding(text: str, dim: int = 16) -> list:
         return [0.0] * dim
     
     tokens = text.lower().split()
+    if not tokens:
+        return [0.0] * dim
+    
+    # Filter stopwords if remaining tokens > 0
+    filtered = [t for t in tokens if t not in STOP_WORDS]
+    if filtered:
+        tokens = filtered
+
     vector = [0.0] * dim
 
     # 1. Semantic Topic Projection
@@ -49,14 +63,14 @@ def generate_embedding(text: str, dim: int = 16) -> list:
             keywords = SEMANTIC_DIMENSIONS.get(d, [])
             for kw in keywords:
                 if token == kw or token.startswith(kw) or kw.startswith(token):
-                    vector[d] += 2.0
+                    vector[d] += 3.0
                     break
 
     # 2. Cryptographic token hash
     for token in tokens:
         h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
         for i in range(dim):
-            vector[i] += (((h >> (i * 4)) & 0xF) / 15.0 - 0.5) * 0.25
+            vector[i] += (((h >> (i * 4)) & 0xF) / 15.0 - 0.5) * 0.10
 
     # L2 Normalize
     norm = math.sqrt(sum(x * x for x in vector)) or 1.0

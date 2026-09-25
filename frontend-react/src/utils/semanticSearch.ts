@@ -2,7 +2,7 @@ import { Product } from '../types';
 
 /**
  * 16-Dimensional Semantic Topic Dimensions
- * Maps vocabulary, synonyms, and domain intent to orthogonal vector dimensions.
+ * Maps natural language intent, synonyms, and domain concepts into orthogonal vector dimensions.
  * Compatible with pgvector cosine similarity ranking.
  */
 export const SEMANTIC_DIMENSION_LABELS: Record<number, string> = {
@@ -24,6 +24,12 @@ export const SEMANTIC_DIMENSION_LABELS: Record<number, string> = {
   15: 'Compact, Portability & Everyday Gear'
 };
 
+const STOP_WORDS = new Set([
+  'a', 'an', 'the', 'is', 'it', 'in', 'on', 'for', 'to', 'of', 'and', 'or', 'i', 'can',
+  'things', 'thing', 'buy', 'bug', 'with', 'that', 'this', 'me', 'my', 'you', 'your',
+  'do', 'does', 'want', 'need', 'looking', 'some', 'any', 'get', 'product', 'items', 'item'
+]);
+
 const SEMANTIC_DIMENSIONS: Record<number, string[]> = {
   0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis'],
   1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model'],
@@ -32,7 +38,7 @@ const SEMANTIC_DIMENSIONS: Record<number, string[]> = {
   4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency'],
   5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'gaming', 'hdr', 'refresh', 'aspect'],
   6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture'],
-  7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music'],
+  7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music', 'listen', 'listening', 'hear', 'song', 'songs', 'tunes', 'earphones', 'earbuds', 'anc', 'spatial', 'playback', 'podcast', 'recording'],
   8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge'],
   9: ['coffee', 'roast', 'bean', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'hot', 'cup'],
   10: ['protein', 'bar', 'almond', 'nutrition', 'snack', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food'],
@@ -54,8 +60,12 @@ export function generateEmbedding(text: string, dim: number = 16): number[] {
   }
 
   const clean = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
-  const tokens = clean.split(/\s+/).filter(Boolean);
+  let tokens = clean.split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return new Array(dim).fill(0.0);
+
+  // Stopwords filtering for clean intent projection
+  const filtered = tokens.filter(t => !STOP_WORDS.has(t));
+  if (filtered.length > 0) tokens = filtered;
 
   const vector = new Array(dim).fill(0.0);
 
@@ -65,14 +75,14 @@ export function generateEmbedding(text: string, dim: number = 16): number[] {
       const keywords = SEMANTIC_DIMENSIONS[d] || [];
       for (const kw of keywords) {
         if (token === kw || token.startsWith(kw) || kw.startsWith(token)) {
-          vector[d] += 2.0; // Strong semantic topic match
+          vector[d] += 3.0; // Strong semantic topic match
           break;
         }
       }
     }
   }
 
-  // 2. Cryptographic Token Hash projection (FNV-1a for unique signature)
+  // 2. Cryptographic Token Hash projection (FNV-1a for unique signature, scaled down)
   for (const token of tokens) {
     let hash = 0x811c9dc5;
     for (let i = 0; i < token.length; i++) {
@@ -83,7 +93,7 @@ export function generateEmbedding(text: string, dim: number = 16): number[] {
 
     for (let i = 0; i < dim; i++) {
       const nibble = (hash >>> (i * 2)) & 0x0f;
-      vector[i] += ((nibble / 15.0) - 0.5) * 0.25;
+      vector[i] += ((nibble / 15.0) - 0.5) * 0.10;
     }
   }
 
@@ -182,10 +192,10 @@ export function performSemanticSearch(
 
 export const SAMPLE_SEMANTIC_PROMPTS = [
   { label: 'Deep Learning GPU', query: 'high performance tensor core neural accelerator for AI' },
+  { label: 'Music & Audio Gear', query: 'Things i can buy to listen to music and audio' },
   { label: 'Morning Caffeine Boost', query: 'colombian artisan dark roast coffee and morning caffeine' },
   { label: 'Study & Campus Stationery', query: 'student writing notebook journal and gel ink rollerball pens' },
   { label: 'Fast Solid State Drive', query: 'ultra low latency PCIe NVMe M.2 flash storage drive' },
   { label: 'Healthy Nutrition & Snack', query: 'whey protein energy bars and salted almonds nutrition' },
-  { label: 'Fast GaN Charger', query: '65w fast usb-c gan wall charger multi port adapter' },
-  { label: 'Studio Headset', query: 'noise cancelling immersive studio monitor audiophile sound' }
+  { label: 'Fast GaN Charger', query: '65w fast usb-c gan wall charger multi port adapter' }
 ];
