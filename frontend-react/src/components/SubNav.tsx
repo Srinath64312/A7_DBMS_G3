@@ -90,6 +90,18 @@ export const SubNav: React.FC<SubNavProps> = ({
             </button>
           )}
 
+          {/* Direct Academic Docs & Swagger Link */}
+          <a
+            href="./docs/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 font-bold px-2.5 py-1 rounded text-[11px] transition shadow-sm active:scale-95"
+            title="Open Academic Documentation & Swagger Portal"
+          >
+            <i className="fa-solid fa-book-open text-cyan-400"></i>
+            <span>Docs</span>
+          </a>
+
           {/* Delivery Campus Badge for Customers */}
           {!isStaff && (
             <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-gray-300 font-medium px-2 py-0.5 rounded bg-black/20 border border-white/5">

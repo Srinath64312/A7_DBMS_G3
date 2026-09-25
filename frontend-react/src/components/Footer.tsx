@@ -40,11 +40,11 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-bold text-sm text-white mb-2">Developer Tools</h4>
+          <h4 className="font-bold text-sm text-white mb-2">Academic & Dev Docs</h4>
           <ul className="space-y-1.5 text-gray-300 text-xs">
-            <li><a href="/docs" target="_blank" rel="noreferrer" className="hover:underline">OpenAPI 3.0 / Swagger UI</a></li>
-            <li><a href="/api/cache/stats" target="_blank" rel="noreferrer" className="hover:underline">Redis Cache Telemetry</a></li>
-            <li><a href="/api/status/databases" target="_blank" rel="noreferrer" className="hover:underline">Database Engine Health</a></li>
+            <li><a href="./docs/" target="_blank" rel="noreferrer" className="hover:underline">Academic Documentation Hub</a></li>
+            <li><a href="./docs/swagger.html" target="_blank" rel="noreferrer" className="hover:underline">OpenAPI 3.0 / Swagger UI</a></li>
+            <li><a href="./docs/PROJECT_REPORT.html" target="_blank" rel="noreferrer" className="hover:underline">Comprehensive Project Report</a></li>
             <li><a href="https://github.com/Srinath64312/A7_DBMS_G3.git" target="_blank" rel="noreferrer" className="hover:underline">GitHub Repository</a></li>
           </ul>
         </div>

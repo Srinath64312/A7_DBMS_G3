@@ -436,7 +436,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </button>
 
                 <a
-                  href="/docs"
+                  href="./docs/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition text-cyan-400"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <i className="fa-solid fa-book-open w-4 text-center"></i>
+                    <span>Academic Docs & Reports</span>
+                  </div>
+                  <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+
+                <a
+                  href="./docs/swagger.html"
                   target="_blank"
                   rel="noreferrer"
                   className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition text-sky-400"

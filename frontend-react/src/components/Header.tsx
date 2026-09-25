@@ -257,9 +257,13 @@ export const Header: React.FC<HeaderProps> = ({
                       <i className="fa-solid fa-graduation-cap text-[10px]"></i>
                     </div>
                   )}
-                  <a href="/docs" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline pt-1 border-t border-gray-100">
-                    <span>Interactive Swagger API</span>
-                    <i className="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400"></i>
+                  <a href="./docs/" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline pt-1 border-t border-gray-100">
+                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-book text-cyan-600"></i> Academic Docs Hub</span>
+                    <span className="text-[10px] text-gray-400 font-mono">./docs</span>
+                  </a>
+                  <a href="./docs/swagger.html" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline">
+                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-code text-[#007185]"></i> Interactive Swagger API</span>
+                    <span className="text-[10px] text-amber-500 font-mono font-bold">OpenAPI</span>
                   </a>
                 </div>
                 <div className="pt-2 border-t border-gray-200">

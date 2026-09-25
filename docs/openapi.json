@@ -1,0 +1,910 @@
+{
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token obtained from POST /api/auth/login",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Interactive REST & AI APIs for Course 25CS1302E (DBS-DBD), KL University Aziz Nagar.\nFeatures Hybrid PostgreSQL (klhdb) + MongoDB persistence, Redis TTL locks, AI vector similarity search, and ACID checkout transactions.",
+    "title": "Distributed Digital Commerce & Inventory Intelligence API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/addresses": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Addresses list"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List user's saved addresses",
+        "tags": [
+          "08. User Profile & Addresses"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "address_line1": {
+                    "example": "123 Main St",
+                    "type": "string"
+                  },
+                  "city": {
+                    "example": "Hyderabad",
+                    "type": "string"
+                  },
+                  "country": {
+                    "example": "India",
+                    "type": "string"
+                  },
+                  "is_default": {
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "state": {
+                    "example": "Telangana",
+                    "type": "string"
+                  },
+                  "zip": {
+                    "example": "500001",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "address_line1",
+                  "city",
+                  "state",
+                  "zip"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Address added"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Add a new shipping address",
+        "tags": [
+          "08. User Profile & Addresses"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "abhinay@klh.edu.in",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "Customer@123",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "JWT issued successfully"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "Authenticate user & issue JWT token (TC01)",
+        "tags": [
+          "01. Authentication & RBAC"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Current profile claims"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get authenticated user profile (JWT protected)",
+        "tags": [
+          "01. Authentication & RBAC"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "john@klh.edu.in",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "John Doe",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "Pass@123",
+                    "type": "string"
+                  },
+                  "role": {
+                    "enum": [
+                      "CUSTOMER",
+                      "WAREHOUSE_MANAGER",
+                      "ADMIN"
+                    ],
+                    "example": "CUSTOMER",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User registered"
+          }
+        },
+        "summary": "Register a new user account",
+        "tags": [
+          "01. Authentication & RBAC"
+        ]
+      }
+    },
+    "/api/cache/clear": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Cache invalidated"
+          }
+        },
+        "summary": "Invalidate / Flush Cache to test cache misses vs hits",
+        "tags": [
+          "05. Cache & Distributed Locks"
+        ]
+      }
+    },
+    "/api/cache/stats": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Cache statistics"
+          }
+        },
+        "summary": "Get Cache-Aside hit/miss metrics and active TTL reservation locks",
+        "tags": [
+          "05. Cache & Distributed Locks"
+        ]
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Categories list"
+          }
+        },
+        "summary": "List all categories",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/coupons/validate": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "example": "SAVE10",
+                    "type": "string"
+                  },
+                  "order_amount": {
+                    "example": 500.0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "code",
+                  "order_amount"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon validated"
+          },
+          "400": {
+            "description": "Invalid coupon"
+          }
+        },
+        "summary": "Validate a discount coupon",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/intelligence/forecast": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Inventory intelligence forecast"
+          }
+        },
+        "summary": "AI Demand Velocity & Automated Reorder Point Forecast",
+        "tags": [
+          "06. AI Intelligence & Analytics"
+        ]
+      }
+    },
+    "/api/inventory": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "warehouse_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inventory list"
+          }
+        },
+        "summary": "List real-time stock across warehouses",
+        "tags": [
+          "03. Multi-Warehouse Inventory"
+        ]
+      },
+      "patch": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "delta": {
+                    "example": 20,
+                    "type": "integer"
+                  },
+                  "note": {
+                    "example": "Restock shipment batch #102",
+                    "type": "string"
+                  },
+                  "product_id": {
+                    "example": "prod_audio_03",
+                    "type": "string"
+                  },
+                  "warehouse_id": {
+                    "example": "wh_hyd_01",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "product_id",
+                  "warehouse_id",
+                  "delta"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stock updated and audit logged"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Restock / Adjust inventory (Manager/Admin RBAC) (TC04)",
+        "tags": [
+          "03. Multi-Warehouse Inventory"
+        ]
+      }
+    },
+    "/api/inventory/audit": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Audit log entries"
+          }
+        },
+        "summary": "Get immutable inventory transaction audit trail",
+        "tags": [
+          "03. Multi-Warehouse Inventory"
+        ]
+      }
+    },
+    "/api/inventory/{product_id}/reserve": {
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "example": "prod_lap_01",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "quantity": {
+                    "example": 1,
+                    "type": "integer"
+                  },
+                  "warehouse_id": {
+                    "example": "wh_hyd_01",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "warehouse_id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stock reserved with TTL lock"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Reserve stock for checkout with 10-minute TTL lock",
+        "tags": [
+          "03. Multi-Warehouse Inventory"
+        ]
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Orders list"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List orders for current user or all orders (if admin)",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "items": {
+                    "items": {
+                      "properties": {
+                        "product_id": {
+                          "example": "prod_lap_01",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "example": 1,
+                          "type": "integer"
+                        },
+                        "warehouse_id": {
+                          "example": "wh_hyd_01",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "shipping_address": {
+                    "example": "CSE Block, KL University",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Order committed atomically"
+          },
+          "400": {
+            "description": "Insufficient stock (ACID Rollback)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Execute ACID transactional checkout (TC06, TC07)",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/payments/create-order": {
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Order created"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create Razorpay Order",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/payments/key": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Razorpay Key ID"
+          }
+        },
+        "summary": "Get Razorpay Key ID",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/payments/process": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "CREDIT_CARD",
+                      "DEBIT_CARD",
+                      "UPI",
+                      "PAYPAL",
+                      "CRYPTO"
+                    ],
+                    "type": "string"
+                  },
+                  "payment_id": {
+                    "type": "string"
+                  },
+                  "transaction_id": {
+                    "example": "TXN_99887766",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "payment_id",
+                  "method",
+                  "transaction_id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Payment completed successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Complete payment for an order",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/payments/verify": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Payment verified"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Verify Razorpay Payment",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/products": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product list"
+          }
+        },
+        "summary": "List catalog products (PostgreSQL core + MongoDB specs) (TC03)",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "attributes": {
+                    "example": {
+                      "tops": 128,
+                      "vram_gb": 16
+                    },
+                    "type": "object"
+                  },
+                  "category_id": {
+                    "example": "cat_comp_01",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "Dedicated tensor accelerator",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "AI Quantum Accelerator",
+                    "type": "string"
+                  },
+                  "price": {
+                    "example": 899.99,
+                    "type": "number"
+                  },
+                  "sku": {
+                    "example": "AI-Q-100",
+                    "type": "string"
+                  },
+                  "tags": {
+                    "example": [
+                      "ai",
+                      "hardware"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "name",
+                  "sku",
+                  "price"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Product created"
+          },
+          "403": {
+            "description": "Admin access required"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Create new product (Admin RBAC) (TC02)",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/products/{product_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "example": "prod_lap_01",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get single product with Cache-Aside pattern (TC03)",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/products/{product_id}/recommendations": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "example": "prod_lap_01",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Top semantically similar products"
+          }
+        },
+        "summary": "AI Vector Similarity Recommendations (pgvector cosine search)",
+        "tags": [
+          "02. Catalog & Hybrid Persistence",
+          "05. AI Intelligence & Analytics"
+        ]
+      }
+    },
+    "/api/reviews": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "comment": {
+                    "type": "string"
+                  },
+                  "product_id": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "maximum": 5,
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "product_id",
+                  "rating"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Review submitted"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Submit a product review",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/reviews/{product_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reviews list"
+          }
+        },
+        "summary": "Get all reviews for a product",
+        "tags": [
+          "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/shipping/{order_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shipping status"
+          }
+        },
+        "summary": "Track order shipment",
+        "tags": [
+          "04. Orders & ACID Transactions"
+        ]
+      }
+    },
+    "/api/status/databases": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Health status"
+          }
+        },
+        "summary": "Get live connection status for PostgreSQL (klhdb), MongoDB, and Cache",
+        "tags": [
+          "07. System Health & Diagnostics"
+        ]
+      }
+    },
+    "/api/tests/run": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Test results summary"
+          }
+        },
+        "summary": "Run full automated test suite (TC01 to TC10 from Slide 7)",
+        "tags": [
+          "07. System Health & Diagnostics"
+        ]
+      }
+    },
+    "/api/warehouses": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Warehouse locations"
+          }
+        },
+        "summary": "List all regional distribution hubs",
+        "tags": [
+          "03. Multi-Warehouse Inventory"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Local Development Server",
+      "url": "http://127.0.0.1:5000"
+    }
+  ]
+}
