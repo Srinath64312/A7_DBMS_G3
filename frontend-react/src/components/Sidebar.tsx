@@ -63,6 +63,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       case 'cat_display_06': return 'fa-desktop';
       case 'cat_periph_07': return 'fa-keyboard';
       case 'cat_power_08': return 'fa-bolt';
+      case 'cat_daily_09': return 'fa-mug-hot';
+      case 'cat_daily_10': return 'fa-pen-ruler';
+      case 'cat_daily_11': return 'fa-heart-pulse';
       default: return 'fa-box';
     }
   };

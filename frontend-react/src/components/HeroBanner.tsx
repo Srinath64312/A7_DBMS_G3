@@ -58,6 +58,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
               padding="8px 22px"
               onClick={() => onSelectCategory('cat_elec_02')}
             />
+            <OrbitBorderButton
+              label="Daily Essentials"
+              stroke={{ color: "#10b981", size: 30, speed: 55 }}
+              colors={{ fill: "#064e3b", textColor: "#6ee7b7" }}
+              rounded={9999}
+              padding="8px 22px"
+              onClick={() => onSelectCategory('cat_daily_09')}
+            />
           </div>
         </div>
 
@@ -163,28 +171,28 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onSelectCategory }) => {
 
         {/* Card 4 */}
         <div 
-          onClick={() => onSelectCategory('cat_net_04')}
+          onClick={() => onSelectCategory('cat_daily_09')}
           className="bg-white dark:bg-slate-900 border border-[#d5d9d9] dark:border-slate-800 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
         >
           <div>
             <div className="flex items-center justify-between mb-1">
               <h3 className="font-bold text-sm md:text-base text-[#0f1111] dark:text-slate-100 group-hover:text-[#e47911] transition">
-                Networking & Spine Switches
+                Daily Essentials & Campus
               </h3>
-              <span className="text-[10px] font-mono uppercase bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded font-semibold">400GbE</span>
+              <span className="text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-semibold">Everyday</span>
             </div>
             <p className="text-xs text-[#565959] dark:text-slate-400">
-              100GbE / 400GbE low-latency optical interconnects and managed fabric switches.
+              Artisan dark roast coffee, whey energy bars, dot-grid journals & GaN fast chargers.
             </p>
           </div>
           <div className="mt-3 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 h-32 flex items-center justify-center">
             <img 
-              src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&auto=format&fit=crop&q=80" 
-              alt="Networking" 
+              src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&auto=format&fit=crop&q=80" 
+              alt="Daily Essentials" 
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">Browse Network Gear <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
+          <span className="text-xs font-semibold text-[#007185] dark:text-sky-400 mt-2.5 flex items-center gap-1">Shop Daily Store <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i></span>
         </div>
 
       </div>

@@ -8,7 +8,10 @@ export const FALLBACK_CATEGORIES: Category[] = [
   { category_id: "cat_storage_05", name: "Storage and Memory", description: "High speed NVMe SSDs, NAS HDDs, and RAM" },
   { category_id: "cat_display_06", name: "Displays and Monitors", description: "High refresh rate gaming monitors and color accurate displays" },
   { category_id: "cat_periph_07", name: "Peripherals and Input Devices", description: "Keyboards, mice, and controller accessories" },
-  { category_id: "cat_power_08", name: "Power and Cooling Systems", description: "UPS, Power supplies, and thermal cooling solutions" }
+  { category_id: "cat_power_08", name: "Power and Cooling Systems", description: "UPS, Power supplies, and thermal cooling solutions" },
+  { category_id: "cat_daily_09", name: "Daily Essentials & Groceries", description: "Fresh roast coffee, protein snacks, hydration & pantry necessities" },
+  { category_id: "cat_daily_10", name: "Campus & Office Stationery", description: "Journals, gel pens, fast GaN chargers, and desktop organizers" },
+  { category_id: "cat_daily_11", name: "Personal Care & Wellness", description: "Electric toothbrushes, blue light glasses, and ergonomics" }
 ];
 
 export const FALLBACK_WAREHOUSES: Warehouse[] = [
@@ -172,5 +175,152 @@ export const FALLBACK_PRODUCTS: Product[] = [
     description: "Double-conversion online UPS with pure sine wave output and zero transfer time for server racks.",
     image_url: "https://images.unsplash.com/photo-1587202372616-b43abea06c2a?w=600&auto=format&fit=crop&q=80",
     total_stock: 16
+  },
+  // Daily Essentials & Groceries
+  {
+    product_id: "prod_daily_01",
+    category_id: "cat_daily_09",
+    category_name: "Daily Essentials & Groceries",
+    name: "Artisan Dark Roast Colombian Whole Bean Coffee (1kg)",
+    sku: "GROC-COF-1KG",
+    price: 18.99,
+    description: "100% Arabica single-origin high-altitude beans with rich dark chocolate, toasted hazelnut, and caramel undertones. Freshly roasted.",
+    image_url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=80",
+    tags: ["coffee", "arabica", "groceries", "daily", "beverage"],
+    total_stock: 140
+  },
+  {
+    product_id: "prod_daily_02",
+    category_id: "cat_daily_09",
+    category_name: "Daily Essentials & Groceries",
+    name: "Organic Whey Protein & Almond Energy Bars (Pack of 12)",
+    sku: "GROC-BAR-12PK",
+    price: 24.50,
+    description: "20g pure whey isolate protein per bar with crushed California almonds, zero added sugar, gluten-free, and prebiotic fiber.",
+    image_url: "https://images.unsplash.com/photo-1622484216802-0e3194a2f8b5?w=600&auto=format&fit=crop&q=80",
+    tags: ["protein", "snacks", "nutrition", "fitness", "bars"],
+    total_stock: 110
+  },
+  {
+    product_id: "prod_daily_03",
+    category_id: "cat_daily_09",
+    category_name: "Daily Essentials & Groceries",
+    name: "Smart Insulated Temperature Display Water Bottle (750ml)",
+    sku: "GROC-BTL-750",
+    price: 22.99,
+    description: "Double-walled vacuum insulated food-grade 304 stainless steel. Keeps drinks cold 24h or hot 12h. Touch LED temperature cap.",
+    image_url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&auto=format&fit=crop&q=80",
+    tags: ["bottle", "hydration", "thermal", "water", "daily"],
+    total_stock: 85
+  },
+  {
+    product_id: "prod_daily_04",
+    category_id: "cat_daily_09",
+    category_name: "Daily Essentials & Groceries",
+    name: "Ceremonial Grade Uji Japanese Matcha Green Tea (100g)",
+    sku: "GROC-MTC-100G",
+    price: 19.99,
+    description: "First-harvest stone-ground Japanese matcha rich in L-theanine and EGCG antioxidants for sustained clean focus and alertness.",
+    image_url: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80",
+    tags: ["tea", "matcha", "organic", "green tea", "beverage"],
+    total_stock: 70
+  },
+  {
+    product_id: "prod_daily_05",
+    category_id: "cat_daily_09",
+    category_name: "Daily Essentials & Groceries",
+    name: "Roasted Himalayan Pink Salted California Almonds (500g)",
+    sku: "GROC-ALM-500G",
+    price: 13.49,
+    description: "Slow dry-roasted nonpareil California almonds lightly dusted with pure Himalayan mineral salt. High in healthy fats and magnesium.",
+    image_url: "https://images.unsplash.com/photo-1508061252224-43775270e0a4?w=600&auto=format&fit=crop&q=80",
+    tags: ["almonds", "nuts", "healthy snacks", "groceries"],
+    total_stock: 160
+  },
+  // Campus & Office Stationery
+  {
+    product_id: "prod_daily_06",
+    category_id: "cat_daily_10",
+    category_name: "Campus & Office Stationery",
+    name: "Hardcover Dot-Grid Spiral Notebook Journal (3-Pack)",
+    sku: "OFF-NOTE-3PK",
+    price: 16.99,
+    description: "120gsm heavy ink-bleed resistant ivory pages. Heavy duty water-resistant hardcover with elastic closure and inner storage pocket.",
+    image_url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
+    tags: ["notebook", "stationery", "journal", "campus", "study"],
+    total_stock: 125
+  },
+  {
+    product_id: "prod_daily_07",
+    category_id: "cat_daily_10",
+    category_name: "Campus & Office Stationery",
+    name: "Quick-Dry Japanese Gel Ink Rollerball Pens 0.5mm (10-Pack)",
+    sku: "OFF-PENS-10PK",
+    price: 11.99,
+    description: "Ultra-fine tungsten carbide 0.5mm tip with fade-proof archival pigment ink. Anti-smear quick dry formula for smooth writing.",
+    image_url: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=600&auto=format&fit=crop&q=80",
+    tags: ["pens", "stationery", "gel pen", "writing", "office"],
+    total_stock: 180
+  },
+  {
+    product_id: "prod_daily_08",
+    category_id: "cat_daily_10",
+    category_name: "Campus & Office Stationery",
+    name: "65W GaN III 3-Port Fast Wall Charger (2x USB-C + USB-A)",
+    sku: "ELEC-GAN-65W",
+    price: 32.99,
+    description: "Gallium Nitride (GaN III) fast power adapter. Powers laptops, tablets, and phones simultaneously with dynamic thermal regulation.",
+    image_url: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&auto=format&fit=crop&q=80",
+    tags: ["charger", "gan", "usb-c", "power", "travel", "campus"],
+    total_stock: 90
+  },
+  {
+    product_id: "prod_daily_09",
+    category_id: "cat_daily_10",
+    category_name: "Campus & Office Stationery",
+    name: "Magnetic Weighted Silicone Desktop Cable Organizer (2-Pack)",
+    sku: "OFF-CBL-MGT",
+    price: 13.99,
+    description: "Heavy weighted anti-slip silicone base with precision magnetic collar clips. Keeps charging wires and cords securely in place.",
+    image_url: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80",
+    tags: ["desk", "organizer", "cable", "clean setup", "office"],
+    total_stock: 145
+  },
+  // Personal Care & Wellness
+  {
+    product_id: "prod_daily_10",
+    category_id: "cat_daily_11",
+    category_name: "Personal Care & Wellness",
+    name: "Sonic Pulse Electric Toothbrush with Travel Case & 6 Heads",
+    sku: "WELL-BRUSH-01",
+    price: 29.99,
+    description: "42,000 vibrations per minute sonic maglev motor with 5 smart cleaning modes and 60-day USB-C rechargeable battery. IPX7 waterproof.",
+    image_url: "https://images.unsplash.com/photo-1559591937-e1032b53587b?w=600&auto=format&fit=crop&q=80",
+    tags: ["electric toothbrush", "oral care", "grooming", "hygiene"],
+    total_stock: 75
+  },
+  {
+    product_id: "prod_daily_11",
+    category_id: "cat_daily_11",
+    category_name: "Personal Care & Wellness",
+    name: "Blue Light Blocking Computer Glasses (Anti-Glare UV400)",
+    sku: "WELL-BLU-GLS",
+    price: 18.50,
+    description: "TR90 ultra-lightweight flexible frame with multi-layer anti-reflective coating. Filters 99% harmful blue rays from monitors.",
+    image_url: "https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=600&auto=format&fit=crop&q=80",
+    tags: ["glasses", "blue light", "eye care", "ergonomics", "coding"],
+    total_stock: 105
+  },
+  {
+    product_id: "prod_daily_12",
+    category_id: "cat_daily_11",
+    category_name: "Personal Care & Wellness",
+    name: "Orthopedic Memory Foam Ergonomic Chair Cushion",
+    sku: "WELL-CUSH-01",
+    price: 26.99,
+    description: "High-density heat-responsive memory foam with U-shaped ergonomic cut-out. Alleviates tailbone pressure during extended study hours.",
+    image_url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&auto=format&fit=crop&q=80",
+    tags: ["cushion", "ergonomic", "seat", "wellness", "study"],
+    total_stock: 65
   }
 ];
