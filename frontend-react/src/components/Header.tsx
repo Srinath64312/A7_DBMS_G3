@@ -194,6 +194,18 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
+          {/* Direct Academic Docs Hub Link */}
+          <a
+            href="./docs/"
+            target="_blank"
+            rel="noreferrer"
+            className="amazon-nav-item hidden sm:flex items-center gap-1.5 text-xs text-cyan-300 font-bold bg-cyan-500/15 border border-cyan-500/40 rounded px-2.5 py-1.5 hover:bg-cyan-500/25 transition active:scale-95"
+            title="Open Academic Documentation & Swagger Portal"
+          >
+            <i className="fa-solid fa-book-open text-base text-cyan-400"></i>
+            <span className="hidden xl:inline text-[11px]">Docs</span>
+          </a>
+
           {/* 3-Mode Theme Selector (Light / Dark / Forest) */}
           <div className="flex items-center bg-black/40 border border-slate-700/60 rounded-lg p-0.5 shadow-inner">
             <button

@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { User, Product, Category, Warehouse, WishlistItem, CartItem, Role, Address } from './types';
 import { Header } from './components/Header';
-import { SubNav } from './components/SubNav';
 import { Sidebar } from './components/Sidebar';
 import { HeroBanner } from './components/HeroBanner';
 import { ProductCard } from './components/ProductCard';
@@ -603,19 +602,6 @@ export function App() {
           addToast(next ? 'AI Semantic Search Active (pgvector cosine similarity)' : 'Switched to Standard Keyword Search', 'info');
         }}
         onOpenSemanticInspector={() => setIsSemanticModalOpen(true)}
-      />
-
-      {/* Amazon SubNav */}
-      <SubNav
-        user={user}
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-        onOpenTestRunner={() => setIsTestRunnerOpen(true)}
-        onOpenRestock={() => setIsRestockOpen(true)}
-        onOpenAcademicLab={openAcademicLab}
-        theme={theme}
-        onOpenSidebar={() => setIsSidebarOpen(true)}
       />
 
       {/* Main Page Body */}
