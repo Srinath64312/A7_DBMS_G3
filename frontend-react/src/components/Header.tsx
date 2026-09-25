@@ -194,16 +194,16 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Direct Academic Docs Hub Link */}
+          {/* Direct Swagger API Docs Link */}
           <a
             href="./docs/"
             target="_blank"
             rel="noreferrer"
-            className="amazon-nav-item hidden sm:flex items-center gap-1.5 text-xs text-cyan-300 font-bold bg-cyan-500/15 border border-cyan-500/40 rounded px-2.5 py-1.5 hover:bg-cyan-500/25 transition active:scale-95"
-            title="Open Academic Documentation & Swagger Portal"
+            className="amazon-nav-item hidden sm:flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-amber-500/15 border border-amber-500/40 rounded px-2.5 py-1.5 hover:bg-amber-500/25 transition active:scale-95"
+            title="Open Interactive Swagger OpenAPI 3.0 Documentation"
           >
-            <i className="fa-solid fa-book-open text-base text-cyan-400"></i>
-            <span className="hidden xl:inline text-[11px]">Docs</span>
+            <i className="fa-solid fa-bolt text-base text-[#ffd814]"></i>
+            <span className="hidden xl:inline text-[11px]">API Docs</span>
           </a>
 
           {/* 3-Mode Theme Selector (Light / Dark / Forest) */}
@@ -308,12 +308,8 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                   )}
                   <a href="./docs/" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline pt-1 border-t border-gray-100">
-                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-book text-cyan-600"></i> Academic Docs Hub</span>
-                    <span className="text-[10px] text-gray-400 font-mono">./docs</span>
-                  </a>
-                  <a href="./docs/swagger.html" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline">
-                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-code text-[#007185]"></i> Interactive Swagger API</span>
-                    <span className="text-[10px] text-amber-500 font-mono font-bold">OpenAPI</span>
+                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-code text-[#007185]"></i> Swagger OpenAPI 3.0</span>
+                    <span className="text-[10px] text-amber-500 font-mono font-bold">/docs</span>
                   </a>
                 </div>
                 <div className="pt-2 border-t border-gray-200">

@@ -1,9 +1,52 @@
 import { Product } from '../types';
 
 /**
+ * 16-Dimensional Semantic Topic Dimensions
+ * Maps vocabulary, synonyms, and domain intent to orthogonal vector dimensions.
+ * Compatible with pgvector cosine similarity ranking.
+ */
+export const SEMANTIC_DIMENSION_LABELS: Record<number, string> = {
+  0: 'Compute & Server Nodes',
+  1: 'AI & Tensor Accelerators',
+  2: 'Enterprise Memory & ECC RAM',
+  3: 'High-IOPS NVMe & Storage Fabrics',
+  4: 'Spine/Leaf Switches & Optics',
+  5: 'Ultra-HD Displays & OLED Monitors',
+  6: 'Peripherals, Keyboards & Ergonomics',
+  7: 'Acoustic Sound & Studio Audio',
+  8: 'Thermal Cooling, GaN & Power',
+  9: 'Coffee, Espresso & Morning Energy',
+  10: 'Nutrition, Protein & Healthy Snacks',
+  11: 'Stationery, Journals & Campus Study',
+  12: 'Hygiene, Sonic Care & Wellness',
+  13: 'Edge IoT, Microcontrollers & Sensors',
+  14: 'Flagship & Enterprise Reliability',
+  15: 'Compact, Portability & Everyday Gear'
+};
+
+const SEMANTIC_DIMENSIONS: Record<number, string[]> = {
+  0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis'],
+  1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model'],
+  2: ['ram', 'ecc', 'ddr5', 'ddr4', 'memory', 'bandwidth', 'dimm', 'gb', 'registered', 'channel', 'buffering'],
+  3: ['ssd', 'nvme', 'pcie', 'disk', 'storage', 'drive', 'tb', 'flash', 'raid', 'san', 'nas', 'hdd', 'ironwolf', 'sata', 'micron', 'samsung', 'solid', 'state'],
+  4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency'],
+  5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'gaming', 'hdr', 'refresh', 'aspect'],
+  6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture'],
+  7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music'],
+  8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge'],
+  9: ['coffee', 'roast', 'bean', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'hot', 'cup'],
+  10: ['protein', 'bar', 'almond', 'nutrition', 'snack', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food'],
+  11: ['stationery', 'notebook', 'journal', 'pen', 'gel', 'paper', 'student', 'office', 'campus', 'dot', 'grid', 'rollerball', 'writing', 'desk', 'organizer', 'book', 'notes', 'study'],
+  12: ['toothbrush', 'dental', 'hygiene', 'sonic', 'clean', 'oral', 'personal', 'care', 'travel', 'glasses', 'blue', 'light', 'anti-glare', 'wellness', 'teeth'],
+  13: ['iot', 'sensor', 'esp32', 'raspberry', 'microcontroller', 'embedded', 'gateway', 'arduino', 'gpio', 'telemetry', 'edge'],
+  14: ['enterprise', 'pro', 'ultra', 'premium', 'titanium', 'gold', 'flagship', 'industrial', 'military', 'grade', 'resilient', 'high-throughput', 'durable'],
+  15: ['portable', 'cable', 'magnetic', 'bottle', 'insulated', 'silicone', 'compact', 'water', 'desktop', 'accessory', 'case', 'gear', 'weight']
+};
+
+/**
  * Deterministic Semantic Feature Hash
  * Generates an L2-normalized 16-dimensional vector embedding for text.
- * Mirrors pgvector embedding pipelines and backend intelligence_service.py.
+ * Combines conceptual semantic topic projections with cryptographic token hashes.
  */
 export function generateEmbedding(text: string, dim: number = 16): number[] {
   if (!text || !text.trim()) {
@@ -16,8 +59,21 @@ export function generateEmbedding(text: string, dim: number = 16): number[] {
 
   const vector = new Array(dim).fill(0.0);
 
+  // 1. Semantic Topic Projection
   for (const token of tokens) {
-    // 32-bit FNV-1a hash
+    for (let d = 0; d < dim; d++) {
+      const keywords = SEMANTIC_DIMENSIONS[d] || [];
+      for (const kw of keywords) {
+        if (token === kw || token.startsWith(kw) || kw.startsWith(token)) {
+          vector[d] += 2.0; // Strong semantic topic match
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. Cryptographic Token Hash projection (FNV-1a for unique signature)
+  for (const token of tokens) {
     let hash = 0x811c9dc5;
     for (let i = 0; i < token.length; i++) {
       hash ^= token.charCodeAt(i);
@@ -27,11 +83,11 @@ export function generateEmbedding(text: string, dim: number = 16): number[] {
 
     for (let i = 0; i < dim; i++) {
       const nibble = (hash >>> (i * 2)) & 0x0f;
-      vector[i] += (nibble / 15.0) - 0.5;
+      vector[i] += ((nibble / 15.0) - 0.5) * 0.25;
     }
   }
 
-  // L2 normalization: v / ||v||
+  // 3. L2 normalization: v / ||v||
   const sumSquares = vector.reduce((sum, val) => sum + (val * val), 0);
   const norm = Math.sqrt(sumSquares) || 1.0;
   return vector.map(v => Math.round((v / norm) * 1000) / 1000);
@@ -77,7 +133,7 @@ export interface SemanticSearchResult {
 export function performSemanticSearch(
   products: Product[],
   query: string,
-  minSimilarity: number = 0.45
+  minSimilarity: number = 0.35
 ): SemanticSearchResult[] {
   if (!query || !query.trim()) return [];
 
@@ -106,7 +162,7 @@ export function performSemanticSearch(
     // Hybrid Score: 70% Dense Cosine Similarity + 30% Lexical Overlap
     const hybridScore = (cosSim * 0.70) + (tokenOverlap * 0.30);
 
-    if (hybridScore >= minSimilarity || cosSim >= 0.55 || tokenOverlap > 0) {
+    if (hybridScore >= minSimilarity || cosSim >= 0.50 || tokenOverlap > 0) {
       scored.push({
         product: {
           ...product,
@@ -126,8 +182,10 @@ export function performSemanticSearch(
 
 export const SAMPLE_SEMANTIC_PROMPTS = [
   { label: 'Deep Learning GPU', query: 'high performance tensor core neural accelerator for AI' },
-  { label: 'Rack Server Node', query: 'enterprise compute blade dual socket datacenter server' },
-  { label: 'Fast Solid State', query: 'ultra low latency PCIe NVMe M.2 flash storage drive' },
-  { label: 'Studio Headset', query: 'noise cancelling immersive studio monitor audiophile sound' },
-  { label: 'Edge IoT Controller', query: 'embedded single board sensor gateway low power microcontroller' }
+  { label: 'Morning Caffeine Boost', query: 'colombian artisan dark roast coffee and morning caffeine' },
+  { label: 'Study & Campus Stationery', query: 'student writing notebook journal and gel ink rollerball pens' },
+  { label: 'Fast Solid State Drive', query: 'ultra low latency PCIe NVMe M.2 flash storage drive' },
+  { label: 'Healthy Nutrition & Snack', query: 'whey protein energy bars and salted almonds nutrition' },
+  { label: 'Fast GaN Charger', query: '65w fast usb-c gan wall charger multi port adapter' },
+  { label: 'Studio Headset', query: 'noise cancelling immersive studio monitor audiophile sound' }
 ];

@@ -1,299 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexCommerce Academic Documentation & API Portal • Course 25CS1302E</title>
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome 6 Pro CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #070b12; color: #e2e8f0; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); border: 1px solid #1e293b; }
-    .glass-card:hover { border-color: #38bdf8; transform: translateY(-2px); transition: all 0.2s ease; }
-    .doc-iframe-container { height: calc(100vh - 280px); min-height: 600px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCommerce OpenAPI 3.0 • Swagger Interactive Docs</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        html { box-sizing: border-box; overflow-y: scroll; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        *, *:before, *:after { box-sizing: inherit; }
+        body { margin: 0; transition: background-color 0.25s ease, color 0.25s ease; }
+        
+        /* Top Navigation & Theme Toggle Bar */
+        .swagger-custom-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .back-link {
+            font-size: 12px;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .theme-toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* LIGHT MODE (Official / Standard Swagger UI) */
+        body.theme-light {
+            background-color: #fafafa;
+            color: #3b4151;
+        }
+        body.theme-light .swagger-custom-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-bottom-color: #e5e7eb;
+        }
+        body.theme-light .header-brand {
+            color: #111827;
+        }
+        body.theme-light .back-link {
+            color: #007185;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+        }
+        body.theme-light .back-link:hover {
+            background-color: #e5e7eb;
+        }
+        body.theme-light .theme-toggle-btn {
+            background-color: #111827;
+            color: #ffffff;
+            border-color: #374151;
+        }
+        body.theme-light .swagger-ui .topbar { display: none; }
+        body.theme-light .swagger-ui { max-width: 1240px; margin: 0 auto; padding: 15px; }
+
+        /* DARK MODE (Cyber Modern Slate UI) */
+        body.theme-dark {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        body.theme-dark .swagger-custom-header {
+            background-color: rgba(11, 15, 25, 0.95);
+            border-bottom-color: #1e293b;
+        }
+        body.theme-dark .header-brand {
+            color: #f8fafc;
+        }
+        body.theme-dark .back-link {
+            color: #38bdf8;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+        body.theme-dark .back-link:hover {
+            background-color: #334155;
+        }
+        body.theme-dark .theme-toggle-btn {
+            background-color: #ffd814;
+            color: #0f1111;
+            border-color: #f59e0b;
+        }
+        body.theme-dark .swagger-ui .topbar { display: none; }
+        body.theme-dark .swagger-ui { color: #e2e8f0; max-width: 1240px; margin: 0 auto; padding: 15px; }
+        body.theme-dark .swagger-ui .info .title { color: #818cf8; }
+        body.theme-dark .swagger-ui .info p, 
+        body.theme-dark .swagger-ui .info li { color: #94a3b8; }
+        body.theme-dark .swagger-ui .scheme-container { background: #111827; box-shadow: none; border: 1px solid #1e293b; border-radius: 8px; }
+        body.theme-dark .swagger-ui select { background: #1e293b; color: #f8fafc; border-color: #334155; }
+        body.theme-dark .swagger-ui input[type=text] { background: #1e293b; color: #f8fafc; border-color: #334155; }
+        body.theme-dark .swagger-ui .opblock { border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3); border: 1px solid #1e293b; }
+        body.theme-dark .swagger-ui .opblock .opblock-summary-operation-id, 
+        body.theme-dark .swagger-ui .opblock .opblock-summary-path,
+        body.theme-dark .swagger-ui .opblock .opblock-summary-description { color: #cbd5e1; }
+        body.theme-dark .swagger-ui .opblock-body { background: #0f172a; }
+        body.theme-dark .swagger-ui table thead tr th, 
+        body.theme-dark .swagger-ui table thead tr td { color: #cbd5e1; border-color: #1e293b; }
+        body.theme-dark .swagger-ui .tab li button.tablinks { color: #94a3b8; }
+        body.theme-dark .swagger-ui .tab li button.tablinks.active { color: #38bdf8; }
+        body.theme-dark .swagger-ui .model-box { background: #111827; }
+        body.theme-dark .swagger-ui section.models { border-color: #1e293b; }
+        body.theme-dark .swagger-ui section.models h4 { color: #94a3b8; }
+        body.theme-dark .swagger-ui .responses-inner h4, 
+        body.theme-dark .swagger-ui .responses-inner h5 { color: #e2e8f0; }
+        body.theme-dark .swagger-ui .btn.authorize { color: #10b981; border-color: #10b981; }
+        body.theme-dark .swagger-ui .btn.authorize svg { fill: #10b981; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white">
-
-  <!-- Top Academic Navigation Bar -->
-  <header class="bg-[#0b1120]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 lg:px-8 py-3.5">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <a href="../" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold text-xs transition">
-          <i class="fa-solid fa-arrow-left"></i>
-          <span>NexCommerce App</span>
-        </a>
-        <div class="h-4 w-px bg-slate-700"></div>
-        <div>
-          <h1 class="text-sm font-extrabold text-white tracking-wide flex items-center gap-2">
-            <i class="fa-solid fa-book-bookmark text-cyan-400"></i>
-            <span>NexCommerce Documentation Portal</span>
-          </h1>
-          <p class="text-[11px] text-slate-400">Course 25CS1302E: Database Systems & Distributed Backend Development (DBS–DBD)</p>
+<body class="theme-dark">
+    <!-- Top Interactive Header with Mode Toggle & Portal Navigation -->
+    <div class="swagger-custom-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="nav-links">
+                <a href="../" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Storefront App
+                </a>
+            </div>
+            <div class="header-brand">
+                <span>NexCommerce API <span style="font-size: 11px; opacity: 0.6; font-family: monospace;">v2.4 (OpenAPI 3.0)</span></span>
+            </div>
         </div>
-      </div>
-
-      <!-- Quick External / Action Links -->
-      <div class="flex items-center gap-2.5">
-        <a href="./swagger.html" class="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-lg shadow-sm transition">
-          <i class="fa-solid fa-bolt"></i>
-          <span>Swagger OpenAPI 3.0</span>
-        </a>
-        <a href="./SOLUTIONS_35_SQL_QUESTIONS.sql" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-semibold text-xs rounded-lg transition">
-          <i class="fa-solid fa-database"></i>
-          <span>35 SQL Solutions</span>
-        </a>
-        <a href="https://github.com/Srinath64312/A7_DBMS_G3" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs rounded-lg transition">
-          <i class="fa-brands fa-github"></i>
-          <span>GitHub Repo</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Hero & Academic Information Header -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-
-    <!-- University & Project Meta Card -->
-    <div class="bg-gradient-to-r from-slate-900 via-[#0f172a] to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-      <div class="absolute -right-12 -top-12 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-        <div class="space-y-2">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-800/60 text-cyan-300 text-xs font-bold">
-            <i class="fa-solid fa-building-columns"></i>
-            <span>KL University • CSE Dept (Off-Campus — Aziz Nagar)</span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-white">Distributed Digital Commerce & Inventory Intelligence</h2>
-          <p class="text-xs text-slate-300 max-w-3xl leading-relaxed">
-            Academic Project Deliverable integrating Polyglot Persistence (PostgreSQL relational ACID ledger + MongoDB document catalog), Redis-compatible TTL stock locks, AI vector similarity search, and automated test suite verification (TC01–TC10).
-          </p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 11px; color: #94a3b8; font-family: monospace; display: none; sm:inline;">KL University • 25CS1302E</span>
+            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleSwaggerTheme()">
+                <i class="fa-solid fa-sun"></i>
+                <span id="themeToggleLabel">Switch to Light Mode</span>
+            </button>
         </div>
-
-        <!-- Team Roster -->
-        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 min-w-[280px]">
-          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Team Members (Batch A7)</span>
-          <div class="space-y-1.5 text-xs">
-            <div class="flex items-center justify-between text-slate-200">
-              <span class="font-medium">Srinath (Lead / DB)</span>
-              <span class="mono text-cyan-400 font-semibold">2510030106</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span class="font-medium">Abhinay Sai (API / Security)</span>
-              <span class="mono text-cyan-400 font-semibold">2510030103</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span class="font-medium">Poli Naidu (Distributed State)</span>
-              <span class="mono text-cyan-400 font-semibold">2510030160</span>
-            </div>
-            <div class="flex items-center justify-between text-slate-200">
-              <span class="font-medium">Chandu (QA / Testing)</span>
-              <span class="mono text-cyan-400 font-semibold">2510030083</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Architecture Badges Row -->
-      <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap gap-2 text-[11px]">
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-blue-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-server"></i> PostgreSQL 16 (klhdb)
-        </span>
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-emerald-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-leaf"></i> MongoDB Catalog
-        </span>
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-rose-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-lock"></i> Redis TTL Locks
-        </span>
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-amber-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-scale-balanced"></i> ACID Strict Isolation
-        </span>
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-purple-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-microchip"></i> Vector Similarity Search
-        </span>
-        <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-teal-300 font-mono flex items-center gap-1.5">
-          <i class="fa-solid fa-vial-circle-check"></i> TC01–TC10 Test Suite
-        </span>
-      </div>
     </div>
 
-    <!-- Navigation Hub / Document Selector Cards -->
-    <div>
-      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Academic Documentation Index</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="docCards">
+    <div id="swagger-ui"></div>
 
-        <!-- 1. Interactive Swagger UI -->
-        <a href="./swagger.html" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer block">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 text-sm">
-                <i class="fa-solid fa-bolt"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">OpenAPI 3.0</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-emerald-400 transition">Interactive Swagger API UI</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Explore and test all 26 REST API contracts, auth endpoints, inventory reservation locks, and ACID transactions live.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-emerald-400 font-semibold">
-            <span>Launch API Console</span>
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </div>
-        </a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        function applySwaggerTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeToggleBtn');
+            
+            if (theme === 'light') {
+                body.classList.remove('theme-dark');
+                body.classList.add('theme-light');
+                btn.innerHTML = '<i class="fa-solid fa-moon"></i> <span>Switch to Dark Mode</span>';
+                localStorage.setItem('swagger_theme', 'light');
+            } else {
+                body.classList.remove('theme-light');
+                body.classList.add('theme-dark');
+                btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Switch to Light Mode</span>';
+                localStorage.setItem('swagger_theme', 'dark');
+            }
+        }
 
-        <!-- 2. Project Report -->
-        <div onclick="selectDocument('PROJECT_REPORT.html', 'Comprehensive Project Report')" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 text-sm">
-                <i class="fa-solid fa-file-lines"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Final Deliverable</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-blue-400 transition">Comprehensive Project Report</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Full architectural whitepaper, relational ERD schemas, polyglot synchronization flow, and verification matrix.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-blue-400 font-semibold">
-            <span>Read Report</span>
-            <i class="fa-solid fa-eye"></i>
-          </div>
-        </div>
+        function toggleSwaggerTheme() {
+            const current = localStorage.getItem('swagger_theme') || 'dark';
+            applySwaggerTheme(current === 'dark' ? 'light' : 'dark');
+        }
 
-        <!-- 3. Review 1 Summary -->
-        <div onclick="selectDocument('REVIEW_1_SUMMARY.html', 'Review 1 Summary & Schema Design')" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20 text-sm">
-                <i class="fa-solid fa-table"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Milestone 1</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-amber-400 transition">Review 1 Summary</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Relational database design (3NF), BCNF normalization proofs, schema definitions, and preliminary benchmarks.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-amber-400 font-semibold">
-            <span>View Milestone 1</span>
-            <i class="fa-solid fa-eye"></i>
-          </div>
-        </div>
+        window.onload = function() {
+            // Restore theme preference
+            const savedTheme = localStorage.getItem('swagger_theme') || 'dark';
+            applySwaggerTheme(savedTheme);
 
-        <!-- 4. Review 2 Summary -->
-        <div onclick="selectDocument('REVIEW_2_SUMMARY.html', 'Review 2 Summary & Distributed Architecture')" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500/20 text-sm">
-                <i class="fa-solid fa-network-wired"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Milestone 2</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-purple-400 transition">Review 2 Summary</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Distributed state management, MongoDB polymorphism, cache-aside read strategy, and Redis TTL locking.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-purple-400 font-semibold">
-            <span>View Milestone 2</span>
-            <i class="fa-solid fa-eye"></i>
-          </div>
-        </div>
+            // Determine spec URL: prioritize local static openapi.json for GitHub Pages, fallback to /api/openapi.json
+            const specUrl = "./openapi.json";
 
-        <!-- 5. Viva Demo Script -->
-        <div onclick="selectDocument('VIVA_DEMO_SCRIPT.html', 'Viva Demo & Faculty Evaluation Script')" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20 text-sm">
-                <i class="fa-solid fa-graduation-cap"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">Faculty Defense</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-rose-400 transition">Viva Demo & Presentation Guide</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Step-by-step 5-minute live demo script, expected faculty viva questions, ACID explanations, and answers.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-rose-400 font-semibold">
-            <span>Open Viva Script</span>
-            <i class="fa-solid fa-eye"></i>
-          </div>
-        </div>
-
-        <!-- 6. 35 SQL Lab Questions & Solutions -->
-        <a href="./SOLUTIONS_35_SQL_QUESTIONS.sql" target="_blank" class="glass-card rounded-xl p-4 flex flex-col justify-between group cursor-pointer block">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="p-2 rounded-lg bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20 text-sm">
-                <i class="fa-solid fa-code"></i>
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800">SQL Lab 1–35</span>
-            </div>
-            <h4 class="font-bold text-sm text-white group-hover:text-teal-400 transition">35 SQL Lab Solutions</h4>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Production PostgreSQL scripts answering all 35 academic questions (Window functions, CTEs, Aggregates, Joins).
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-teal-400 font-semibold">
-            <span>Download / View Raw SQL</span>
-            <i class="fa-solid fa-download"></i>
-          </div>
-        </a>
-
-      </div>
-    </div>
-
-    <!-- Interactive In-Page Viewer Container -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-      <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
-          <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
-          <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-          <span class="text-xs font-bold text-slate-300 ml-2" id="viewerTitle">Comprehensive Project Report</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="fullscreenBtn" onclick="openFullscreen()" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-expand"></i>
-            <span>Open in Full Tab</span>
-          </button>
-        </div>
-      </div>
-      <iframe id="docViewer" src="./PROJECT_REPORT.html" class="w-full doc-iframe-container bg-[#080c14] border-0"></iframe>
-    </div>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-    <p>© 2025–2026 NexCommerce Platform • Department of Computer Science and Engineering, KL University (Off-Campus — Aziz Nagar)</p>
-    <p class="mt-1">Batch A7 — Course 25CS1302E: Database Systems & Distributed Backend Development</p>
-  </footer>
-
-  <script>
-    let currentDocUrl = './PROJECT_REPORT.html';
-
-    function selectDocument(docUrl, docTitle) {
-      currentDocUrl = './' + docUrl;
-      const iframe = document.getElementById('docViewer');
-      const titleSpan = document.getElementById('viewerTitle');
-      iframe.src = currentDocUrl;
-      titleSpan.textContent = docTitle;
-      iframe.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function openFullscreen() {
-      window.open(currentDocUrl, '_blank');
-    }
-  </script>
+            const ui = SwaggerUIBundle({
+                url: specUrl,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "BaseLayout",
+                persistAuthorization: true
+            });
+            window.ui = ui;
+        };
+    </script>
 </body>
 </html>

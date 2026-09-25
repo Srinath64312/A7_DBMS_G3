@@ -12,20 +12,51 @@ from backend.db import postgres_db
 
 logger = logging.getLogger("IntelligenceService")
 
+SEMANTIC_DIMENSIONS = {
+    0: ['server', 'rack', 'epyc', 'xeon', 'cpu', 'processor', 'blade', 'node', 'core', 'compute', 'datacenter', 'virtualization', 'baremetal', 'supermicro', 'chassis'],
+    1: ['ai', 'tensor', 'gpu', 'rtx', 'cuda', 'deep', 'learning', 'neural', 'inference', 'accelerator', 'h100', 'a100', 'mi300x', 'movidius', 'training', 'vllm', 'intelligence', 'model'],
+    2: ['ram', 'ecc', 'ddr5', 'ddr4', 'memory', 'bandwidth', 'dimm', 'gb', 'registered', 'channel', 'buffering'],
+    3: ['ssd', 'nvme', 'pcie', 'disk', 'storage', 'drive', 'tb', 'flash', 'raid', 'san', 'nas', 'hdd', 'ironwolf', 'sata', 'micron', 'samsung', 'solid', 'state'],
+    4: ['network', '100gbe', '400gbe', 'switch', 'spine', 'leaf', 'optical', 'qsfp', 'ethernet', 'router', 'fabric', 'sfp', 'transceiver', 'fiber', 'vlan', 'latency'],
+    5: ['display', 'monitor', 'screen', 'oled', '4k', 'hz', 'uhd', 'resolution', 'ips', 'panel', 'gaming', 'hdr', 'refresh', 'aspect'],
+    6: ['keyboard', 'mouse', 'ergonomic', 'mechanical', 'keychron', 'wireless', 'trackpad', 'cushion', 'chair', 'wrist', 'orthopedic', 'posture'],
+    7: ['audio', 'headphones', 'headset', 'sound', 'mic', 'microphone', 'noise', 'cancelling', 'studio', 'acoustic', 'speaker', 'audiophile', 'hifi', 'music'],
+    8: ['power', 'psu', 'cooling', 'fan', 'liquid', 'freezer', 'cooler', 'heatsink', 'watt', 'gan', 'charger', 'battery', 'thermal', 'arctic', 'supply', 'fast', 'charge'],
+    9: ['coffee', 'roast', 'bean', 'brew', 'espresso', 'caffeine', 'matcha', 'tea', 'morning', 'beverage', 'arabica', 'colombian', 'drink', 'hot', 'cup'],
+    10: ['protein', 'bar', 'almond', 'nutrition', 'snack', 'organic', 'wellness', 'healthy', 'vitamins', 'whey', 'energy', 'diet', 'himalayan', 'salted', 'food'],
+    11: ['stationery', 'notebook', 'journal', 'pen', 'gel', 'paper', 'student', 'office', 'campus', 'dot', 'grid', 'rollerball', 'writing', 'desk', 'organizer', 'book', 'notes', 'study'],
+    12: ['toothbrush', 'dental', 'hygiene', 'sonic', 'clean', 'oral', 'personal', 'care', 'travel', 'glasses', 'blue', 'light', 'anti-glare', 'wellness', 'teeth'],
+    13: ['iot', 'sensor', 'esp32', 'raspberry', 'microcontroller', 'embedded', 'gateway', 'arduino', 'gpio', 'telemetry', 'edge'],
+    14: ['enterprise', 'pro', 'ultra', 'premium', 'titanium', 'gold', 'flagship', 'industrial', 'military', 'grade', 'resilient', 'high-throughput', 'durable'],
+    15: ['portable', 'cable', 'magnetic', 'bottle', 'insulated', 'silicone', 'compact', 'water', 'desktop', 'accessory', 'case', 'gear', 'weight']
+}
+
 def generate_embedding(text: str, dim: int = 16) -> list:
     """
     Generates a deterministic normalized semantic feature vector for text.
     Simulates pgvector embedding pipelines (compatible with local and cloud vector stores).
+    Combines semantic conceptual projection with cryptographic token hashes.
     """
     if not text:
         return [0.0] * dim
     
     tokens = text.lower().split()
     vector = [0.0] * dim
+
+    # 1. Semantic Topic Projection
+    for token in tokens:
+        for d in range(dim):
+            keywords = SEMANTIC_DIMENSIONS.get(d, [])
+            for kw in keywords:
+                if token == kw or token.startswith(kw) or kw.startswith(token):
+                    vector[d] += 2.0
+                    break
+
+    # 2. Cryptographic token hash
     for token in tokens:
         h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
         for i in range(dim):
-            vector[i] += ((h >> (i * 4)) & 0xF) / 15.0 - 0.5
+            vector[i] += (((h >> (i * 4)) & 0xF) / 15.0 - 0.5) * 0.25
 
     # L2 Normalize
     norm = math.sqrt(sum(x * x for x in vector)) or 1.0

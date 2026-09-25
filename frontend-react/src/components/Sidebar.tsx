@@ -442,24 +442,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   href="./docs/"
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition text-cyan-400"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <i className="fa-solid fa-book-open w-4 text-center"></i>
-                    <span>Academic Docs & Reports</span>
-                  </div>
-                  <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-
-                <a
-                  href="./docs/swagger.html"
-                  target="_blank"
-                  rel="noreferrer"
                   className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition text-sky-400"
                 >
                   <div className="flex items-center gap-2.5">
-                    <i className="fa-solid fa-code w-4 text-center"></i>
-                    <span>Interactive OpenAPI Swagger Docs</span>
+                    <i className="fa-solid fa-bolt w-4 text-center text-[#ffd814]"></i>
+                    <span>Interactive OpenAPI Swagger Docs (/docs)</span>
                   </div>
                   <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                 </a>
