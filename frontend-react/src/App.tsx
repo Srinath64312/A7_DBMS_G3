@@ -443,6 +443,7 @@ export function App() {
         theme={theme}
         onSelectTheme={setTheme}
         onOpenAcademicLab={() => openAcademicLab('sql_workbench')}
+        onOpenRestock={() => setIsRestockOpen(true)}
         onOpenSidebar={() => setIsSidebarOpen(true)}
       />
 

@@ -274,12 +274,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               <div className="space-y-0.5 text-xs">
                 <button
+                  onClick={() => { onOpenOrders(); onClose(); }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:bg-sky-500/20 font-bold transition mb-1"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <i className="fa-solid fa-boxes-packing w-4 text-center text-sky-500"></i>
+                    <span>All Customer Orders & Dispatch</span>
+                  </div>
+                  <span className="text-[10px] bg-sky-600 text-white font-bold px-1.5 py-0.5 rounded">Ledger</span>
+                </button>
+
+                <button
                   onClick={() => { onOpenRestock(); onClose(); }}
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 font-semibold transition"
                 >
                   <div className="flex items-center gap-2.5">
-                    <i className="fa-solid fa-dolly w-4 text-center text-emerald-500"></i>
-                    <span>Regional Restock Console</span>
+                    <i className="fa-solid fa-warehouse w-4 text-center text-emerald-500"></i>
+                    <span>Warehouse Hubs & Stock Restock</span>
                   </div>
                   <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                 </button>

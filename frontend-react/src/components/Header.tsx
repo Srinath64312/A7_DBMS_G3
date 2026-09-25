@@ -20,6 +20,7 @@ interface HeaderProps {
   isDark?: boolean;
   onToggleTheme?: () => void;
   onOpenAcademicLab?: () => void;
+  onOpenRestock?: () => void;
   onOpenSidebar?: () => void;
 }
 
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
   theme,
   onSelectTheme,
   onOpenAcademicLab,
+  onOpenRestock,
   onOpenSidebar
 }) => {
   return (
@@ -116,15 +118,27 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Navigation Controls */}
         <div className="flex items-center gap-1 md:gap-2">
 
-          {/* Academic DBMS Lab Button */}
-          {onOpenAcademicLab && (
+          {/* Academic DBMS Lab Button (Admin Only) */}
+          {(user?.role === 'ADMIN' && onOpenAcademicLab) && (
             <button
               onClick={onOpenAcademicLab}
-              className="amazon-nav-item flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-amber-500/15 border border-amber-500/50 rounded px-2.5 py-1.5 hover:bg-amber-500/25 transition active:scale-95"
-              title="Open Academic DBMS Command Center & Viva Evaluation Lab"
+              className="amazon-nav-item flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-amber-500/15 border border-amber-500/50 rounded px-2.5 py-1.5 hover:bg-amber-500/25 transition active:scale-95 cursor-pointer"
+              title="Open Academic DBMS Command Center & Viva Evaluation Lab (Admin Only)"
             >
-              <i className="fa-solid fa-graduation-cap text-base text-amber-400"></i>
-              <span className="hidden xl:inline text-[11px]">Academic Lab</span>
+              <i className="fa-solid fa-shield-halved text-base text-amber-400"></i>
+              <span className="hidden xl:inline text-[11px]">Admin Console</span>
+            </button>
+          )}
+
+          {/* Warehouse Console Button (Manager Only) */}
+          {(user?.role === 'WAREHOUSE_MANAGER' && onOpenRestock) && (
+            <button
+              onClick={onOpenRestock}
+              className="amazon-nav-item flex items-center gap-1.5 text-xs text-emerald-300 font-bold bg-emerald-500/15 border border-emerald-500/50 rounded px-2.5 py-1.5 hover:bg-emerald-500/25 transition active:scale-95 cursor-pointer"
+              title="Open Warehouse Hubs & Restock (Manager Only)"
+            >
+              <i className="fa-solid fa-warehouse text-base text-emerald-400"></i>
+              <span className="hidden xl:inline text-[11px]">Warehouse Hubs</span>
             </button>
           )}
 
@@ -181,26 +195,51 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-xs font-bold text-white flex items-center gap-1">
                   Account & Lists <i className="fa-solid fa-caret-down text-[10px]"></i>
                 </span>
-                <span className="text-[10px] uppercase font-mono px-1 py-0.5 rounded bg-emerald-600 text-white ml-1">
+                <span className={`text-[10px] uppercase font-mono px-1 py-0.5 rounded font-bold ml-1 ${
+                  user.role === 'ADMIN' ? 'bg-amber-500 text-slate-950' : user.role === 'WAREHOUSE_MANAGER' ? 'bg-emerald-600 text-white' : 'bg-sky-600 text-white'
+                }`}>
                   {user.role === 'ADMIN' ? 'ADMIN' : user.role === 'WAREHOUSE_MANAGER' ? 'MGR' : 'USER'}
                 </span>
               </div>
               {/* Dropdown Menu on hover */}
-              <div className="absolute top-full right-0 w-52 bg-white text-[#0f1111] shadow-xl border border-gray-200 rounded-b p-3 hidden group-hover:block z-50 animate-fadeIn">
+              <div className="absolute top-full right-0 w-60 bg-white text-[#0f1111] shadow-2xl border border-gray-200 rounded-b-lg p-3 hidden group-hover:block z-50 animate-fadeIn">
                 <div className="text-xs pb-2 border-b border-gray-200">
                   <div className="font-bold text-sm truncate">{user.name}</div>
                   <div className="text-gray-500 truncate text-[11px]">{user.email}</div>
                   <div className="text-emerald-700 font-semibold text-[11px] mt-0.5">Role: {user.role}</div>
                 </div>
-                <div className="py-2 space-y-1.5 text-xs">
-                  <div onClick={onOpenOrders} className="hover:text-[#e47911] hover:underline cursor-pointer">Your Orders</div>
-                  <div onClick={onOpenWishlist} className="hover:text-[#e47911] hover:underline cursor-pointer">Your Wishlist ({wishlistCount})</div>
-                  <a href="/docs" target="_blank" rel="noreferrer" className="block hover:text-[#e47911] hover:underline">Interactive Swagger API</a>
+                <div className="py-2 space-y-2 text-xs">
+                  <div onClick={onOpenOrders} className="hover:text-[#e47911] hover:underline cursor-pointer flex items-center justify-between">
+                    <span>{user.role === 'ADMIN' ? '👑 Master Orders Ledger' : user.role === 'WAREHOUSE_MANAGER' ? '🏢 Fulfillment & Orders' : '🛍️ Your Orders & Tracking'}</span>
+                    <i className="fa-solid fa-angle-right text-[10px] text-gray-400"></i>
+                  </div>
+                  {user.role === 'CUSTOMER' && (
+                    <div onClick={onOpenWishlist} className="hover:text-[#e47911] hover:underline cursor-pointer flex items-center justify-between">
+                      <span>Your Wishlist ({wishlistCount})</span>
+                      <i className="fa-solid fa-heart text-[10px] text-rose-500"></i>
+                    </div>
+                  )}
+                  {(user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER') && onOpenRestock && (
+                    <div onClick={onOpenRestock} className="hover:text-[#e47911] hover:underline cursor-pointer text-emerald-700 font-semibold flex items-center justify-between">
+                      <span>Warehouse Hubs & Restock</span>
+                      <i className="fa-solid fa-warehouse text-[10px]"></i>
+                    </div>
+                  )}
+                  {user.role === 'ADMIN' && onOpenAcademicLab && (
+                    <div onClick={onOpenAcademicLab} className="hover:text-[#e47911] hover:underline cursor-pointer text-amber-700 font-semibold flex items-center justify-between">
+                      <span>Academic DBMS Lab & SQL</span>
+                      <i className="fa-solid fa-graduation-cap text-[10px]"></i>
+                    </div>
+                  )}
+                  <a href="/docs" target="_blank" rel="noreferrer" className="flex items-center justify-between hover:text-[#e47911] hover:underline pt-1 border-t border-gray-100">
+                    <span>Interactive Swagger API</span>
+                    <i className="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400"></i>
+                  </a>
                 </div>
                 <div className="pt-2 border-t border-gray-200">
                   <button 
                     onClick={onLogout}
-                    className="w-full text-center py-1.5 bg-[#f0f2f2] hover:bg-[#e3e6e6] border border-[#d5d9d9] rounded text-xs font-medium cursor-pointer"
+                    className="w-full text-center py-1.5 bg-[#f0f2f2] hover:bg-[#e3e6e6] border border-[#d5d9d9] rounded text-xs font-bold cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -217,8 +256,14 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           {/* Orders */}
-          <div onClick={onOpenOrders} className="amazon-nav-item hidden sm:flex">
-            <span className="text-[11px] text-gray-300 leading-tight">Returns</span>
+          <div 
+            onClick={onOpenOrders} 
+            className="amazon-nav-item hidden sm:flex cursor-pointer"
+            title={user?.role === 'ADMIN' ? 'Open Master Orders Ledger' : user?.role === 'WAREHOUSE_MANAGER' ? 'Open Dispatch & Orders' : 'View Your Orders'}
+          >
+            <span className="text-[11px] text-gray-300 leading-tight">
+              {user?.role === 'ADMIN' ? 'Master' : user?.role === 'WAREHOUSE_MANAGER' ? 'Dispatch' : 'Returns'}
+            </span>
             <span className="text-xs font-bold text-white">& Orders</span>
           </div>
 
