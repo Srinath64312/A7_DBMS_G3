@@ -57,10 +57,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Product Information */}
       <div className="space-y-1.5 flex-1 flex flex-col">
-        {/* Category tag */}
-        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
-          {product.category_name || 'Hardware'}
-        </span>
+        {/* Category & Semantic Similarity Tag */}
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
+            {product.category_name || 'Hardware'}
+          </span>
+          {product.similarity_score !== undefined && product.similarity_score > 0 && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/40 text-purple-600 dark:text-purple-300 text-[10px] font-mono font-bold shrink-0 shadow-sm">
+              <i className="fa-solid fa-brain text-[9px] text-purple-500"></i>
+              <span>{Math.round(product.similarity_score * 100)}% Match</span>
+            </div>
+          )}
+        </div>
 
         {/* Name */}
         <h4 className="text-xs sm:text-sm font-semibold text-[var(--text-main)] line-clamp-2 leading-snug group-hover:text-[var(--color-link)] transition-colors">

@@ -766,7 +766,7 @@
         "summary": "AI Vector Similarity Recommendations (pgvector cosine search)",
         "tags": [
           "02. Catalog & Hybrid Persistence",
-          "05. AI Intelligence & Analytics"
+          "06. AI Intelligence & Analytics"
         ]
       }
     },
@@ -835,6 +835,74 @@
         "summary": "Get all reviews for a product",
         "tags": [
           "02. Catalog & Hybrid Persistence"
+        ]
+      }
+    },
+    "/api/search/semantic": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "example": "high performance GPU accelerator",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "example": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranked products with cosine similarity and embedding vectors"
+          }
+        },
+        "summary": "AI Semantic Vector Search (pgvector cosine similarity & embeddings)",
+        "tags": [
+          "02. Catalog & Hybrid Persistence",
+          "06. AI Intelligence & Analytics"
+        ]
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "limit": {
+                    "example": 10,
+                    "type": "integer"
+                  },
+                  "query": {
+                    "example": "noise cancelling studio headphones",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked products with cosine similarity and embedding vectors"
+          }
+        },
+        "summary": "AI Semantic Vector Search via JSON body",
+        "tags": [
+          "02. Catalog & Hybrid Persistence",
+          "06. AI Intelligence & Analytics"
         ]
       }
     },

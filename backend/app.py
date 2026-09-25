@@ -388,10 +388,41 @@ def get_openapi_spec():
             },
             "/api/products/{product_id}/recommendations": {
                 "get": {
-                    "tags": ["02. Catalog & Hybrid Persistence", "05. AI Intelligence & Analytics"],
+                    "tags": ["02. Catalog & Hybrid Persistence", "06. AI Intelligence & Analytics"],
                     "summary": "AI Vector Similarity Recommendations (pgvector cosine search)",
                     "parameters": [{"name": "product_id", "in": "path", "required": True, "schema": {"type": "string", "example": "prod_lap_01"}}],
                     "responses": {"200": {"description": "Top semantically similar products"}}
+                }
+            },
+            "/api/search/semantic": {
+                "get": {
+                    "tags": ["02. Catalog & Hybrid Persistence", "06. AI Intelligence & Analytics"],
+                    "summary": "AI Semantic Vector Search (pgvector cosine similarity & embeddings)",
+                    "parameters": [
+                        {"name": "q", "in": "query", "required": True, "schema": {"type": "string", "example": "high performance GPU accelerator"}},
+                        {"name": "limit", "in": "query", "schema": {"type": "integer", "example": 10}}
+                    ],
+                    "responses": {"200": {"description": "Ranked products with cosine similarity and embedding vectors"}}
+                },
+                "post": {
+                    "tags": ["02. Catalog & Hybrid Persistence", "06. AI Intelligence & Analytics"],
+                    "summary": "AI Semantic Vector Search via JSON body",
+                    "requestBody": {
+                        "required": True,
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "query": {"type": "string", "example": "noise cancelling studio headphones"},
+                                        "limit": {"type": "integer", "example": 10}
+                                    },
+                                    "required": ["query"]
+                                }
+                            }
+                        }
+                    },
+                    "responses": {"200": {"description": "Ranked products with cosine similarity and embedding vectors"}}
                 }
             },
             "/api/categories": {
@@ -992,6 +1023,23 @@ def create_product():
 def get_recommendations(product_id):
     recs = intelligence_service.get_product_recommendations(product_id)
     return jsonify(recs), 200
+
+@app.route("/api/search/semantic", methods=["GET", "POST"])
+def search_semantic():
+    """
+    Semantic Vector Search (pgvector cosine similarity & embedding match).
+    Accepts ?q=... or JSON {"query": "..."}
+    """
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        query = data.get("query") or data.get("q") or ""
+        limit = int(data.get("limit") or 12)
+    else:
+        query = request.args.get("q") or request.args.get("query") or ""
+        limit = int(request.args.get("limit") or 12)
+    
+    results = intelligence_service.semantic_search(query, limit=limit)
+    return jsonify(results), 200
 
 # ==============================================================================
 # 03. Multi-Warehouse Inventory APIs (Slide 5 & 6)

@@ -81,6 +81,101 @@ def get_product_recommendations(product_id: str, limit: int = 4):
     scored.sort(key=lambda x: x["similarity_score"], reverse=True)
     return scored[:limit]
 
+def semantic_search(query_text: str, limit: int = 12, min_similarity: float = 0.05):
+    """
+    Executes semantic vector search using pgvector cosine similarity and semantic embeddings.
+    Embeds the user's natural language query into the shared vector space and ranks catalog products.
+    """
+    if not query_text or not query_text.strip():
+        return {
+            "query": "",
+            "query_vector": [],
+            "vector_dimension": 16,
+            "total_matches": 0,
+            "results": []
+        }
+
+    clean_query = query_text.strip()
+    query_vec = generate_embedding(clean_query, dim=16)
+    query_tokens = set(clean_query.lower().split())
+
+    # Fetch candidate products from PostgreSQL (with fallback to fallback data)
+    try:
+        candidates = postgres_db.query_all(
+            "SELECT p.product_id, p.name, p.price, p.sku, p.category_id, p.embedding, c.name as category_name, "
+            "COALESCE(SUM(i.quantity - i.reserved_qty), 0) as total_stock "
+            "FROM products p "
+            "LEFT JOIN categories c ON p.category_id = c.category_id "
+            "LEFT JOIN inventory i ON p.product_id = i.product_id "
+            "WHERE p.is_active = %s "
+            "GROUP BY p.product_id, p.name, p.price, p.sku, p.category_id, p.embedding, c.name",
+            (True if postgres_db.is_postgres() else 1,)
+        )
+    except Exception as e:
+        logger.warning(f"Error querying products from PostgreSQL: {e}")
+        candidates = []
+
+    if not candidates:
+        # Fallback to local catalog
+        from backend.services import catalog_service
+        all_prods = catalog_service.get_all_products()
+        candidates = [{
+            "product_id": p.get("product_id"),
+            "name": p.get("name"),
+            "price": p.get("price", 0.0),
+            "sku": p.get("sku", ""),
+            "category_id": p.get("category_id", ""),
+            "category_name": p.get("category_name", ""),
+            "embedding": p.get("embedding"),
+            "total_stock": p.get("total_stock", 50)
+        } for p in all_prods]
+
+    scored = []
+    for cand in candidates:
+        name_str = cand.get("name") or ""
+        cand_embed = cand.get("embedding")
+        if cand_embed:
+            try:
+                cand_vec = json.loads(cand_embed) if isinstance(cand_embed, str) else cand_embed
+            except Exception:
+                cand_vec = generate_embedding(name_str, dim=16)
+        else:
+            cand_vec = generate_embedding(name_str, dim=16)
+
+        # 1. Cosine similarity
+        cos_sim = cosine_similarity(query_vec, cand_vec)
+
+        # 2. Token overlap bonus (Hybrid search)
+        cand_tokens = set(name_str.lower().split())
+        token_overlap = len(query_tokens.intersection(cand_tokens)) / max(len(query_tokens), 1)
+
+        # 3. Hybrid score: 70% semantic vector similarity + 30% lexical overlap
+        hybrid_score = round((cos_sim * 0.70) + (token_overlap * 0.30), 4)
+
+        if hybrid_score >= min_similarity or cos_sim >= 0.15:
+            scored.append({
+                "product_id": cand["product_id"],
+                "name": cand["name"],
+                "sku": cand["sku"],
+                "price": float(cand["price"]),
+                "category_id": cand.get("category_id"),
+                "category_name": cand.get("category_name"),
+                "similarity_score": round(float(hybrid_score), 4),
+                "cosine_similarity": round(float(cos_sim), 4),
+                "vector": cand_vec,
+                "total_stock": int(cand.get("total_stock") or 0)
+            })
+
+    # Sort descending by hybrid similarity score
+    scored.sort(key=lambda x: x["similarity_score"], reverse=True)
+    return {
+        "query": clean_query,
+        "query_vector": query_vec,
+        "vector_dimension": len(query_vec),
+        "total_matches": len(scored),
+        "results": scored[:limit]
+    }
+
 # =========================================================================
 # Inventory Intelligence & Forecasting (Demand Velocity & Reorder Alerts)
 # =========================================================================

@@ -15,10 +15,12 @@ import { RestockModal } from './components/RestockModal';
 import { AuthModal } from './components/AuthModal';
 import { AddressModal } from './components/AddressModal';
 import { AddProductModal } from './components/AddProductModal';
+import { SemanticSearchModal } from './components/SemanticSearchModal';
 import { AcademicCommandCenter } from './components/AcademicCommandCenter';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { Footer } from './components/Footer';
 import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES, FALLBACK_WAREHOUSES } from './utils/fallbackData';
+import { performSemanticSearch } from './utils/semanticSearch';
 
 // 3 Default saved delivery addresses for university campus, faculty residence, and tech park
 export const DEFAULT_ADDRESSES: Address[] = [
@@ -122,6 +124,14 @@ export function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+  const [isSemanticModalOpen, setIsSemanticModalOpen] = useState(false);
+  const [isSemanticMode, setIsSemanticMode] = useState<boolean>(() => {
+    return localStorage.getItem('nex_semantic_mode') === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('nex_semantic_mode', isSemanticMode ? 'true' : 'false');
+  }, [isSemanticMode]);
 
   // Delivery Addresses State (3 default saved locations)
   const [addresses, setAddresses] = useState<Address[]>(() => {
@@ -517,28 +527,45 @@ export function App() {
   };
 
   // Filtered Products
+  // Filtered & Semantically Ranked Products
   const filteredProducts = useMemo(() => {
-    return products.filter(p => {
-      // Category filter
-      if (selectedCategory && p.category_id !== selectedCategory) return false;
-      // Search query filter
-      if (searchQuery.trim()) {
+    let result = products;
+
+    // Category filter
+    if (selectedCategory) {
+      result = result.filter(p => p.category_id === selectedCategory);
+    }
+
+    // In stock filter
+    if (inStockOnly) {
+      result = result.filter(p => (p.total_stock ?? 1) > 0);
+    }
+
+    // Search filter: AI Semantic Vector Mode vs Traditional Lexical Keyword Match
+    if (searchQuery.trim()) {
+      if (isSemanticMode) {
+        // AI Dense Vector Search (pgvector cosine similarity + hybrid lexical overlap)
+        const semanticResults = performSemanticSearch(result, searchQuery, 0.35);
+        return semanticResults.map(r => r.product);
+      } else {
         const q = searchQuery.toLowerCase();
-        const matchesName = p.name.toLowerCase().includes(q);
-        const matchesSku = p.sku.toLowerCase().includes(q);
-        const matchesDesc = p.description.toLowerCase().includes(q);
-        if (!matchesName && !matchesSku && !matchesDesc) return false;
+        result = result.filter(p => {
+          const matchesName = p.name.toLowerCase().includes(q);
+          const matchesSku = p.sku.toLowerCase().includes(q);
+          const matchesDesc = p.description.toLowerCase().includes(q);
+          return matchesName || matchesSku || matchesDesc;
+        });
       }
-      // In stock filter
-      if (inStockOnly && (p.total_stock ?? 1) === 0) return false;
-      return true;
-    }).sort((a, b) => {
+    }
+
+    // Normal Sorting
+    return [...result].sort((a, b) => {
       if (sortBy === 'price_low') return a.price - b.price;
       if (sortBy === 'price_high') return b.price - a.price;
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       return 0;
     });
-  }, [products, selectedCategory, searchQuery, inStockOnly, sortBy]);
+  }, [products, selectedCategory, searchQuery, inStockOnly, isSemanticMode, sortBy]);
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -569,6 +596,13 @@ export function App() {
         onOpenAddressModal={() => setIsAddressModalOpen(true)}
         activeAddress={activeAddress}
         onOpenAddProduct={() => setIsAddProductOpen(true)}
+        isSemanticMode={isSemanticMode}
+        onToggleSemanticMode={() => {
+          const next = !isSemanticMode;
+          setIsSemanticMode(next);
+          addToast(next ? 'AI Semantic Search Active (pgvector cosine similarity)' : 'Switched to Standard Keyword Search', 'info');
+        }}
+        onOpenSemanticInspector={() => setIsSemanticModalOpen(true)}
       />
 
       {/* Amazon SubNav */}
@@ -615,6 +649,34 @@ export function App() {
             >
               <i className="fa-solid fa-plus text-xs"></i>
               <span>Add Product</span>
+            </button>
+
+            {/* AI Semantic Vector Search Toggle */}
+            <button
+              onClick={() => {
+                const next = !isSemanticMode;
+                setIsSemanticMode(next);
+                addToast(next ? 'AI Semantic Search Active (pgvector cosine similarity)' : 'Switched to Standard Keyword Search', 'info');
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition cursor-pointer ${
+                isSemanticMode
+                  ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
+                  : 'bg-[var(--bg-card-subtle)] text-purple-600 dark:text-purple-400 border-[var(--border-subtle)] hover:border-purple-400'
+              }`}
+              title="Toggle AI Semantic Vector Search (pgvector cosine similarity)"
+            >
+              <i className={`fa-solid fa-brain ${isSemanticMode ? 'animate-pulse' : ''}`}></i>
+              <span>{isSemanticMode ? 'AI Semantic: ON' : 'AI Semantic: OFF'}</span>
+            </button>
+
+            {/* Vector Math & Embeddings Inspector */}
+            <button
+              onClick={() => setIsSemanticModalOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-card-subtle)] border border-[var(--border-subtle)] hover:border-purple-400 text-[var(--text-muted)] hover:text-purple-400 text-xs font-semibold cursor-pointer transition"
+              title="Open 16-Dimensional Vector & Cosine Math Inspector"
+            >
+              <i className="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
+              <span className="hidden sm:inline">Vector Inspector</span>
             </button>
 
             {/* In stock toggle */}
@@ -811,6 +873,17 @@ export function App() {
         warehouses={warehouses}
         user={user}
         onProductCreated={handleProductCreated}
+      />
+
+      <SemanticSearchModal
+        isOpen={isSemanticModalOpen}
+        onClose={() => setIsSemanticModalOpen(false)}
+        products={products}
+        onSelectProduct={(p) => setActiveModalProduct(p)}
+        onApplyQueryToStorefront={(q) => {
+          setSearchQuery(q);
+          setIsSemanticMode(true);
+        }}
       />
 
       {/* RBAC Flyout Sidebar */}

@@ -25,6 +25,9 @@ interface HeaderProps {
   onOpenAddressModal?: () => void;
   activeAddress?: Address | null;
   onOpenAddProduct?: () => void;
+  isSemanticMode?: boolean;
+  onToggleSemanticMode?: () => void;
+  onOpenSemanticInspector?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -48,7 +51,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSidebar,
   onOpenAddressModal,
   activeAddress,
-  onOpenAddProduct
+  onOpenAddProduct,
+  isSemanticMode = false,
+  onToggleSemanticMode,
+  onOpenSemanticInspector
 }) => {
   return (
     <header className={`${
@@ -101,12 +107,14 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex-1 flex items-center h-10 rounded-md overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#e47911] shadow-inner">
+        {/* Search Bar with AI Semantic Mode */}
+        <div className={`flex-1 flex items-center h-10 rounded-md overflow-hidden bg-white shadow-inner transition-all ${
+          isSemanticMode ? 'ring-2 ring-purple-600 bg-purple-50/20' : 'focus-within:ring-2 focus-within:ring-[#e47911]'
+        }`}>
           <select 
             value={selectedCategory} 
             onChange={(e) => onSelectCategory(e.target.value)}
-            className="h-full bg-[#f3f3f3] hover:bg-[#dadada] text-[#0f1111] text-xs px-2.5 border-r border-[#cdcdcd] outline-none cursor-pointer hidden md:block max-w-[150px] truncate"
+            className="h-full bg-[#f3f3f3] hover:bg-[#dadada] text-[#0f1111] text-xs px-2.5 border-r border-[#cdcdcd] outline-none cursor-pointer hidden md:block max-w-[150px] truncate font-medium"
           >
             <option value="">All Departments</option>
             {categories.map(c => (
@@ -117,12 +125,42 @@ export const Header: React.FC<HeaderProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search Amazon Hardware, Nodes, GPUs, Storage, ASINs..."
-            className="flex-1 h-full px-3 text-[#0f1111] text-sm outline-none placeholder:text-gray-500"
+            placeholder={isSemanticMode ? "✨ Describe intent (e.g. 'fast GPU for deep learning', 'quiet studio sound')..." : "Search Amazon Hardware, Nodes, GPUs, Storage, ASINs..."}
+            className="flex-1 h-full px-3 text-[#0f1111] text-sm outline-none placeholder:text-gray-500 font-medium"
           />
+
+          {/* AI Semantic Toggle Button */}
+          {onToggleSemanticMode && (
+            <button
+              type="button"
+              onClick={onToggleSemanticMode}
+              className={`h-full px-2.5 flex items-center gap-1.5 text-xs font-bold transition border-l border-gray-200 cursor-pointer ${
+                isSemanticMode
+                  ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-sm'
+                  : 'bg-gray-100 text-purple-700 hover:bg-purple-50'
+              }`}
+              title="Toggle AI Semantic Vector Search (pgvector cosine similarity)"
+            >
+              <i className={`fa-solid fa-brain ${isSemanticMode ? 'animate-pulse text-amber-300' : 'text-purple-600'}`}></i>
+              <span className="hidden sm:inline">AI Semantic</span>
+            </button>
+          )}
+
+          {/* Semantic Inspector Button */}
+          {onOpenSemanticInspector && (
+            <button
+              type="button"
+              onClick={onOpenSemanticInspector}
+              className="h-full px-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border-l border-purple-200 text-xs hidden lg:flex items-center justify-center cursor-pointer transition"
+              title="Inspect 16-Dimensional Vectors & Cosine Math"
+            >
+              <i className="fa-solid fa-wand-magic-sparkles text-sm text-purple-600"></i>
+            </button>
+          )}
+
           <button 
             type="button"
-            className="h-full px-5 bg-[#febd69] hover:bg-[#f3a847] text-[#131921] transition flex items-center justify-center cursor-pointer"
+            className="h-full px-5 bg-[#febd69] hover:bg-[#f3a847] text-[#131921] transition flex items-center justify-center cursor-pointer shrink-0"
             title="Search"
           >
             <i className="fa-solid fa-magnifying-glass text-lg"></i>

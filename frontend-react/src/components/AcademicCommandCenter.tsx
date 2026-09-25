@@ -85,6 +85,18 @@ JOIN products p ON it.product_id = p.product_id
 JOIN warehouses w ON it.warehouse_id = w.warehouse_id
 ORDER BY it.created_at DESC
 LIMIT 12;`
+  },
+  {
+    name: '9. pgvector Dense Semantic Search & Cosine Distance',
+    sql: `SELECT p.product_id, p.name, p.price, p.sku,
+       c.name AS category_name,
+       p.embedding,
+       ROUND((1 - (p.embedding <=> '[0.342, -0.118, 0.765, 0.231, 0.441, -0.092, 0.512, 0.119, -0.321, 0.654, -0.218, 0.412, -0.115, 0.389, -0.054, 0.291]')::numeric), 3) AS cosine_similarity
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+WHERE p.is_active = true
+ORDER BY p.embedding <=> '[0.342, -0.118, 0.765, 0.231, 0.441, -0.092, 0.512, 0.119, -0.321, 0.654, -0.218, 0.412, -0.115, 0.389, -0.054, 0.291]'
+LIMIT 5;`
   }
 ];
 
