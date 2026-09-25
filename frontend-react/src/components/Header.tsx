@@ -17,6 +17,7 @@ interface HeaderProps {
   onLogout: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
+  onOpenAcademicLab?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,7 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onLogout,
   isDark,
-  onToggleTheme
+  onToggleTheme,
+  onOpenAcademicLab
 }) => {
   return (
     <header className="bg-[#131921] text-white sticky top-0 z-40 select-none shadow-md">
@@ -91,6 +93,18 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Navigation Controls */}
         <div className="flex items-center gap-1 md:gap-2">
+
+          {/* Academic DBMS Lab Button */}
+          {onOpenAcademicLab && (
+            <button
+              onClick={onOpenAcademicLab}
+              className="amazon-nav-item flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-amber-500/15 border border-amber-500/50 rounded px-2.5 py-1.5 hover:bg-amber-500/25 transition active:scale-95"
+              title="Open Academic DBMS Command Center & Viva Evaluation Lab"
+            >
+              <i className="fa-solid fa-graduation-cap text-base text-amber-400"></i>
+              <span className="hidden xl:inline text-[11px]">Academic Lab</span>
+            </button>
+          )}
 
           {/* Theme Toggle (Dark OLED / Light) */}
           <button

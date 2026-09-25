@@ -6,6 +6,7 @@ Distributed Digital Commerce & Inventory Intelligence Platform
 import os
 import sys
 import logging
+from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template_string
 from flask_cors import CORS
 from flasgger import Swagger
@@ -15,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend import config
 from backend.db import postgres_db, mongo_db, cache_manager
-from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service
+from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service, academic_service
 from backend.services.rate_limiter import rate_limit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -1215,6 +1216,106 @@ def run_tests_api():
     from backend.tests import test_suite
     results = test_suite.run_all_tests()
     return jsonify(results), 200
+
+# ==============================================================================
+# 07b. Academic DBMS Lab & Evaluation Endpoints (Course 25CS1302E)
+# ==============================================================================
+@app.route("/api/db/schema", methods=["GET"])
+def get_db_schema():
+    """
+    Returns relational schema introspection (tables, columns, PK, FK, row counts) and MongoDB collections
+    """
+    data = academic_service.get_relational_schema()
+    return jsonify(data), 200
+
+@app.route("/api/db/query", methods=["POST"])
+def execute_sql_console():
+    """
+    Executes safe SQL query against PostgreSQL with execution time and optional EXPLAIN plan
+    """
+    body = request.get_json(silent=True) or {}
+    sql = body.get("sql", "")
+    explain = bool(body.get("explain", False))
+    res = academic_service.execute_safe_sql(sql, explain=explain)
+    status_code = 200 if res.get("success") else 400
+    return jsonify(res), status_code
+
+@app.route("/api/db/telemetry", methods=["GET"])
+def get_system_telemetry_metrics():
+    """
+    Returns real-time database connection metrics, sizes, and cache telemetry
+    """
+    data = academic_service.get_system_telemetry()
+    return jsonify(data), 200
+
+@app.route("/api/db/acid-simulate", methods=["POST"])
+def run_acid_simulation():
+    """
+    Simulates ACID transactions (commit, rollback, deadlock, isolation)
+    """
+    body = request.get_json(silent=True) or {}
+    scenario = body.get("scenario", "commit")
+    res = academic_service.simulate_acid_transaction(scenario)
+    return jsonify(res), 200
+
+@app.route("/api/db/sql-lab/questions", methods=["GET"])
+def get_sql_lab_question_list():
+    """
+    Returns all 35 Lab Questions with categorized prompts and solutions
+    """
+    return jsonify({
+        "success": True,
+        "questions": academic_service.SQL_LAB_QUESTIONS,
+        "total": len(academic_service.SQL_LAB_QUESTIONS)
+    }), 200
+
+@app.route("/api/db/sql-lab/run/<int:qid>", methods=["POST"])
+def run_single_sql_lab_question(qid):
+    """
+    Executes a specific lab question immediately
+    """
+    target = next((q for q in academic_service.SQL_LAB_QUESTIONS if q["id"] == qid), None)
+    if not target:
+        return jsonify({"success": False, "error": f"Question #{qid} not found"}), 404
+    
+    body = request.get_json(silent=True) or {}
+    explain = bool(body.get("explain", False))
+    res = academic_service.execute_safe_sql(target["sql"], explain=explain)
+    res["question_id"] = qid
+    res["question_text"] = target["question"]
+    res["category"] = target["category"]
+    return jsonify(res), 200 if res.get("success") else 400
+
+@app.route("/api/db/audit-log", methods=["GET"])
+def get_recent_audit_ledger():
+    """
+    Fetches recent CDC audit ledger records from inventory_transactions
+    """
+    limit = request.args.get("limit", 25, type=int)
+    try:
+        sql = f"""
+        SELECT it.txn_id, it.txn_type, p.name AS product_name, w.name AS warehouse_name,
+               it.delta, it.reference_order_id, it.performed_by, it.created_at
+        FROM inventory_transactions it
+        LEFT JOIN products p ON it.product_id = p.product_id
+        LEFT JOIN warehouses w ON it.warehouse_id = w.warehouse_id
+        ORDER BY it.created_at DESC
+        LIMIT {max(1, min(limit, 100))};
+        """
+        rows = postgres_db.query_all(sql)
+        for r in rows:
+            if isinstance(r.get("created_at"), datetime):
+                r["created_at"] = r["created_at"].isoformat()
+        return jsonify({"success": True, "records": rows, "count": len(rows)}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "records": []}), 500
+
+@app.route("/api/db/viva-defense", methods=["GET"])
+def get_viva_defense_info():
+    """
+    Returns team assignments, demo flow steps, literature survey matrix, and viva FAQ
+    """
+    return jsonify(academic_service.get_viva_defense_guide()), 200
 
 # ==============================================================================
 # 08. Favicon Route

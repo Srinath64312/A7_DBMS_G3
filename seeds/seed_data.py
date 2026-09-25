@@ -366,6 +366,65 @@ def seed_database():
         mongo_db.upsert_review(r)
     logger.info(f"✅ Seeded {len(reviews_data)} Product Reviews.")
 
+    # 9. Seed Academic Benchmark Tables (dept & emp for Course 25CS1302E)
+    try:
+        postgres_db.execute("""
+        CREATE TABLE IF NOT EXISTS dept (
+            deptno INT PRIMARY KEY,
+            dname VARCHAR(50) NOT NULL,
+            loc VARCHAR(50)
+        );
+        """)
+        postgres_db.execute("""
+        CREATE TABLE IF NOT EXISTS emp (
+            empno INT PRIMARY KEY,
+            ename VARCHAR(50) NOT NULL,
+            job VARCHAR(50) NOT NULL,
+            mgr INT,
+            hiredate DATE NOT NULL,
+            sal NUMERIC(10, 2) NOT NULL,
+            comm NUMERIC(10, 2) DEFAULT 0,
+            deptno INT REFERENCES dept(deptno)
+        );
+        """)
+        
+        dept_rows = [
+            (10, 'ACCOUNTING', 'NEW YORK'),
+            (20, 'RESEARCH', 'DALLAS'),
+            (30, 'SALES', 'CHICAGO'),
+            (40, 'OPERATIONS', 'BOSTON')
+        ]
+        for dno, dnm, dlc in dept_rows:
+            postgres_db.execute(
+                "INSERT INTO dept (deptno, dname, loc) VALUES (%s, %s, %s) ON CONFLICT (deptno) DO NOTHING;",
+                (dno, dnm, dlc)
+            )
+
+        emp_rows = [
+            (7369, 'SMITH',  'CLERK',     7902, '2019-12-17', 3200.00, None,    20),
+            (7499, 'ALLEN',  'SALESMAN',  7698, '2020-02-20', 3600.00, 300.00,  30),
+            (7521, 'WARD',   'SALESMAN',  7698, '2020-02-22', 2500.00, 500.00,  30),
+            (7566, 'JONES',  'MANAGER',   7839, '2018-04-02', 5975.00, None,    20),
+            (7654, 'MARTIN', 'SALESMAN',  7698, '2021-09-28', 2500.00, 1400.00, 30),
+            (7698, 'BLAKE',  'MANAGER',   7839, '2019-05-01', 4850.00, None,    30),
+            (7782, 'CLARK',  'MANAGER',   7839, '2019-06-09', 4450.00, None,    10),
+            (7788, 'SCOTT',  'ANALYST',   7566, '2020-04-19', 4000.00, None,    20),
+            (7839, 'KING',   'PRESIDENT', None, '2017-11-17', 8000.00, None,    10),
+            (7844, 'TURNER', 'SALESMAN',  7698, '2020-09-08', 3500.00, 0.00,    30),
+            (7876, 'ADAMS',  'CLERK',     7788, '2021-05-23', 3100.00, None,    20),
+            (7900, 'JAMES',  'CLERK',     7698, '2020-12-03', 2950.00, None,    30),
+            (7902, 'FORD',   'ANALYST',   7566, '2019-12-03', 4000.00, None,    40),
+            (7934, 'MILLER', 'CLERK',     7782, '2022-01-23', 3300.00, None,    10)
+        ]
+        for eno, enm, ejb, mgr, hdt, sal, comm, dno in emp_rows:
+            postgres_db.execute(
+                "INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (empno) DO NOTHING;",
+                (eno, enm, ejb, mgr, hdt, sal, comm, dno)
+            )
+        logger.info("✅ Seeded Academic Benchmark Tables (dept & emp).")
+    except Exception as e:
+        logger.warning(f"Academic benchmark tables seed notice: {e}")
+
     logger.info("🎉 Database Seeding Completed Successfully!")
 
 if __name__ == "__main__":

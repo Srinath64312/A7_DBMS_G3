@@ -8,6 +8,7 @@ interface SubNavProps {
   onSelectCategory: (catId: string) => void;
   onOpenTestRunner: () => void;
   onOpenRestock: () => void;
+  onOpenAcademicLab: (tab?: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide') => void;
 }
 
 export const SubNav: React.FC<SubNavProps> = ({
@@ -16,13 +17,14 @@ export const SubNav: React.FC<SubNavProps> = ({
   selectedCategory,
   onSelectCategory,
   onOpenTestRunner,
-  onOpenRestock
+  onOpenRestock,
+  onOpenAcademicLab
 }) => {
   const isStaff = user && (user.role === 'ADMIN' || user.role === 'WAREHOUSE_MANAGER');
 
   return (
     <nav className="bg-[#232f3e] text-white text-xs select-none shadow-sm">
-      <div className="max-w-[1700px] mx-auto flex items-center gap-1 px-4 overflow-x-auto whitespace-nowrap py-1">
+      <div className="max-w-[1700px] mx-auto flex items-center gap-1.5 px-4 overflow-x-auto whitespace-nowrap py-1">
         
         {/* All / Clear Filter */}
         <button
@@ -36,7 +38,7 @@ export const SubNav: React.FC<SubNavProps> = ({
         </button>
 
         {/* Dynamic Categories */}
-        {categories.slice(0, 5).map(cat => (
+        {categories.slice(0, 4).map(cat => (
           <button
             key={cat.category_id}
             onClick={() => onSelectCategory(cat.category_id)}
@@ -50,13 +52,60 @@ export const SubNav: React.FC<SubNavProps> = ({
 
         <div className="h-4 w-[1px] bg-slate-600 mx-1 hidden md:block"></div>
 
+        {/* Academic DBMS Lab Button (Highlighted) */}
+        <button
+          onClick={() => onOpenAcademicLab('sql_workbench')}
+          className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs py-1 px-3 rounded shadow flex items-center gap-1.5 transition active:scale-95"
+        >
+          <i className="fa-solid fa-graduation-cap"></i>
+          <span>🎓 Academic DBMS Lab & SQL</span>
+        </button>
+
+        {/* ACID Simulator Shortcut */}
+        <button
+          onClick={() => onOpenAcademicLab('acid_lab')}
+          className="amazon-nav-item py-1 px-2 text-cyan-300 font-semibold flex items-center gap-1 hover:text-white"
+        >
+          <i className="fa-solid fa-shield-halved text-xs"></i>
+          <span>ACID Simulator</span>
+        </button>
+
+        {/* Schema ERD Shortcut */}
+        <button
+          onClick={() => onOpenAcademicLab('schema_erd')}
+          className="amazon-nav-item py-1 px-2 text-purple-300 font-semibold flex items-center gap-1 hover:text-white"
+        >
+          <i className="fa-solid fa-diagram-project text-xs"></i>
+          <span>Schema & ERD</span>
+        </button>
+
+        {/* 35 Questions Shortcut */}
+        <button
+          onClick={() => onOpenAcademicLab('lab_questions')}
+          className="amazon-nav-item py-1 px-2 text-emerald-300 font-semibold flex items-center gap-1 hover:text-white"
+        >
+          <i className="fa-solid fa-list-check text-xs"></i>
+          <span>35 Lab Queries</span>
+        </button>
+
+        {/* Professor Viva Guide Shortcut */}
+        <button
+          onClick={() => onOpenAcademicLab('viva_guide')}
+          className="amazon-nav-item py-1 px-2 text-amber-200 font-semibold flex items-center gap-1 hover:text-white"
+        >
+          <i className="fa-solid fa-chalkboard-user text-xs"></i>
+          <span>Viva Guide</span>
+        </button>
+
+        <div className="h-4 w-[1px] bg-slate-600 mx-1 hidden md:block"></div>
+
         {/* System & Test Suite Buttons */}
         <button
           onClick={onOpenTestRunner}
-          className="amazon-nav-item py-1 px-2.5 text-amber-300 font-semibold flex items-center gap-1 hover:text-white"
+          className="amazon-nav-item py-1 px-2 text-yellow-300 font-semibold flex items-center gap-1 hover:text-white"
         >
           <i className="fa-solid fa-vial-circle-check text-xs"></i>
-          <span>Live Test Runner (TC01-TC14)</span>
+          <span>Tests (TC01-TC14)</span>
         </button>
 
         {isStaff && (

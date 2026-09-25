@@ -12,6 +12,7 @@ import { OrdersModal } from './components/OrdersModal';
 import { TestRunnerModal } from './components/TestRunnerModal';
 import { RestockModal } from './components/RestockModal';
 import { AuthModal } from './components/AuthModal';
+import { AcademicCommandCenter } from './components/AcademicCommandCenter';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { Footer } from './components/Footer';
 
@@ -74,6 +75,13 @@ export function App() {
   const [isTestRunnerOpen, setIsTestRunnerOpen] = useState(false);
   const [isRestockOpen, setIsRestockOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isAcademicLabOpen, setIsAcademicLabOpen] = useState(false);
+  const [academicLabDefaultTab, setAcademicLabDefaultTab] = useState<'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide'>('sql_workbench');
+
+  const openAcademicLab = useCallback((tab: 'sql_workbench' | 'lab_questions' | 'schema_erd' | 'acid_lab' | 'telemetry' | 'viva_guide' = 'sql_workbench') => {
+    setAcademicLabDefaultTab(tab);
+    setIsAcademicLabOpen(true);
+  }, []);
 
   // Payment Modal State
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -381,6 +389,7 @@ export function App() {
         onLogout={handleLogout}
         isDark={isDark}
         onToggleTheme={toggleTheme}
+        onOpenAcademicLab={() => openAcademicLab('sql_workbench')}
       />
 
       {/* Amazon SubNav */}
@@ -391,6 +400,7 @@ export function App() {
         onSelectCategory={setSelectedCategory}
         onOpenTestRunner={() => setIsTestRunnerOpen(true)}
         onOpenRestock={() => setIsRestockOpen(true)}
+        onOpenAcademicLab={openAcademicLab}
       />
 
       {/* Main Page Body */}
@@ -582,6 +592,12 @@ export function App() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      <AcademicCommandCenter
+        isOpen={isAcademicLabOpen}
+        onClose={() => setIsAcademicLabOpen(false)}
+        defaultTab={academicLabDefaultTab}
       />
 
       {/* Footer */}
