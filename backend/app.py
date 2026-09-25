@@ -55,27 +55,190 @@ SWAGGER_UI_HTML = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Swagger API Docs - Distributed Commerce Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCommerce OpenAPI 3.0 • Swagger Interactive Docs</title>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
-        html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+        html { box-sizing: border-box; overflow-y: scroll; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         *, *:before, *:after { box-sizing: inherit; }
-        body { margin: 0; background: #0f172a; }
-        .swagger-ui .topbar { display: none; }
-        .swagger-ui { color: #e2e8f0; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .swagger-ui .info .title { color: #818cf8; }
-        .swagger-ui .info p, .swagger-ui .info li { color: #94a3b8; }
-        .swagger-ui .scheme-container { background: #1e293b; box-shadow: none; border-radius: 8px; }
-        .swagger-ui select { background: #0f172a; color: #fff; }
-        .swagger-ui .opblock { border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        body { margin: 0; transition: background-color 0.25s ease, color 0.25s ease; }
+        
+        /* Top Navigation & Theme Toggle Bar */
+        .swagger-custom-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .back-link {
+            font-size: 12px;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .theme-toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* LIGHT MODE (Official / Standard Swagger UI) */
+        body.theme-light {
+            background-color: #fafafa;
+            color: #3b4151;
+        }
+        body.theme-light .swagger-custom-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-bottom-color: #e5e7eb;
+        }
+        body.theme-light .header-brand {
+            color: #111827;
+        }
+        body.theme-light .back-link {
+            color: #007185;
+            background-color: #f3f4f6;
+        }
+        body.theme-light .back-link:hover {
+            background-color: #e5e7eb;
+        }
+        body.theme-light .theme-toggle-btn {
+            background-color: #111827;
+            color: #ffffff;
+            border-color: #374151;
+        }
+        body.theme-light .swagger-ui .topbar { display: none; }
+        body.theme-light .swagger-ui { max-width: 1200px; margin: 0 auto; padding: 15px; }
+
+        /* DARK MODE (Cyber Modern Slate UI) */
+        body.theme-dark {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        body.theme-dark .swagger-custom-header {
+            background-color: rgba(11, 15, 25, 0.95);
+            border-bottom-color: #1e293b;
+        }
+        body.theme-dark .header-brand {
+            color: #f8fafc;
+        }
+        body.theme-dark .back-link {
+            color: #38bdf8;
+            background-color: #1e293b;
+        }
+        body.theme-dark .back-link:hover {
+            background-color: #334155;
+        }
+        body.theme-dark .theme-toggle-btn {
+            background-color: #ffd814;
+            color: #0f1111;
+            border-color: #f59e0b;
+        }
+        body.theme-dark .swagger-ui .topbar { display: none; }
+        body.theme-dark .swagger-ui { color: #e2e8f0; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        body.theme-dark .swagger-ui .info .title { color: #818cf8; }
+        body.theme-dark .swagger-ui .info p, 
+        body.theme-dark .swagger-ui .info li { color: #94a3b8; }
+        body.theme-dark .swagger-ui .scheme-container { background: #111827; box-shadow: none; border: 1px solid #1e293b; border-radius: 8px; }
+        body.theme-dark .swagger-ui select { background: #1e293b; color: #f8fafc; border-color: #334155; }
+        body.theme-dark .swagger-ui input[type=text] { background: #1e293b; color: #f8fafc; border-color: #334155; }
+        body.theme-dark .swagger-ui .opblock { border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3); border: 1px solid #1e293b; }
+        body.theme-dark .swagger-ui .opblock .opblock-summary-operation-id, 
+        body.theme-dark .swagger-ui .opblock .opblock-summary-path,
+        body.theme-dark .swagger-ui .opblock .opblock-summary-description { color: #cbd5e1; }
+        body.theme-dark .swagger-ui .opblock-body { background: #0f172a; }
+        body.theme-dark .swagger-ui table thead tr th, 
+        body.theme-dark .swagger-ui table thead tr td { color: #cbd5e1; border-color: #1e293b; }
+        body.theme-dark .swagger-ui .tab li button.tablinks { color: #94a3b8; }
+        body.theme-dark .swagger-ui .tab li button.tablinks.active { color: #38bdf8; }
+        body.theme-dark .swagger-ui .model-box { background: #111827; }
+        body.theme-dark .swagger-ui section.models { border-color: #1e293b; }
+        body.theme-dark .swagger-ui section.models h4 { color: #94a3b8; }
+        body.theme-dark .swagger-ui .responses-inner h4, 
+        body.theme-dark .swagger-ui .responses-inner h5 { color: #e2e8f0; }
+        body.theme-dark .swagger-ui .btn.authorize { color: #10b981; border-color: #10b981; }
+        body.theme-dark .swagger-ui .btn.authorize svg { fill: #10b981; }
     </style>
 </head>
-<body>
+<body class="theme-dark">
+    <!-- Top Interactive Header with Mode Toggle -->
+    <div class="swagger-custom-header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="/" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to NexCommerce Store
+            </a>
+            <div class="header-brand">
+                <span>NexCommerce API <span style="font-size: 11px; opacity: 0.6; font-family: monospace;">v2.4 (OpenAPI 3.0)</span></span>
+            </div>
+        </div>
+        <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleSwaggerTheme()">
+            <i class="fa-solid fa-sun"></i>
+            <span id="themeToggleLabel">Switch to Light Mode</span>
+        </button>
+    </div>
+
     <div id="swagger-ui"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js"></script>
     <script>
+        function applySwaggerTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeToggleBtn');
+            const label = document.getElementById('themeToggleLabel');
+            
+            if (theme === 'light') {
+                body.classList.remove('theme-dark');
+                body.classList.add('theme-light');
+                btn.innerHTML = '<i class="fa-solid fa-moon"></i> <span>Switch to Dark Mode</span>';
+                localStorage.setItem('swagger_theme', 'light');
+            } else {
+                body.classList.remove('theme-light');
+                body.classList.add('theme-dark');
+                btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Switch to Light Mode</span>';
+                localStorage.setItem('swagger_theme', 'dark');
+            }
+        }
+
+        function toggleSwaggerTheme() {
+            const current = localStorage.getItem('swagger_theme') || 'dark';
+            applySwaggerTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
         window.onload = function() {
+            // Restore theme preference
+            const savedTheme = localStorage.getItem('swagger_theme') || 'dark';
+            applySwaggerTheme(savedTheme);
+
             const ui = SwaggerUIBundle({
                 url: "/api/openapi.json",
                 dom_id: '#swagger-ui',
