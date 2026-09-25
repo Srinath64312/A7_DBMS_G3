@@ -20,12 +20,23 @@ export const OrdersModal: React.FC<OrdersModalProps> = ({
     setIsLoading(true);
     const token = user.token || user.access_token || '';
 
+    const localOrders = JSON.parse(localStorage.getItem('nex_orders') || '[]');
+
     fetch('/api/orders', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(res => res.ok ? res.json() : [])
-      .then(data => setOrders(Array.isArray(data) ? data : []))
-      .catch(err => console.error(err))
+      .then(res => (res.ok && res.headers.get('content-type')?.includes('application/json')) ? res.json() : null)
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setOrders(data);
+        } else {
+          setOrders(localOrders);
+        }
+      })
+      .catch(err => {
+        console.warn('Orders fetch fallback:', err);
+        setOrders(localOrders);
+      })
       .finally(() => setIsLoading(false));
   }, [isOpen, user]);
 

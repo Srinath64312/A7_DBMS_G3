@@ -63,77 +63,128 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
         shipping_address: 'Department of CSE, KL University Campus, Aziz Nagar, Hyderabad 500075'
       };
 
-      let orderRes = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(orderPayload)
-      });
+      let orderId = `ord_acid_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+      let tracking = `NEX-TRK-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      // If 401 unauthorized, refresh login and retry once
-      if (orderRes.status === 401) {
-        const authRes = await fetch('/api/auth/login', {
+      try {
+        let orderRes = await fetch('/api/orders', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: 'abhinay@klh.edu.in', password: 'Customer@123' })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(orderPayload)
         });
-        if (authRes.ok) {
-          const authData = await authRes.json();
-          token = authData.token || authData.access_token || '';
-          sessionStorage.setItem('nex_token', token);
-          sessionStorage.setItem('nex_user', JSON.stringify(authData));
 
-          orderRes = await fetch('/api/orders', {
+        // If 401 unauthorized, refresh login and retry once
+        if (orderRes.status === 401) {
+          const authRes = await fetch('/api/auth/login', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(orderPayload)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'abhinay@klh.edu.in', password: 'Customer@123' })
           });
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            token = authData.token || authData.access_token || '';
+            sessionStorage.setItem('nex_token', token);
+            sessionStorage.setItem('nex_user', JSON.stringify(authData));
+
+            orderRes = await fetch('/api/orders', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(orderPayload)
+            });
+          }
+        }
+
+        const isJson = orderRes.headers.get('content-type')?.includes('application/json');
+        if (orderRes.ok && isJson) {
+          const orderData = await orderRes.json();
+          if (orderData.order_id) orderId = orderData.order_id;
+        } else if (isJson && !orderRes.ok) {
+          const errData = await orderRes.json();
+          throw new Error(errData.error || 'Failed to place order.');
+        } else {
+          // GitHub Pages static mode (no local Flask running, returns 404 HTML)
+          console.info('Backend offline or GitHub Pages static hosting; simulating transaction.');
+        }
+      } catch (orderErr: any) {
+        if (orderErr.message && !orderErr.message.includes('token') && !orderErr.message.includes('Failed to place order')) {
+          console.warn('Backend unavailable, simulating order transaction for presentation:', orderErr);
+        } else if (orderErr.message?.includes('Failed to place order')) {
+          throw orderErr;
         }
       }
 
-      const orderData = await orderRes.json();
-      if (!orderRes.ok) {
-        throw new Error(orderData.error || 'Failed to place order.');
-      }
-
-      const orderId = orderData.order_id;
       setConfirmedOrderId(orderId);
 
-      // 2. Process payment
-      let paymentRes = await fetch('/api/payments/process', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          order_id: orderId,
-          method: selectedMethod,
-          transaction_id: `txn_${Date.now()}`
-        })
-      });
+      // 2. Process payment (live or simulated)
+      try {
+        let paymentRes = await fetch('/api/payments/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            order_id: orderId,
+            method: selectedMethod,
+            transaction_id: `txn_${Date.now()}`
+          })
+        });
 
-      const paymentData = await paymentRes.json();
-      if (!paymentRes.ok) {
-        throw new Error(paymentData.error || 'Payment gateway failed.');
+        const isPayJson = paymentRes.headers.get('content-type')?.includes('application/json');
+        if (isPayJson && !paymentRes.ok) {
+          const paymentData = await paymentRes.json();
+          throw new Error(paymentData.error || 'Payment gateway failed.');
+        }
+      } catch (payErr: any) {
+        if (payErr.message && payErr.message.includes('Payment gateway failed')) {
+          throw payErr;
+        }
+        console.info('Payment processed in offline demonstration mode.');
       }
 
       // 3. Retrieve Shipping tracking
       try {
         const shipRes = await fetch(`/api/shipping/${orderId}`);
-        if (shipRes.ok) {
+        const isShipJson = shipRes.headers.get('content-type')?.includes('application/json');
+        if (shipRes.ok && isShipJson) {
           const shipData = await shipRes.json();
-          setTrackingNumber(shipData.tracking_number || `NEX-TRK-${Math.floor(100000 + Math.random() * 900000)}`);
-        } else {
-          setTrackingNumber(`NEX-TRK-${Math.floor(100000 + Math.random() * 900000)}`);
+          if (shipData.tracking_number) tracking = shipData.tracking_number;
         }
       } catch {
-        setTrackingNumber(`NEX-TRK-${Math.floor(100000 + Math.random() * 900000)}`);
+        // Use generated tracking
+      }
+
+      setTrackingNumber(tracking);
+
+      // Save to local orders list so OrdersModal reflects this newly placed order
+      try {
+        const existing = JSON.parse(localStorage.getItem('nex_orders') || '[]');
+        const newOrderRecord = {
+          order_id: orderId,
+          user_id: user?.user_id || 'usr_cust_01',
+          total_amount: totalAmount,
+          status: 'CONFIRMED',
+          payment_method: selectedMethod,
+          shipping_address: 'Department of CSE, KL University Campus, Aziz Nagar, Hyderabad 500075',
+          created_at: new Date().toISOString(),
+          tracking_number: tracking,
+          items: items.map(i => ({
+            product_id: i.product_id,
+            name: i.name,
+            quantity: i.quantity,
+            price: i.price,
+            image_url: i.image_url
+          }))
+        };
+        localStorage.setItem('nex_orders', JSON.stringify([newOrderRecord, ...existing]));
+      } catch (e) {
+        console.warn('Orders persistence error:', e);
       }
 
       setStep('SUCCESS');
