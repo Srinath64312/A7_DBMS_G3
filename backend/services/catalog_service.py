@@ -183,6 +183,22 @@ def update_product(product_id, name=None, category_id=None, price=None, attribut
     return get_product_by_id(product_id)
 
 
+def delete_product(product_id: str) -> bool:
+    """Deletes/deactivates a product across PostgreSQL, MongoDB, and Redis cache"""
+    existing = get_product_by_id(product_id)
+    if not existing:
+        raise ValueError(f"Product '{product_id}' not found.")
+
+    # Soft-delete in PostgreSQL to preserve transactional order history constraints
+    postgres_db.execute("UPDATE products SET is_active = FALSE WHERE product_id = %s", (product_id,))
+    # Delete from MongoDB polymorphic catalog
+    mongo_db.delete_product(product_id)
+    # Invalidate cache
+    cache_manager.invalidate_cache(f"catalog:product:{product_id}")
+    cache_manager.invalidate_cache("catalog:")
+    return True
+
+
 def semantic_search(query, limit=20):
     """
     Intent-based semantic product search using synonym vocabulary expansion

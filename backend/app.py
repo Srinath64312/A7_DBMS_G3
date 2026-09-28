@@ -5,6 +5,7 @@ Distributed Digital Commerce & Inventory Intelligence Platform
 """
 import os
 import sys
+import uuid
 import logging
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template_string
@@ -755,6 +756,7 @@ def serve_static(path):
 # 01. Authentication, OAuth 2.0 & RBAC APIs (Slide 5)
 # ==============================================================================
 @app.route("/api/auth/register", methods=["POST"])
+@app.route("/register", methods=["POST"])
 @rate_limit(limit=20, window_seconds=60, key_prefix="auth_register")
 def register():
     """
@@ -782,17 +784,32 @@ def register():
         description: Rate limit exceeded
     """
     data = request.get_json(silent=True) or request.form.to_dict() or {}
-    name = data.get("name")
-    email = data.get("email")
+    name = data.get("name") or data.get("username")
+    email = data.get("email") or (f"{data.get('username')}@commerce.kluniversity.in" if data.get("username") else None)
     password = data.get("password")
-    role = data.get("role", "CUSTOMER")
+    raw_role = data.get("role", "CUSTOMER")
+    
+    if raw_role.upper() in ["USER", "CUSTOMER"]:
+        role = "CUSTOMER"
+    elif raw_role.upper() == "ADMIN":
+        role = "ADMIN"
+    elif raw_role.upper() in ["WAREHOUSE_MANAGER", "MANAGER"]:
+        role = "WAREHOUSE_MANAGER"
+    else:
+        role = "CUSTOMER"
 
     if not name or not email or not password:
-        return jsonify({"error": "Missing required fields: name, email, password"}), 400
+        return jsonify({"error": "Missing required fields: username/email and password"}), 400
 
     try:
         user = auth_service.register_user(name, email, password, role)
-        return jsonify(user), 201
+        resp_user = dict(user)
+        resp_user.update({
+            "message": "User registered successfully",
+            "username": data.get("username") or name,
+            "role": "admin" if role == "ADMIN" else "user"
+        })
+        return jsonify(resp_user), 201
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
@@ -800,6 +817,7 @@ def register():
         return jsonify({"error": "Registration failed"}), 500
 
 @app.route("/api/auth/login", methods=["POST"])
+@app.route("/login", methods=["POST"])
 @rate_limit(limit=30, window_seconds=60, key_prefix="auth_login")
 def login():
     """
@@ -833,6 +851,9 @@ def login():
 
     try:
         user = auth_service.login_user(identifier, password)
+        token_resp = auth_service.build_token_response(user)
+        user["access_token"] = token_resp.get("access_token")
+        user["token_type"] = "bearer"
         return jsonify(user), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 401
@@ -980,14 +1001,32 @@ def list_categories():
     return jsonify(catalog_service.get_categories()), 200
 
 @app.route("/api/products", methods=["GET"])
+@app.route("/products", methods=["GET"])
 def list_products():
     category_id = request.args.get("category_id")
     search = request.args.get("search")
     tag = request.args.get("tag")
     products = catalog_service.get_products(category_id=category_id, search=search, tag=tag)
+
+    # Optional RBAC wrapper if client sent Bearer token
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        try:
+            token = auth_header.split(" ")[1]
+            payload = auth_service.decode_jwt(token)
+            if payload:
+                return jsonify({
+                    "logged_in_user": payload.get("username") or payload.get("email"),
+                    "role": "admin" if payload.get("role") == "ADMIN" else "user",
+                    "products": products
+                }), 200
+        except Exception:
+            pass
+
     return jsonify(products), 200
 
 @app.route("/api/products/<product_id>", methods=["GET"])
+@app.route("/products/<product_id>", methods=["GET"])
 def get_product(product_id):
     prod = catalog_service.get_product_by_id(product_id)
     if not prod:
@@ -995,27 +1034,90 @@ def get_product(product_id):
     return jsonify(prod), 200
 
 @app.route("/api/products", methods=["POST"])
+@app.route("/products", methods=["POST"])
 @auth_service.auth_required(roles=["ADMIN", "WAREHOUSE_MANAGER"])
 def create_product():
-    data = request.get_json(silent=True) or {}
-    if not data or not data.get("name") or not data.get("sku") or "price" not in data:
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    name = data.get("name") or data.get("pname")
+    price = data.get("price")
+    sku = data.get("sku") or (f"SKU-{uuid.uuid4().hex[:8].upper()}" if (name and price is not None) else None)
+    attributes = data.get("attributes", {})
+    if "warranty" in data:
+        attributes["warranty"] = data["warranty"]
+
+    if not name or not sku or price is None:
         return jsonify({"error": "Missing required fields: name, sku, price"}), 400
 
     try:
         new_prod = catalog_service.create_product(
-            name=data["name"],
-            category_id=data.get("category_id"),
-            sku=data["sku"],
-            price=data["price"],
-            attributes=data.get("attributes", {}),
-            description=data.get("description", ""),
+            name=name,
+            category_id=data.get("category_id") or "cat_periph_07",
+            sku=sku,
+            price=price,
+            attributes=attributes,
+            description=data.get("description", f"{name} with {attributes.get('warranty', 12)} month warranty."),
             supplier_id=data.get("supplier_id", ""),
-            tags=data.get("tags", []),
+            tags=data.get("tags", ["hardware"]),
             image_url=data.get("image_url", ""),
-            initial_stock=data.get("initial_stock", 0),
+            initial_stock=data.get("initial_stock", 25),
             warehouse_id=data.get("warehouse_id")
         )
-        return jsonify(new_prod), 201
+        resp_prod = dict(new_prod)
+        resp_prod.update({
+            "message": "Product added successfully",
+            "added_by": request.current_user.get("email") or request.current_user.get("name")
+        })
+        return jsonify(resp_prod), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/products/<product_id>", methods=["PUT"])
+@app.route("/products/<product_id>", methods=["PUT"])
+@auth_service.auth_required(roles=["ADMIN", "WAREHOUSE_MANAGER"])
+def update_product_endpoint(product_id):
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    name = data.get("name") or data.get("pname")
+    price = data.get("price")
+    category_id = data.get("category_id")
+    attributes = data.get("attributes", {})
+    if "warranty" in data:
+        attributes["warranty"] = data["warranty"]
+    description = data.get("description")
+    tags = data.get("tags")
+
+    try:
+        updated = catalog_service.update_product(
+            product_id=product_id,
+            name=name,
+            category_id=category_id,
+            price=price,
+            attributes=attributes if attributes else None,
+            description=description,
+            tags=tags
+        )
+        return jsonify({
+            "message": "Product updated successfully",
+            "product": updated,
+            "updated_by": request.current_user.get("email") or request.current_user.get("name")
+        }), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/products/<product_id>", methods=["DELETE"])
+@app.route("/products/<product_id>", methods=["DELETE"])
+@auth_service.auth_required(roles=["ADMIN", "WAREHOUSE_MANAGER"])
+def delete_product_endpoint(product_id):
+    try:
+        catalog_service.delete_product(product_id)
+        return jsonify({
+            "message": "Product deleted successfully",
+            "product_id": product_id,
+            "deleted_by": request.current_user.get("email") or request.current_user.get("name")
+        }), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
