@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend import config
 from backend.db import postgres_db, mongo_db, cache_manager
-from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service, academic_service
+from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service, academic_service, seller_service
 from backend.services.rate_limiter import rate_limit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -795,6 +795,8 @@ def register():
         role = "ADMIN"
     elif raw_role.upper() in ["WAREHOUSE_MANAGER", "MANAGER"]:
         role = "WAREHOUSE_MANAGER"
+    elif raw_role.upper() in ["SELLER", "VENDOR"]:
+        role = "SELLER"
     else:
         role = "CUSTOMER"
 
@@ -803,11 +805,20 @@ def register():
 
     try:
         user = auth_service.register_user(name, email, password, role)
+        if role == "SELLER":
+            company = data.get("company_name") or f"{name} Solutions"
+            seller_service.register_seller(
+                user_id=user["user_id"],
+                company_name=company,
+                contact_email=email,
+                contact_phone=data.get("phone", "+91 98480 12345"),
+                city=data.get("city", "Hyderabad")
+            )
         resp_user = dict(user)
         resp_user.update({
             "message": "User registered successfully",
             "username": data.get("username") or name,
-            "role": "admin" if role == "ADMIN" else "user"
+            "role": "admin" if role == "ADMIN" else ("seller" if role == "SELLER" else ("manager" if role == "WAREHOUSE_MANAGER" else "user"))
         })
         return jsonify(resp_user), 201
     except ValueError as ve:
@@ -1142,6 +1153,27 @@ def search_semantic():
     
     results = intelligence_service.semantic_search(query, limit=limit)
     return jsonify(results), 200
+
+@app.route("/api/catalog/rag", methods=["GET", "POST"])
+def get_rag_catalog_recommendation():
+    """
+    RAG (Retrieval-Augmented Generation) Endpoint
+    Performs dense vector retrieval against pgvector/MongoDB embeddings, extracts
+    structured catalog grounding context, and returns synthesized RAG answer.
+    """
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        query = data.get("query") or data.get("q") or ""
+        limit = int(data.get("limit") or 4)
+    else:
+        query = request.args.get("q") or request.args.get("query") or ""
+        limit = int(request.args.get("limit") or 4)
+
+    if not query:
+        query = "high performance machine learning GPU accelerator for AI training"
+
+    rag_result = catalog_service.generate_rag_response(query, top_k=limit)
+    return jsonify(rag_result), 200
 
 # ==============================================================================
 # 03. Multi-Warehouse Inventory APIs (Slide 5 & 6)
@@ -1629,6 +1661,62 @@ def get_viva_defense_info():
     Returns team assignments, demo flow steps, literature survey matrix, and viva FAQ
     """
     return jsonify(academic_service.get_viva_defense_guide()), 200
+
+# ==============================================================================
+# 07.5 Marketplace Verified Sellers & Vendor Management
+# ==============================================================================
+@app.route("/api/sellers", methods=["GET"])
+def list_sellers():
+    """Retrieve all verified sellers registered on the platform"""
+    try:
+        sellers = seller_service.get_all_sellers()
+        for s in sellers:
+            if isinstance(s.get("created_at"), datetime):
+                s["created_at"] = s["created_at"].isoformat()
+            if "rating" in s and s["rating"] is not None:
+                s["rating"] = float(s["rating"])
+        return jsonify(sellers), 200
+    except Exception as e:
+        logger.error(f"List sellers error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/sellers/<seller_id>", methods=["GET"])
+def get_seller(seller_id):
+    """Retrieve profile and metrics of a single seller"""
+    seller = seller_service.get_seller_by_id(seller_id)
+    if not seller:
+        return jsonify({"error": "Seller not found"}), 404
+    if isinstance(seller.get("created_at"), datetime):
+        seller["created_at"] = seller["created_at"].isoformat()
+    if "rating" in seller and seller["rating"] is not None:
+        seller["rating"] = float(seller["rating"])
+    return jsonify(seller), 200
+
+@app.route("/api/sellers", methods=["POST"])
+@auth_service.auth_required(roles=["ADMIN", "SELLER"])
+def create_seller():
+    """Register or onboard a new marketplace seller"""
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    company_name = data.get("company_name")
+    contact_email = data.get("contact_email") or request.current_user.get("email")
+    if not company_name or not contact_email:
+        return jsonify({"error": "Missing required fields: company_name and contact_email"}), 400
+
+    try:
+        new_seller = seller_service.register_seller(
+            user_id=request.current_user["user_id"],
+            company_name=company_name,
+            contact_email=contact_email,
+            contact_phone=data.get("contact_phone", ""),
+            gstin=data.get("gstin", ""),
+            city=data.get("city", "Hyderabad"),
+            rating=float(data.get("rating", 4.85)),
+            is_verified=True
+        )
+        return jsonify(new_seller), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 # ==============================================================================
 # 08. Favicon Route

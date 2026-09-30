@@ -8,7 +8,8 @@
 -- 1. Enable UUID Extension (if available)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. Clean Existing Tables (in reverse dependency order)
+DROP TABLE IF EXISTS sellers CASCADE;
+DROP TABLE IF EXISTS user_wishlists CASCADE;
 DROP TABLE IF EXISTS shipping_details CASCADE;
 DROP TABLE IF EXISTS payments CASCADE;
 DROP TABLE IF EXISTS user_addresses CASCADE;
@@ -29,7 +30,7 @@ CREATE TABLE users (
     name VARCHAR(120) NOT NULL,
     email VARCHAR(160) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    role VARCHAR(30) NOT NULL DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'ADMIN', 'WAREHOUSE_MANAGER')),
+    role VARCHAR(30) NOT NULL DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'ADMIN', 'WAREHOUSE_MANAGER', 'SELLER')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -200,4 +201,21 @@ CREATE TABLE IF NOT EXISTS user_wishlists (
 );
 
 CREATE INDEX IF NOT EXISTS idx_wishlists_user ON user_wishlists(user_id);
+
+-- 18. Verified Sellers & Vendors Table
+CREATE TABLE IF NOT EXISTS sellers (
+    seller_id VARCHAR(64) PRIMARY KEY,
+    user_id VARCHAR(64) REFERENCES users(user_id) ON DELETE CASCADE,
+    company_name VARCHAR(150) NOT NULL,
+    contact_email VARCHAR(160) NOT NULL,
+    contact_phone VARCHAR(30),
+    gstin VARCHAR(30) UNIQUE,
+    city VARCHAR(100),
+    rating NUMERIC(3, 2) DEFAULT 4.80,
+    is_verified BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sellers_user ON sellers(user_id);
+CREATE INDEX IF NOT EXISTS idx_sellers_city ON sellers(city);
 

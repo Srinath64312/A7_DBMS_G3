@@ -257,6 +257,25 @@ class DistributedCommerceTestSuite(unittest.TestCase):
         del_res = self.client.delete("/api/wishlist/prod_lap_01", headers=self.admin_headers)
         self.assertEqual(del_res.status_code, 200)
 
+    def test_tc15_sellers_and_rag(self):
+        """TC15 - Verified Sellers & RAG Semantic Vector Retrieval"""
+        # 1. Get all sellers
+        res_sellers = self.client.get("/api/sellers")
+        self.assertEqual(res_sellers.status_code, 200)
+        sellers = res_sellers.get_json()
+        self.assertTrue(len(sellers) >= 1)
+
+        # 2. Get RAG recommendation
+        rag_res = self.client.post("/api/catalog/rag", json={
+            "query": "high performance gaming gpu and mechanical keyboard",
+            "limit": 3
+        })
+        self.assertEqual(rag_res.status_code, 200)
+        rag_data = rag_res.get_json()
+        self.assertIn("rag_answer", rag_data)
+        self.assertIn("grounding_context", rag_data)
+        self.assertTrue(len(rag_data["retrieved_products"]) > 0)
+
     @classmethod
     def run_all_tests(cls):
         """Runs all tests and returns structured JSON results for presentation / UI"""
@@ -278,7 +297,8 @@ class DistributedCommerceTestSuite(unittest.TestCase):
             ("TC11", "Coupon Validation", "Valid coupon reduces order total atomically", "test_tc11_coupon_validation"),
             ("TC12", "Payment Link", "Payment process moves PENDING order to CONFIRMED", "test_tc12_payment_order_acid_link"),
             ("TC13", "Address Validation", "Manage shipping profiles in relational core", "test_tc13_address_validation"),
-            ("TC14", "Wishlist & Admin Superuser", "Admin access to wishlist with zero permission errors", "test_tc14_wishlist_admin_access")
+            ("TC14", "Wishlist & Admin Superuser", "Admin access to wishlist with zero permission errors", "test_tc14_wishlist_admin_access"),
+            ("TC15", "Sellers & RAG Search", "Verified seller directory and RAG vector recommendation", "test_tc15_sellers_and_rag")
         ]
 
         test_results = []

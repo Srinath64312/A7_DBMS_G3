@@ -101,6 +101,7 @@
                         <option value="CUSTOMER">Customer (Hardware Procurement)</option>
                         <option value="WAREHOUSE_MANAGER">Warehouse Manager (Inventory Restock)</option>
                         <option value="ADMIN">System Administrator (Full RBAC)</option>
+                        <option value="SELLER">Marketplace Seller / Vendor Partner</option>
                     </select>
                 </div>
 
@@ -139,7 +140,7 @@
                     <span class="text-[11px] font-bold text-[#565959] uppercase tracking-wider">Evaluation Demo Login</span>
                     <span class="text-[10px] text-[#007600] font-bold font-mono">1-Click</span>
                 </div>
-                <div class="grid grid-cols-3 gap-1.5">
+                <div class="grid grid-cols-4 gap-1.5">
                     <button type="button" onclick="quickLoginRole('CUSTOMER')" class="border border-[#d5d9d9] hover:border-[#e77600] hover:bg-[#fff9f3] p-1.5 rounded text-left transition flex flex-col">
                         <span class="text-[9px] font-bold text-[#007600] uppercase">Customer</span>
                         <span class="text-xs font-semibold text-[#0f1111] truncate">Abhinay</span>
@@ -147,6 +148,10 @@
                     <button type="button" onclick="quickLoginRole('WAREHOUSE_MANAGER')" class="border border-[#d5d9d9] hover:border-[#e77600] hover:bg-[#fff9f3] p-1.5 rounded text-left transition flex flex-col">
                         <span class="text-[9px] font-bold text-[#e47911] uppercase">Manager</span>
                         <span class="text-xs font-semibold text-[#0f1111] truncate">Poli Naidu</span>
+                    </button>
+                    <button type="button" onclick="quickLoginRole('SELLER')" class="border border-[#d5d9d9] hover:border-[#e77600] hover:bg-[#fff9f3] p-1.5 rounded text-left transition flex flex-col">
+                        <span class="text-[9px] font-bold text-[#7c3aed] uppercase">Seller</span>
+                        <span class="text-xs font-semibold text-[#0f1111] truncate">Apex Vendor</span>
                     </button>
                     <button type="button" onclick="quickLoginRole('ADMIN')" class="border border-[#d5d9d9] hover:border-[#e77600] hover:bg-[#fff9f3] p-1.5 rounded text-left transition flex flex-col">
                         <span class="text-[9px] font-bold text-[#b12704] uppercase">Admin</span>

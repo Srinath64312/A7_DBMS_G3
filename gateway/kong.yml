@@ -1,0 +1,114 @@
+_format_version: "3.0"
+
+# ==============================================================================
+# KONG API GATEWAY DECLARATIVE CONFIGURATION
+# Course: 25CS1302E - DBS-DBD (Department of CSE, KL University)
+# Distributed Commerce Platform: Unified API Gateway & Microservices Routing
+# ==============================================================================
+
+services:
+  # 1. Identity & RBAC Service (Port 5001)
+  - name: identity-service
+    url: http://identity-service:5001
+    routes:
+      - name: auth-routes
+        paths:
+          - /api/auth
+          - /token
+          - /register
+          - /login
+          - /profile
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 60
+          policy: local
+
+  # 2. Product Catalog & Semantic Search Service (Port 5002)
+  - name: catalog-service
+    url: http://catalog-service:5002
+    routes:
+      - name: catalog-routes
+        paths:
+          - /api/products
+          - /api/categories
+          - /api/catalog
+          - /products
+        strip_path: false
+    plugins:
+      - name: proxy-cache
+        config:
+          content_type:
+            - "application/json; charset=utf-8"
+          cache_ttl: 300
+          strategy: memory
+
+  # 3. Distributed Inventory & Warehousing Service (Spring Boot / Python - Port 5003 / 8080)
+  - name: inventory-service
+    url: http://inventory-service:5003
+    routes:
+      - name: inventory-routes
+        paths:
+          - /api/inventory
+          - /api/warehouses
+        strip_path: false
+
+  # 4. ACID Order & Payment Saga Service (Port 5004)
+  - name: order-service
+    url: http://order-service:5004
+    routes:
+      - name: order-routes
+        paths:
+          - /api/orders
+          - /api/payments
+          - /api/coupons
+          - /api/wishlist
+        strip_path: false
+
+  # 5. Verified Sellers & Marketplace Service
+  - name: seller-service
+    url: http://backend-app:5000
+    routes:
+      - name: seller-routes
+        paths:
+          - /api/sellers
+        strip_path: false
+
+  # 6. Standalone FastAPI RBAC Microservice (Port 8000)
+  - name: fastapi-rbac-service
+    url: http://fastapi-service:8000
+    routes:
+      - name: fastapi-rbac-routes
+        paths:
+          - /fastapi
+          - /docs
+        strip_path: false
+
+plugins:
+  # Global CORS configuration across all downstream microservices
+  - name: cors
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - X-Total-Count
+      credentials: true
+      max_age: 3600
+
+  # Global Prometheus telemetry metrics for distributed monitoring
+  - name: prometheus

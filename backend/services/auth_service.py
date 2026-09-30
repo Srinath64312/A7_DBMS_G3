@@ -112,8 +112,8 @@ def register_user(name: str, email: str, password: str, role: str = "CUSTOMER") 
         raise ValueError("Name, email, and password are required.")
 
     role = role.upper()
-    if role not in ["CUSTOMER", "ADMIN", "WAREHOUSE_MANAGER"]:
-        raise ValueError("Invalid role. Must be CUSTOMER, ADMIN, or WAREHOUSE_MANAGER.")
+    if role not in ["CUSTOMER", "ADMIN", "WAREHOUSE_MANAGER", "SELLER"]:
+        raise ValueError("Invalid role. Must be CUSTOMER, ADMIN, WAREHOUSE_MANAGER, or SELLER.")
 
     existing = postgres_db.query_one("SELECT user_id FROM users WHERE email = %s", (email.strip().lower(),))
     if existing:

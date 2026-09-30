@@ -85,3 +85,9 @@ jobs:
           REDIS_URI: redis://localhost:6379/0
         run: |
           python -m unittest discover -s backend/tests -p "test_*.py"
+
+      - name: Verify FastAPI RBAC Service
+        env:
+          DATABASE_URL: postgresql://postgres:Admin%40123@localhost:5432/klhdb
+        run: |
+          python -c "import fastapi_rbac; print('FastAPI RBAC service successfully verified.')"

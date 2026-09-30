@@ -181,6 +181,8 @@ def init_db():
         logger.info(" PostgreSQL (klhdb) schema initialized successfully.")
     else:
         sqlite_schema = """
+        DROP TABLE IF EXISTS sellers;
+        DROP TABLE IF EXISTS user_wishlists;
         DROP TABLE IF EXISTS shipping_details;
         DROP TABLE IF EXISTS payments;
         DROP TABLE IF EXISTS user_addresses;
@@ -200,7 +202,7 @@ def init_db():
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
-            role TEXT NOT NULL DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'ADMIN', 'WAREHOUSE_MANAGER')),
+            role TEXT NOT NULL DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'ADMIN', 'WAREHOUSE_MANAGER', 'SELLER')),
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
 
@@ -326,6 +328,27 @@ def init_db():
             expiry_date DATETIME NOT NULL,
             usage_limit INTEGER NOT NULL DEFAULT 100,
             times_used INTEGER NOT NULL DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE user_wishlists (
+            wishlist_id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+            product_id TEXT NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, product_id)
+        );
+
+        CREATE TABLE sellers (
+            seller_id TEXT PRIMARY KEY,
+            user_id TEXT REFERENCES users(user_id) ON DELETE CASCADE,
+            company_name TEXT NOT NULL,
+            contact_email TEXT NOT NULL,
+            contact_phone TEXT,
+            gstin TEXT UNIQUE,
+            city TEXT,
+            rating REAL DEFAULT 4.80,
+            is_verified INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
         """

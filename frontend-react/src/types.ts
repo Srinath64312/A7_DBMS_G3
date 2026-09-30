@@ -1,4 +1,4 @@
-export type Role = 'CUSTOMER' | 'WAREHOUSE_MANAGER' | 'ADMIN';
+export type Role = 'CUSTOMER' | 'WAREHOUSE_MANAGER' | 'ADMIN' | 'SELLER';
 
 export interface User {
   user_id: string;
@@ -7,6 +7,19 @@ export interface User {
   role: Role;
   token?: string;
   access_token?: string;
+}
+
+export interface Seller {
+  seller_id: string;
+  user_id?: string;
+  company_name: string;
+  contact_email: string;
+  contact_phone?: string;
+  gstin?: string;
+  city?: string;
+  rating?: number;
+  is_verified?: boolean;
+  created_at?: string;
 }
 
 export interface Category {

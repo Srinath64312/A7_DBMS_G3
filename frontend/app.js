@@ -33,6 +33,7 @@ let selectedReviewRating = 5;
 const DEMO_USERS = {
     CUSTOMER: { email: "abhinay@klh.edu.in", password: "Customer@123", name: "Abhinay Sai" },
     WAREHOUSE_MANAGER: { email: "manager@commerce.kluniversity.in", password: "Manager@123", name: "Poli Naidu" },
+    SELLER: { email: "seller@commerce.kluniversity.in", password: "Seller@123", name: "Apex Hardware Seller" },
     ADMIN: { email: "admin@commerce.kluniversity.in", password: "Admin@123", name: "Admin Srinath" }
 };
 

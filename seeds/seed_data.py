@@ -30,6 +30,7 @@ def seed_database():
     users_data = [
         ("usr_admin_01", "Admin Srinath", "admin@commerce.kluniversity.in", "Admin@123", "ADMIN"),
         ("usr_mgr_01", "Manager Poli Naidu", "manager@commerce.kluniversity.in", "Manager@123", "WAREHOUSE_MANAGER"),
+        ("usr_seller_01", "Apex Hardware Seller", "seller@commerce.kluniversity.in", "Seller@123", "SELLER"),
         ("usr_cust_01", "Abhinay Sai", "abhinay@klh.edu.in", "Customer@123", "CUSTOMER"),
         ("usr_cust_02", "Chandu K", "chandu@klh.edu.in", "Customer@123", "CUSTOMER")
     ]
@@ -40,7 +41,23 @@ def seed_database():
             "ON CONFLICT (user_id) DO NOTHING",
             (uid, name, email, pw_hash, role)
         )
-    logger.info("✅ Seeded 4 Users.")
+    logger.info("✅ Seeded 5 Users across all 4 Roles (Admin, Manager, Seller, Customer).")
+
+    # 1.5 Seed Verified Sellers
+    sellers_data = [
+        ("sel_01", "usr_seller_01", "Apex High-Performance Computing Ltd", "seller@commerce.kluniversity.in", "+91 98480 11223", "36AABCA1234D1ZM", "Hyderabad", 4.95, True),
+        ("sel_02", "usr_admin_01", "NexCommerce Direct Hardware & Peripherals", "admin@commerce.kluniversity.in", "+91 98480 99887", "36AABCN5678E2ZN", "Bangalore", 4.98, True),
+        ("sel_03", None, "QuantumSilicon Technologies", "supply@quantumsilicon.io", "+91 80234 56789", "29AAACQ4321F1ZP", "Bangalore", 4.88, True),
+        ("sel_04", None, "ElectroCraft Components & IoT", "contact@electrocraft.in", "+91 22678 90123", "27AABCE9876G1ZR", "Mumbai", 4.79, True),
+        ("sel_05", None, "DailyEssentials & Workspace Goods", "support@dailygoods.co", "+91 11456 78901", "07AABCD8765H1ZS", "Delhi NCR", 4.85, True)
+    ]
+    for sid, uid, cname, email, phone, gstin, city, rating, is_v in sellers_data:
+        postgres_db.execute(
+            "INSERT INTO sellers (seller_id, user_id, company_name, contact_email, contact_phone, gstin, city, rating, is_verified) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (seller_id) DO NOTHING",
+            (sid, uid, cname, email, phone, gstin, city, rating, is_v)
+        )
+    logger.info("✅ Seeded 5 Verified Sellers.")
 
     # 2. Seed User Addresses
     addresses_data = [

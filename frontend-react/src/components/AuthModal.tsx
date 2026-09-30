@@ -10,7 +10,8 @@ interface AuthModalProps {
 const DEMO_USERS = {
   CUSTOMER: { email: 'abhinay@klh.edu.in', password: 'Customer@123', name: 'Abhinay Sai', role: 'CUSTOMER' as Role },
   WAREHOUSE_MANAGER: { email: 'manager@commerce.kluniversity.in', password: 'Manager@123', name: 'Poli Naidu', role: 'WAREHOUSE_MANAGER' as Role },
-  ADMIN: { email: 'admin@commerce.kluniversity.in', password: 'Admin@123', name: 'Admin Srinath', role: 'ADMIN' as Role }
+  ADMIN: { email: 'admin@commerce.kluniversity.in', password: 'Admin@123', name: 'Admin Srinath', role: 'ADMIN' as Role },
+  SELLER: { email: 'seller@commerce.kluniversity.in', password: 'Seller@123', name: 'Apex Hardware Seller', role: 'SELLER' as Role }
 };
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -257,6 +258,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <option value="CUSTOMER">Customer / Shopper</option>
                 <option value="WAREHOUSE_MANAGER">Warehouse Manager</option>
                 <option value="ADMIN">System Administrator</option>
+                <option value="SELLER">Marketplace Seller / Vendor</option>
               </select>
             </div>
           )}
@@ -273,9 +275,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* 1-Click Demo Logins for Presentations */}
         <div className="pt-3 border-t border-gray-200 dark:border-slate-800 space-y-2">
           <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">
-            1-Click Presentation Access:
+            1-Click Presentation Access (All 4 Enterprise Roles):
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             <button
               type="button"
               onClick={() => handleDemoLogin('CUSTOMER')}
@@ -291,6 +293,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               title="Manager Login"
             >
               <i className="fa-solid fa-boxes-stacked text-amber-500"></i> Manager
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('SELLER')}
+              className="a-button a-button-subtle text-[11px] py-1.5 px-1 font-bold truncate dark:bg-slate-800 dark:border-slate-700"
+              title="Seller Login"
+            >
+              <i className="fa-solid fa-store text-purple-500"></i> Seller
             </button>
             <button
               type="button"
