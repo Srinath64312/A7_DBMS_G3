@@ -130,7 +130,9 @@ Distributed_Commerce_Platform/
 
 ---
 
-## 📑 Review Documentation Links
+## 📑 Platform Documentation & Architecture
+- **[FEATURES_AND_TECHNOLOGIES.md](FEATURES_AND_TECHNOLOGIES.md)**: Complete feature matrix, polyglot persistence architecture, security PIN protocol, and test cases.
 - **[PROJECT_REPORT.md](docs/PROJECT_REPORT.md)**: Full project report with ER diagram, schema definitions, and ACID analysis.
 - **[REVIEW_1_SUMMARY.md](docs/REVIEW_1_SUMMARY.md)**: Presentation notes mapped to the Review-1 detailed template.
 - **[REVIEW_2_SUMMARY.md](docs/REVIEW_2_SUMMARY.md)**: Literature review matrix, gap analysis table, and proposed novelty.
+

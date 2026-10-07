@@ -97,12 +97,27 @@
 
                 <div id="registerRoleGroup" class="hidden space-y-1">
                     <label class="text-xs font-bold text-[#0f1111] block">Account Role</label>
-                    <select id="authRoleInput" class="w-full border border-[#888c8c] rounded-[3px] px-2.5 py-1.5 text-xs bg-white text-[#0f1111]">
+                    <select id="authRoleInput" onchange="handleRegisterRoleChange()" class="w-full border border-[#888c8c] rounded-[3px] px-2.5 py-1.5 text-xs bg-white text-[#0f1111]">
                         <option value="CUSTOMER">Customer (Hardware Procurement)</option>
                         <option value="WAREHOUSE_MANAGER">Warehouse Manager (Inventory Restock)</option>
                         <option value="ADMIN">System Administrator (Full RBAC)</option>
                         <option value="SELLER">Marketplace Seller / Vendor Partner</option>
                     </select>
+                </div>
+
+                <!-- Admin Security PIN Group for Elevated Roles -->
+                <div id="registerAdminPinGroup" class="hidden space-y-1 bg-amber-50/70 border border-amber-200 rounded p-2.5">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold text-[#0f1111] flex items-center gap-1.5">
+                            <i class="fa-solid fa-key text-[#e47911]"></i>
+                            <span>Special Admin PIN <span class="text-rose-600">*</span></span>
+                        </label>
+                        <button type="button" onclick="setDemoAdminPin()" class="text-[10px] text-[#007185] hover:underline font-semibold bg-white px-1.5 py-0.5 rounded border border-amber-300">
+                            🔑 Auto-Fill: 7788
+                        </button>
+                    </div>
+                    <input type="password" id="authAdminPinInput" placeholder="Enter 4-digit Master Admin PIN (e.g. 7788)" class="w-full border border-[#888c8c] focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] rounded-[3px] px-2.5 py-1.5 text-xs text-[#0f1111] outline-none font-mono bg-white">
+                    <p class="text-[10px] text-[#565959]">Required to authorize Administrator or Warehouse Manager account creation.</p>
                 </div>
 
                 <div id="authErrorMsg" class="hidden p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-xs"></div>
@@ -664,38 +679,264 @@
             </div>
 
             <!-- ----------------------------------------------------------------- -->
-            <!-- TAB 4: DATABASE AUDIT & DISTRIBUTED LOCKS                         -->
+            <!-- TAB 4: POLYGLOT DATABASE COMMAND CENTER & LIVE INSPECTOR          -->
             <!-- ----------------------------------------------------------------- -->
             <div id="view-db-inspector" class="tab-view hidden space-y-5">
                 
-                <div class="bg-white border border-[#d5d9d9] rounded p-5 flex flex-wrap items-center justify-between gap-4">
+                <!-- Main Header & Action Center -->
+                <div class="bg-white border border-[#d5d9d9] rounded p-5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
                     <div>
-                        <h2 class="text-lg font-bold text-[#0f1111]">Database Transaction Audit Log & Lock Inspector</h2>
-                        <p class="text-xs text-[#565959]">Chronological audit trail of all ACID transactions recorded in PostgreSQL.</p>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="bg-[#232f3e] text-[#febd69] font-black text-[10px] uppercase px-2 py-0.5 rounded tracking-wider">3-Tier Polyglot Persistence</span>
+                            <h2 class="text-xl font-bold text-[#0f1111]">Polyglot Database Command Center & Real-Time Inspector</h2>
+                        </div>
+                        <p class="text-xs text-[#565959]">Live inspection and 3-way synchronization across PostgreSQL (Relational ACID), MongoDB (Polymorphic Catalog), and Redis (Distributed Cache & Locks).</p>
                     </div>
-                    <button onclick="loadAuditLogs()" class="a-button a-button-subtle text-xs py-1.5">
-                        <i class="fa-solid fa-arrows-rotate"></i> Refresh Logs
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="verifyPolyglotBtn" onclick="runPolyglotVerification()" class="a-button a-button-secondary text-xs font-bold py-1.5 px-3 flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-microchip text-[#007600]"></i> Verify 3-Way Polyglot Sync
+                        </button>
+                        <button onclick="flushRedisCache()" class="a-button a-button-subtle text-xs py-1.5 px-3 flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can text-rose-600"></i> Flush Redis Cache
+                        </button>
+                        <button onclick="loadPolyglotInspector()" class="a-button a-button-primary text-xs font-bold py-1.5 px-3 flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 Top-Tier Database Live Status Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- Card 1: PostgreSQL 16 -->
+                    <div class="bg-white border border-[#d5d9d9] rounded-lg p-4 space-y-3 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-md bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-sm">
+                                    <i class="fa-solid fa-database"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#0f1111]">PostgreSQL 16</h3>
+                                    <span class="text-[10px] text-[#565959]">Relational System-of-Record</span>
+                                </div>
+                            </div>
+                            <span id="pgStatusBadge" class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Strict ACID
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-[#f0f2f2]">
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Total Relational Rows</span>
+                                <span id="pgTotalRows" class="text-base font-bold font-mono text-[#0f1111]">--</span>
+                            </div>
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Query Latency</span>
+                                <span id="pgLatency" class="text-base font-bold font-mono text-[#007600]">-- ms</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-[#565959] flex items-center justify-between">
+                            <span>Database: <b id="pgDbName" class="font-mono text-[#0f1111]">klhdb</b></span>
+                            <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check"></i> Two-Phase Locking</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: MongoDB 7.0 -->
+                    <div class="bg-white border border-[#d5d9d9] rounded-lg p-4 space-y-3 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-md bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 font-bold text-sm">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#0f1111]">MongoDB 7.0</h3>
+                                    <span class="text-[10px] text-[#565959]">Polymorphic Catalog & Reviews</span>
+                                </div>
+                            </div>
+                            <span id="mongoStatusBadge" class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Schema-Free
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-[#f0f2f2]">
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Catalog Documents</span>
+                                <span id="mongoTotalDocs" class="text-base font-bold font-mono text-[#0f1111]">--</span>
+                            </div>
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Doc Query Latency</span>
+                                <span id="mongoLatency" class="text-base font-bold font-mono text-[#007600]">-- ms</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-[#565959] flex items-center justify-between">
+                            <span>Database: <b id="mongoDbName" class="font-mono text-[#0f1111]">distributed_commerce_db</b></span>
+                            <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check"></i> Dynamic BSON Specs</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Redis 7.2 -->
+                    <div class="bg-white border border-[#d5d9d9] rounded-lg p-4 space-y-3 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-md bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 font-bold text-sm">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#0f1111]">Redis 7.2</h3>
+                                    <span class="text-[10px] text-[#565959]">Cache & Distributed Lock Manager</span>
+                                </div>
+                            </div>
+                            <span id="redisStatusBadge" class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sub-ms Cache
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-[#f0f2f2]">
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Cached Keys / Locks</span>
+                                <span id="redisKeysAndLocks" class="text-base font-bold font-mono text-[#0f1111]">--</span>
+                            </div>
+                            <div class="bg-[#f7fafa] p-2 rounded border border-[#e5eded]">
+                                <span class="text-[10px] text-[#565959] block">Cache Hit Rate</span>
+                                <span id="redisHitRate" class="text-base font-bold font-mono text-[#007600]">--%</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-[#565959] flex items-center justify-between">
+                            <span>Protocol: <b id="redisProtocol" class="font-mono text-[#0f1111]">SETNX / TTL</b></span>
+                            <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check"></i> Atomic Mutex</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Polyglot Verification Results Banner (Revealed on 1-Click Verification) -->
+                <div id="polyglotVerificationBanner" class="hidden bg-white border border-[#d5d9d9] rounded-lg p-4 space-y-3 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-[#e7e7e7] pb-2">
+                        <div class="flex items-center gap-2">
+                            <i id="polyglotVerifyIcon" class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+                            <h3 id="polyglotVerifyTitle" class="text-sm font-bold text-[#0f1111]">Polyglot Integrity Report</h3>
+                        </div>
+                        <span id="polyglotVerifyTime" class="text-xs text-[#565959] font-mono">--</span>
+                    </div>
+                    <div id="polyglotVerifySteps" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Sub-Navigation Switcher for Database Inspection Views -->
+                <div class="bg-white border border-[#d5d9d9] rounded-lg p-2 flex flex-wrap gap-2 text-xs font-semibold">
+                    <button type="button" onclick="switchInspectorView('postgres')" id="inspBtn-postgres" class="px-3.5 py-1.5 rounded text-white bg-[#131921] transition">
+                        <i class="fa-solid fa-database text-blue-400 mr-1"></i> PostgreSQL Relational Tables
+                    </button>
+                    <button type="button" onclick="switchInspectorView('mongodb')" id="inspBtn-mongodb" class="px-3.5 py-1.5 rounded text-[#565959] hover:text-[#0f1111] hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-leaf text-emerald-500 mr-1"></i> MongoDB Polymorphic Docs
+                    </button>
+                    <button type="button" onclick="switchInspectorView('redis')" id="inspBtn-redis" class="px-3.5 py-1.5 rounded text-[#565959] hover:text-[#0f1111] hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-bolt text-rose-500 mr-1"></i> Redis Keys & Active Locks
+                    </button>
+                    <button type="button" onclick="switchInspectorView('audit')" id="inspBtn-audit" class="px-3.5 py-1.5 rounded text-[#565959] hover:text-[#0f1111] hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-500 mr-1"></i> ACID Transaction Ledger
                     </button>
                 </div>
 
-                <div class="bg-white border border-[#d5d9d9] rounded overflow-hidden shadow-sm">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-[#f0f2f2] text-[#0f1111] font-bold border-b border-[#d5d9d9]">
-                                <tr>
-                                    <th class="p-3">Txn ID</th>
-                                    <th class="p-3">Timestamp</th>
-                                    <th class="p-3">Product Name</th>
-                                    <th class="p-3">Warehouse</th>
-                                    <th class="p-3">Type</th>
-                                    <th class="p-3 text-center">Delta</th>
-                                    <th class="p-3">Audit Note / Performed By</th>
-                                </tr>
-                            </thead>
-                            <tbody id="auditTableBody" class="divide-y divide-[#e7e7e7]">
+                <!-- VIEW A: POSTGRESQL TABLES INSPECTOR -->
+                <div id="inspPanel-postgres" class="space-y-4">
+                    <div class="bg-white border border-[#d5d9d9] rounded p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-[#0f1111]">Select Relational Table:</span>
+                            <select id="pgTableSelect" onchange="renderPgSelectedTable()" class="border border-[#888c8c] rounded p-1.5 text-xs bg-white text-[#0f1111] font-mono">
+                                <option value="users">users (User Accounts & Hashed Credentials)</option>
+                                <option value="products">products (Core Product Inventory Headers)</option>
+                                <option value="inventory_items">inventory_items (Multi-Warehouse Stock Balances)</option>
+                                <option value="orders">orders (ACID Order Transactions)</option>
+                                <option value="order_items">order_items (Order Line Items)</option>
+                                <option value="payments">payments (Transaction Gateways)</option>
+                                <option value="addresses">addresses (Customer Delivery Addresses)</option>
+                                <option value="sellers">sellers (Marketplace Verified Sellers)</option>
+                                <option value="carts">carts (Active Shopping Carts)</option>
+                            </select>
+                        </div>
+                        <span id="pgTableCountBadge" class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-mono font-bold">-- records</span>
+                    </div>
+
+                    <div class="bg-white border border-[#d5d9d9] rounded overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead id="pgDynamicThead" class="bg-[#f0f2f2] text-[#0f1111] font-bold border-b border-[#d5d9d9]">
+                                    <!-- Dynamic -->
+                                </thead>
+                                <tbody id="pgDynamicTbody" class="divide-y divide-[#e7e7e7] font-sans">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW B: MONGODB POLYMORPHIC CATALOG INSPECTOR -->
+                <div id="inspPanel-mongodb" class="space-y-4 hidden">
+                    <div class="bg-white border border-[#d5d9d9] rounded p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <span class="font-bold text-[#0f1111]">MongoDB Dynamic BSON Specifications & Reviews:</span>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="mongoDocSearchInput" onkeyup="filterMongoDocs()" placeholder="Search polymorphic specs..." class="border border-[#888c8c] rounded p-1.5 text-xs">
+                        </div>
+                    </div>
+
+                    <div id="mongoDocsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Populated dynamically with JSON spec views -->
+                    </div>
+                </div>
+
+                <!-- VIEW C: REDIS KEYS & ACTIVE LOCKS INSPECTOR -->
+                <div id="inspPanel-redis" class="space-y-4 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Left: Cached Keys with TTL -->
+                        <div class="bg-white border border-[#d5d9d9] rounded p-4 space-y-3 shadow-sm">
+                            <div class="flex items-center justify-between border-b border-[#e7e7e7] pb-2">
+                                <div class="flex items-center gap-1.5 font-bold text-xs text-[#0f1111]">
+                                    <i class="fa-solid fa-key text-rose-500"></i> Cached Key-Value Store (Storefront Cache)
+                                </div>
+                                <span id="redisKeyCountLabel" class="text-[10px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-mono">0 keys</span>
+                            </div>
+                            <div id="redisKeysList" class="space-y-2 max-h-[350px] overflow-y-auto text-xs font-mono">
                                 <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+
+                        <!-- Right: Active Reservation Locks -->
+                        <div class="bg-white border border-[#d5d9d9] rounded p-4 space-y-3 shadow-sm">
+                            <div class="flex items-center justify-between border-b border-[#e7e7e7] pb-2">
+                                <div class="flex items-center gap-1.5 font-bold text-xs text-[#0f1111]">
+                                    <i class="fa-solid fa-lock text-amber-500"></i> Active Stock Reservation Locks (10m TTL)
+                                </div>
+                                <span id="redisLockCountLabel" class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono">0 locks</span>
+                            </div>
+                            <div id="redisLocksList" class="space-y-2 max-h-[350px] overflow-y-auto text-xs">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW D: ACID TRANSACTION AUDIT LEDGER -->
+                <div id="inspPanel-audit" class="space-y-4 hidden">
+                    <div class="bg-white border border-[#d5d9d9] rounded overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-[#f0f2f2] text-[#0f1111] font-bold border-b border-[#d5d9d9]">
+                                    <tr>
+                                        <th class="p-3">Txn ID</th>
+                                        <th class="p-3">Timestamp</th>
+                                        <th class="p-3">Product Name</th>
+                                        <th class="p-3">Warehouse</th>
+                                        <th class="p-3">Type</th>
+                                        <th class="p-3 text-center">Delta</th>
+                                        <th class="p-3">Audit Note / Performed By</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditTableBody" class="divide-y divide-[#e7e7e7]">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -1560,11 +1801,19 @@
                     </div>
                     <div>
                         <label class="font-bold text-[#565959] block mb-1">Assigned Role</label>
-                        <select id="newUserRole" class="w-full border border-[#888c8c] rounded p-2 text-xs bg-white">
+                        <select id="newUserRole" onchange="handleAddUserRoleChange()" class="w-full border border-[#888c8c] rounded p-2 text-xs bg-white">
                             <option value="CUSTOMER">Customer</option>
                             <option value="WAREHOUSE_MANAGER">Warehouse Manager</option>
                             <option value="ADMIN">System Administrator</option>
                         </select>
+                    </div>
+
+                    <div id="addUserAdminPinGroup" class="hidden space-y-1 bg-amber-50/70 border border-amber-200 rounded p-2">
+                        <div class="flex items-center justify-between">
+                            <label class="font-bold text-[#0f1111] block">Admin Security PIN <span class="text-rose-600">*</span></label>
+                            <span onclick="document.getElementById('newUserAdminPin').value = '7788';" class="text-[10px] text-[#007185] hover:underline cursor-pointer">PIN: 7788</span>
+                        </div>
+                        <input type="password" id="newUserAdminPin" placeholder="Enter Master Admin PIN" class="w-full border border-[#888c8c] rounded p-2 text-xs font-mono bg-white">
                     </div>
 
                     <div id="addUserError" class="hidden p-2 rounded bg-rose-50 text-rose-700 text-xs"></div>

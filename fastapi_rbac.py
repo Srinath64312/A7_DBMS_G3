@@ -196,6 +196,7 @@ class UserRegister(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
     role: Optional[str] = "user"
+    admin_pin: Optional[str] = None
 
 
 import re
@@ -226,12 +227,14 @@ def register(
     username: Optional[str] = None,
     password: Optional[str] = None,
     role: str = "user",
+    admin_pin: Optional[str] = None,
     body: Optional[UserRegister] = None,
     db: Session = Depends(get_db)
 ):
     final_user = (body.username if body and body.username else username)
     final_pass = (body.password if body and body.password else password)
-    final_role = (body.role if body and body.role else role)
+    final_role = (body.role if body and body.role else role).lower()
+    final_pin = (body.admin_pin if body and body.admin_pin else admin_pin)
 
     if not final_user or not final_pass:
         raise HTTPException(
@@ -251,12 +254,20 @@ def register(
             detail="Username already exists"
         )
 
-    # user, admin role
-    if final_role not in ["admin", "user"]:
+    # user, admin, manager role
+    if final_role not in ["admin", "user", "manager", "warehouse_manager"]:
         raise HTTPException(
             status_code=400,
-            detail="Role must be admin or user"
+            detail="Role must be admin, manager, or user"
         )
+
+    # Master Admin Security PIN verification for elevated roles
+    if final_role in ["admin", "manager", "warehouse_manager"]:
+        if not final_pin or str(final_pin).strip() not in ["7788", "2026"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid Admin Security PIN. Master PIN 7788 is required to register as admin/manager."
+            )
 
     # Hash password
     hashed_password = hash_password(final_pass)

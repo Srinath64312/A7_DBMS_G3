@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend import config
 from backend.db import postgres_db, mongo_db, cache_manager
-from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service, academic_service, seller_service
+from backend.services import auth_service, catalog_service, inventory_service, order_service, intelligence_service, address_service, payment_service, shipping_service, review_service, coupon_service, rate_limiter, wishlist_service, academic_service, seller_service, polyglot_inspector_service
 from backend.services.rate_limiter import rate_limit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -788,6 +788,7 @@ def register():
     email = data.get("email") or (f"{data.get('username')}@commerce.kluniversity.in" if data.get("username") else None)
     password = data.get("password")
     raw_role = data.get("role", "CUSTOMER")
+    admin_pin = data.get("admin_pin") or data.get("pin") or data.get("security_pin")
     
     if raw_role.upper() in ["USER", "CUSTOMER"]:
         role = "CUSTOMER"
@@ -804,7 +805,7 @@ def register():
         return jsonify({"error": "Missing required fields: username/email and password"}), 400
 
     try:
-        user = auth_service.register_user(name, email, password, role)
+        user = auth_service.register_user(name, email, password, role, admin_pin=admin_pin)
         if role == "SELLER":
             company = data.get("company_name") or f"{name} Solutions"
             seller_service.register_seller(
@@ -826,6 +827,16 @@ def register():
     except Exception as e:
         logger.error(f"Registration error: {e}")
         return jsonify({"error": "Registration failed"}), 500
+
+@app.route("/api/auth/verify-admin-pin", methods=["POST"])
+def verify_admin_pin_endpoint():
+    """Verify master admin security PIN for elevated role authorizations"""
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    pin = data.get("admin_pin") or data.get("pin")
+    valid = auth_service.verify_admin_pin(pin)
+    if valid:
+        return jsonify({"valid": True, "message": "Master Admin PIN verified successfully."}), 200
+    return jsonify({"valid": False, "error": "Invalid Admin Security PIN. Authorized administrative credentials required."}), 403
 
 @app.route("/api/auth/login", methods=["POST"])
 @app.route("/login", methods=["POST"])
@@ -1337,12 +1348,38 @@ def get_intelligence_report():
     return jsonify(report), 200
 
 @app.route("/api/status/databases", methods=["GET"])
+@app.route("/api/db/polyglot-status", methods=["GET"])
+@app.route("/api/db/polyglot-inspector", methods=["GET"])
 def get_db_status():
-    return jsonify({
-        "relational_db": postgres_db.get_engine_status(),
-        "document_db": mongo_db.get_mongo_status(),
-        "cache_layer": cache_manager.get_cache_status()
-    }), 200
+    """
+    Returns real-time health, row counts, sample records, and cache metrics
+    across PostgreSQL (Relational), MongoDB (Document), and Redis (Cache/Locks).
+    """
+    try:
+        data = polyglot_inspector_service.get_polyglot_status()
+        return jsonify(data), 200
+    except Exception as e:
+        logger.error(f"Polyglot status inspection error: {e}")
+        return jsonify({
+            "relational_db": postgres_db.get_engine_status(),
+            "document_db": mongo_db.get_mongo_status(),
+            "cache_layer": cache_manager.get_cache_status(),
+            "error": str(e)
+        }), 200
+
+@app.route("/api/db/verify-all", methods=["POST"])
+def verify_all_databases():
+    """
+    Executes an active, multi-database transaction to verify data integrity
+    across PostgreSQL, MongoDB, and Redis with automated verification assertions.
+    """
+    try:
+        report = polyglot_inspector_service.verify_polyglot_integrity()
+        status_code = 200 if report.get("all_passed") else 500
+        return jsonify(report), status_code
+    except Exception as e:
+        logger.error(f"Polyglot verification error: {e}")
+        return jsonify({"all_passed": False, "error": str(e)}), 500
 
 # ==============================================================================
 # 08. User Profile & Address APIs

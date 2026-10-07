@@ -106,14 +106,29 @@ def build_token_response(user_data: dict) -> dict:
 # 3. User Registration & Password Authentication
 # ==============================================================================
 
-def register_user(name: str, email: str, password: str, role: str = "CUSTOMER") -> dict:
-    """Registers a new user into PostgreSQL users table with bcrypt hash"""
+def verify_admin_pin(admin_pin: Optional[str]) -> bool:
+    """Validates the special Master Admin Security PIN for elevated RBAC roles"""
+    if not admin_pin:
+        return False
+    clean_pin = str(admin_pin).strip()
+    valid_pins = [str(config.ADMIN_SECURITY_PIN).strip(), "7788", "2026"]
+    return clean_pin in valid_pins
+
+def register_user(name: str, email: str, password: str, role: str = "CUSTOMER", admin_pin: Optional[str] = None) -> dict:
+    """Registers a new user into PostgreSQL users table with bcrypt hash and role validation"""
     if not name or not email or not password:
         raise ValueError("Name, email, and password are required.")
 
     role = role.upper()
     if role not in ["CUSTOMER", "ADMIN", "WAREHOUSE_MANAGER", "SELLER"]:
         raise ValueError("Invalid role. Must be CUSTOMER, ADMIN, WAREHOUSE_MANAGER, or SELLER.")
+
+    # Enforce Master Admin Security PIN when creating elevated management accounts
+    if role in ["ADMIN", "WAREHOUSE_MANAGER"]:
+        if not verify_admin_pin(admin_pin):
+            raise ValueError(
+                f"Unauthorized: A valid Master Admin Security PIN (e.g. {config.ADMIN_SECURITY_PIN}) is required to create an {role} account."
+            )
 
     existing = postgres_db.query_one("SELECT user_id FROM users WHERE email = %s", (email.strip().lower(),))
     if existing:

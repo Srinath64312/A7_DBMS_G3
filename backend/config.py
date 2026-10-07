@@ -17,6 +17,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 JWT_SECRET = os.getenv("JWT_SECRET", "kl_university_dbs_dbd_secret_key_2026")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
+ADMIN_SECURITY_PIN = os.getenv("ADMIN_SECURITY_PIN", "7788")
 
 # PostgreSQL & SQLAlchemy Configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Admin%40123@localhost:5432/klhdb")
