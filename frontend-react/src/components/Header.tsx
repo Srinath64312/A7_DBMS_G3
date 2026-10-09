@@ -206,6 +206,16 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden xl:inline text-[11px]">API Docs</span>
           </a>
 
+          {/* Switch to Awwwards Obsidian Portal */}
+          <a
+            href="./awwwards.html"
+            className="amazon-nav-item hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-500/40 rounded px-2.5 py-1.5 hover:bg-emerald-900/60 hover:border-emerald-400 transition active:scale-95 shadow-sm"
+            title="Switch to Awwwards Obsidian Glassmorphism Portal"
+          >
+            <i className="fa-solid fa-cube text-emerald-400"></i>
+            <span className="hidden xl:inline text-[11px]">Awwwards UI</span>
+          </a>
+
           {/* 3-Mode Theme Selector (Light / Dark / Forest) */}
           <div className="flex items-center bg-black/40 border border-slate-700/60 rounded-lg p-0.5 shadow-inner">
             <button
