@@ -273,6 +273,15 @@ function handleAddUserRoleChange() {
   }
 }
 
+function handleAuthSubmit(e) {
+  if (e) e.preventDefault();
+  if (isRegisterMode) {
+    handleRegisterSubmit(e);
+  } else {
+    handleLoginSubmit(e);
+  }
+}
+
 async function handleLoginSubmit(e) {
   if (e) e.preventDefault();
   const errEl = document.getElementById('authErrorMsg');
