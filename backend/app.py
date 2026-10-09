@@ -23,23 +23,22 @@ from backend.services.rate_limiter import rate_limit
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("DistributedCommerceApp")
 
-# Static frontend folder (Vite React + TSX build prioritized, with classic fallback)
+# Static frontend folders
 frontend_base = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
 frontend_dist = os.path.join(frontend_base, "dist")
-frontend_dir = frontend_dist if os.path.exists(os.path.join(frontend_dist, "index.html")) else frontend_base
+frontend_dir = frontend_base
 app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
 CORS(app)
 swagger = Swagger(app)
 
 @app.route("/")
 def serve_root():
-    """Serves compiled React + TSX application if available, falling back to classic UI"""
-    if os.path.exists(os.path.join(frontend_dist, "index.html")):
-        return send_from_directory(frontend_dist, "index.html")
+    """Serves the modern Awwwards-inspired portal"""
     return send_from_directory(frontend_base, "index.html")
 
 @app.route("/react")
 def serve_react_app():
+    """Serves compiled React + TSX application if available"""
     if os.path.exists(os.path.join(frontend_dist, "index.html")):
         return send_from_directory(frontend_dist, "index.html")
     return send_from_directory(frontend_base, "index.html")

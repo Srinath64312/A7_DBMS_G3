@@ -531,6 +531,8 @@ function closeWishlistModal() {
 }
 function closePaymentGatewayModal() {
     document.getElementById("paymentGatewayModal")?.classList.add("hidden");
+    activeGatewayOrder = null;
+    activeGatewayItems = [];
     if (gatewayUpiInterval) clearInterval(gatewayUpiInterval);
 }
 function openRestockModal() { 
