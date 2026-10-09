@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CartItem, User, Address } from '../types';
 
 interface PaymentGatewayModalProps {
@@ -29,6 +29,23 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
   const [step, setStep] = useState<'PAY' | 'SUCCESS'>('PAY');
   const [confirmedOrderId, setConfirmedOrderId] = useState<string>('');
   const [trackingNumber, setTrackingNumber] = useState<string>('');
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep('PAY');
+      setErrorMsg(null);
+      setIsProcessing(false);
+      setConfirmedOrderId('');
+      setTrackingNumber('');
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setStep('PAY');
+    setErrorMsg(null);
+    setIsProcessing(false);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -222,7 +239,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 <h3 className="text-lg font-bold">NexCommerce Secure Payment Gateway</h3>
               </div>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="text-gray-500 hover:text-black dark:hover:text-white text-lg p-1"
               >
                 <i className="fa-solid fa-xmark"></i>
@@ -411,11 +428,20 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
               <div><span className="text-gray-500">Order ID:</span> <span className="font-bold text-gray-800 dark:text-slate-200">{confirmedOrderId}</span></div>
               <div><span className="text-gray-500">Status:</span> <span className="text-emerald-600 font-bold">CONFIRMED</span></div>
               <div><span className="text-gray-500">Tracking #:</span> <span className="text-sky-600 font-bold">{trackingNumber}</span></div>
-              <div><span className="text-gray-500">Fulfillment Hub:</span> Hyderabad Central Warehouse (wh_hyd_01)</div>
+              <div>
+                <span className="text-gray-500">Fulfillment Hub:</span>{' '}
+                {items[0]?.warehouse_id === 'wh_blr_01'
+                  ? 'Bangalore Logistics Center (wh_blr_01)'
+                  : items[0]?.warehouse_id === 'wh_mum_01'
+                  ? 'Mumbai Distribution Hub (wh_mum_01)'
+                  : items[0]?.warehouse_id === 'wh_del_01'
+                  ? 'Delhi National Hub (wh_del_01)'
+                  : 'Hyderabad Central Warehouse (wh_hyd_01)'}
+              </div>
             </div>
 
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="a-button a-button-primary px-6 py-2 text-xs font-bold"
             >
               Continue Shopping
