@@ -535,6 +535,100 @@ function closeRestockModal() { document.getElementById("restockModal")?.classLis
 function openAddUserModal() { document.getElementById("addUserModal")?.classList.remove("hidden"); }
 function closeAddUserModal() { document.getElementById("addUserModal")?.classList.add("hidden"); }
 
+// Spotlight Command Palette (Ctrl + K)
+function openCommandPalette() {
+    const modal = document.getElementById("commandPaletteModal");
+    const input = document.getElementById("cmdPaletteInput");
+    if (modal) {
+        modal.classList.remove("hidden");
+        if (input) {
+            input.value = "";
+            setTimeout(() => input.focus(), 50);
+        }
+        filterCommandPalette();
+    }
+}
+
+function closeCommandPalette() {
+    const modal = document.getElementById("commandPaletteModal");
+    if (modal) modal.classList.add("hidden");
+}
+
+function filterCommandPalette() {
+    const input = document.getElementById("cmdPaletteInput");
+    const container = document.getElementById("cmdPaletteResults");
+    if (!container) return;
+    
+    const query = (input?.value || "").toLowerCase().trim();
+    
+    const actions = [
+        { id: "nav-storefront", icon: "fa-store text-emerald-400", title: "Hardware Catalog", desc: "Browse high-performance enterprise tech hardware & accelerators", run: () => switchTab('storefront') },
+        { id: "nav-checkout-sim", icon: "fa-shield-halved text-blue-400", title: "2PC ACID Simulator", desc: "Interactive Two-Phase Distributed Commit with rollback injector", run: () => switchTab('checkout-sim') },
+        { id: "nav-warehouses", icon: "fa-warehouse text-amber-400", title: "Regional Hubs & Inventory", desc: "4 multi-region warehouses (BOM, DEL, BLR, HYD) live stock allocations", run: () => switchTab('warehouses') },
+        { id: "nav-db-inspector", icon: "fa-database text-purple-400", title: "Polyglot DB Inspector", desc: "Live table inspection: PostgreSQL 3NF, Mongo BSON, Redis Mutex", run: () => switchTab('db-inspector') },
+        { id: "nav-intelligence", icon: "fa-chart-line text-cyan-400", title: "Demand Intelligence", desc: "Vector similarity clustering, cosine distance & inventory forecasting", run: () => switchTab('intelligence') },
+        { id: "nav-test-runner", icon: "fa-vial-circle-check text-emerald-400", title: "Automated Test Suite (TC01-TC15)", desc: "15-point verification of ACID, BSON, Redis Mutex, and RBAC", run: () => switchTab('test-runner') },
+        { id: "nav-users-hub", icon: "fa-users-gear text-rose-400", title: "Users & Security RBAC", desc: "Manage platform accounts with Master PIN security verification", run: () => switchTab('users-hub') },
+        { id: "act-cart", icon: "fa-cart-shopping text-emerald-400", title: "Open Shopping Cart", desc: "View cart items and trigger distributed stock reservations", run: () => openCartModal() },
+        { id: "act-wishlist", icon: "fa-heart text-rose-400", title: "View Wishlist", desc: "Saved hardware items and procurement bookmarks", run: () => openWishlistModal() },
+        { id: "act-orders", icon: "fa-box text-blue-400", title: "Order Tracking Timeline", desc: "Inspect confirmed orders and status timeline", run: () => openOrdersModal() },
+        { id: "act-polyglot-verify", icon: "fa-microchip text-emerald-400", title: "Run Polyglot 3-Way Verification", desc: "Execute automated verification across Postgres, Mongo, and Redis", run: () => runPolyglotVerification() },
+        { id: "act-clear-cache", icon: "fa-broom text-amber-400", title: "Flush Redis In-Memory Cache", desc: "Purge cached catalog queries and force fresh SQL reads", run: () => flushRedisCache() },
+        { id: "act-theme", icon: "fa-moon text-slate-300", title: "Toggle Dark / Light Theme", desc: "Switch visual theme between Obsidian Dark and Light", run: () => toggleTheme() }
+    ];
+
+    let matches = actions.filter(a => a.title.toLowerCase().includes(query) || a.desc.toLowerCase().includes(query));
+    
+    // Also include matching products if query length >= 2
+    let productMatches = [];
+    if (query.length >= 2 && catalogProducts.length > 0) {
+        productMatches = catalogProducts
+            .filter(p => p.name.toLowerCase().includes(query) || (p.sku && p.sku.toLowerCase().includes(query)) || (p.category_name && p.category_name.toLowerCase().includes(query)))
+            .slice(0, 5)
+            .map(p => ({
+                id: `prod-${p.product_id}`,
+                icon: "fa-cube text-emerald-400",
+                title: `${p.name} ($${p.price.toFixed(2)})`,
+                desc: `Department: ${p.category_name || 'Hardware'} • SKU: ${p.sku || p.product_id}`,
+                run: () => { viewProductDetails(p.product_id); }
+            }));
+    }
+
+    const allMatches = [...matches, ...productMatches];
+
+    if (allMatches.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No matching actions or products found for "${query}"</div>`;
+        return;
+    }
+
+    container.innerHTML = allMatches.map((item) => `
+        <div onclick="executePaletteAction('${item.id}')" class="p-2.5 rounded-lg bg-slate-900/60 hover:bg-emerald-500/10 border border-slate-800/80 hover:border-emerald-500/40 cursor-pointer flex items-center justify-between transition group">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded bg-slate-800 flex items-center justify-center group-hover:scale-105 transition">
+                    <i class="fa-solid ${item.icon} text-xs"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-200 group-hover:text-emerald-300 transition">${item.title}</div>
+                    <div class="text-[10px] text-slate-400 line-clamp-1">${item.desc}</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-emerald-400 transition"></i>
+        </div>
+    `).join("");
+
+    window._paletteActionMap = {};
+    allMatches.forEach(item => {
+        window._paletteActionMap[item.id] = item.run;
+    });
+}
+
+function executePaletteAction(actionId) {
+    closeCommandPalette();
+    if (window._paletteActionMap && window._paletteActionMap[actionId]) {
+        window._paletteActionMap[actionId]();
+    }
+}
+
 // Keyboard Shortcuts
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeAllModals();
@@ -544,12 +638,12 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.ctrlKey && e.key === 'k') {
     e.preventDefault();
-    document.getElementById('mainSearchInput')?.focus();
+    openCommandPalette();
   }
 });
 
 function closeAllModals() {
-  ['addUserModal', 'productDetailModal', 'restockModal', 'ordersModal', 'wishlistModal', 'privacyModal', 'termsModal', 'paymentGatewayModal'].forEach(id => {
+  ['addUserModal', 'productDetailModal', 'restockModal', 'ordersModal', 'wishlistModal', 'privacyModal', 'termsModal', 'paymentGatewayModal', 'commandPaletteModal'].forEach(id => {
     document.getElementById(id)?.classList.add('hidden');
   });
   if (gatewayUpiInterval) clearInterval(gatewayUpiInterval);
@@ -610,7 +704,23 @@ async function fetchDbStatus() {
     try {
         const res = await fetch(`${API_BASE}/api/status/databases`);
         const data = await res.json();
-        console.log("Database Telemetry:", data);
+        
+        const pgLat = document.getElementById("hdrPgLat");
+        const mgLat = document.getElementById("hdrMgLat");
+        const rdLat = document.getElementById("hdrRdLat");
+        
+        if (data.databases) {
+            if (pgLat && data.databases.postgresql?.latency_ms !== undefined) {
+                pgLat.innerText = `${data.databases.postgresql.latency_ms.toFixed(2)}ms`;
+            }
+            if (mgLat && data.databases.mongodb?.latency_ms !== undefined) {
+                mgLat.innerText = `${data.databases.mongodb.latency_ms.toFixed(2)}ms`;
+            }
+            if (rdLat && data.databases.redis?.latency_ms !== undefined) {
+                rdLat.innerText = `${data.databases.redis.latency_ms.toFixed(2)}ms`;
+            }
+        }
+        return data;
     } catch (e) {
         console.error("DB Status check:", e);
     }
@@ -788,7 +898,10 @@ function renderProductGrid(products) {
     }
 
     if (!products.length) {
-        grid.innerHTML = `<div class="col-span-full py-16 text-center text-[#565959] text-xs bg-white rounded border border-[#d5d9d9]">No products found matching your search.</div>`;
+        grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 text-xs glass-card border border-slate-800 p-8">
+            <i class="fa-solid fa-magnifying-glass text-2xl text-slate-600 mb-2 block"></i>
+            No hardware products found matching your active filter criteria.
+        </div>`;
         return;
     }
     
@@ -802,80 +915,81 @@ function renderProductGrid(products) {
         const fraction = Math.round((p.price - whole) * 100).toString().padStart(2, '0');
         const listPrice = (p.price * 1.25).toFixed(2);
 
-        let stockText = `<span class="text-[11px] text-[#007600] font-bold">In Stock</span>`;
+        let stockBadge = `<span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">In Stock</span>`;
         if (p.total_stock !== undefined) {
             if (p.total_stock === 0) {
-                stockText = `<span class="text-[11px] text-[#b12704] font-bold">Currently unavailable.</span>`;
+                stockBadge = `<span class="text-[10px] font-mono font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">Out of Stock</span>`;
             } else if (p.total_stock < 10) {
-                stockText = `<span class="text-[11px] text-[#b12704] font-bold">Only ${p.total_stock} left in stock - order soon.</span>`;
+                stockBadge = `<span class="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">Only ${p.total_stock} Left</span>`;
             } else {
-                stockText = `<span class="text-[11px] text-[#007600] font-bold">In Stock (${p.total_stock} units)</span>`;
+                stockBadge = `<span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">${p.total_stock} Units</span>`;
             }
         }
 
         const reviewCount = (p.product_id.charCodeAt(p.product_id.length - 1) * 7) % 200 + 15;
 
+        // Build BSON attribute badges if present
+        let specPills = '';
+        if (p.attributes && typeof p.attributes === 'object') {
+            const keys = Object.keys(p.attributes).slice(0, 2);
+            specPills = keys.map(k => `<span class="text-[9px] font-mono text-slate-400 bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-800 truncate">${k}: ${p.attributes[k]}</span>`).join(" ");
+        }
+
         return `
-        <div class="amazon-product-card space-y-2.5">
-            <div class="space-y-2">
-                <!-- Image Container with Wishlist Heart -->
-                <div class="amazon-product-image-container cursor-pointer" onclick="viewProductDetails('${p.product_id}')">
-                    <img src="${img}" alt="${p.name}" loading="lazy" class="amazon-product-image">
-                    <button type="button" onclick="event.stopPropagation(); toggleWishlist({product_id:'${p.product_id}', name:'${p.name.replace(/'/g,"\\'")}', price:${p.price}})" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 hover:bg-white flex items-center justify-center border border-[#d5d9d9] shadow-sm transition" title="Save to Wishlist">
-                        <i class="fa-heart ${inWishlist ? 'fa-solid text-rose-500' : 'fa-regular text-gray-500'} text-xs"></i>
+        <div class="glass-card p-3.5 flex flex-col justify-between group space-y-3 relative overflow-hidden transition-all duration-300">
+            <div class="space-y-2.5">
+                <!-- Image Container with Wishlist Toggle -->
+                <div class="relative bg-slate-900/70 rounded-lg p-3 flex items-center justify-center border border-slate-800/80 overflow-hidden cursor-pointer" onclick="viewProductDetails('${p.product_id}')">
+                    <img src="${img}" alt="${p.name}" loading="lazy" class="h-36 object-contain transform group-hover:scale-105 transition-transform duration-300">
+                    
+                    <button type="button" onclick="event.stopPropagation(); toggleWishlist({product_id:'${p.product_id}', name:'${p.name.replace(/'/g,"\\'")}', price:${p.price}})" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-slate-900/90 hover:bg-slate-800 flex items-center justify-center border border-slate-700 shadow-md transition" title="Save to Wishlist">
+                        <i class="fa-heart ${inWishlist ? 'fa-solid text-rose-500' : 'fa-regular text-slate-400'} text-xs"></i>
                     </button>
-                    <span class="absolute bottom-1.5 left-1.5 a-badge-choice">
-                        <span class="a-badge-choice-highlight">Nex</span>Choice
+                    
+                    <span class="absolute bottom-2 left-2 text-[9px] font-mono font-black text-emerald-400 bg-emerald-500/20 backdrop-blur-sm px-1.5 py-0.5 rounded border border-emerald-500/40">
+                        ⚡ NexChoice
                     </span>
                 </div>
 
-                <!-- Product Title & Category -->
-                <div class="space-y-1 cursor-pointer" onclick="viewProductDetails('${p.product_id}')">
-                    <span class="text-[11px] text-[#007185] hover:underline font-semibold block">${p.category_name || 'Hardware'}</span>
-                    <h3 class="text-xs font-bold text-[#0f1111] hover:text-[#c7511f] line-clamp-2 leading-tight">${p.name}</h3>
-                    
-                    <!-- Amazon Stars -->
-                    <div class="flex items-center gap-1 text-[11px]">
-                        <span class="a-star-rating">★★★★☆</span>
-                        <span class="a-review-count">(${reviewCount})</span>
+                <!-- Product Details -->
+                <div class="space-y-1.5 cursor-pointer" onclick="viewProductDetails('${p.product_id}')">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-[10px] font-semibold text-emerald-400 font-mono truncate">${p.category_name || 'Enterprise Hardware'}</span>
+                        ${stockBadge}
                     </div>
 
-                    <div class="text-[10px] text-[#565959]">500+ bought in past month</div>
-                </div>
+                    <h3 class="text-xs font-bold text-slate-100 group-hover:text-emerald-300 line-clamp-2 leading-snug transition-colors">${p.name}</h3>
 
-                <!-- Price Block -->
-                <div class="pt-1">
-                    <div class="flex items-baseline gap-1">
-                        <span class="a-price">
-                            <span class="a-price-symbol">$</span><span class="a-price-whole">${whole}</span><span class="a-price-fraction">${fraction}</span>
-                        </span>
-                        <span class="text-[11px] text-[#565959] line-through ml-1">$${listPrice}</span>
+                    <!-- Star Rating & Review Count -->
+                    <div class="flex items-center gap-1 text-[10px] text-amber-400 font-mono">
+                        <span>★ 4.8</span>
+                        <span class="text-slate-500">(${reviewCount} reviews)</span>
                     </div>
 
-                    <!-- Prime Delivery Badge -->
-                    <div class="pt-0.5 flex items-center gap-1.5">
-                        <span class="prime-badge">prime</span>
-                        <span class="text-[11px] text-[#565959]">FREE delivery <span class="font-bold text-[#0f1111]">Tomorrow</span></span>
-                    </div>
+                    <!-- BSON dynamic specs -->
+                    ${specPills ? `<div class="flex flex-wrap gap-1 pt-0.5">${specPills}</div>` : ''}
 
-                    <div class="pt-0.5">
-                        ${stockText}
+                    <!-- Price Block -->
+                    <div class="pt-1.5 flex items-baseline gap-2">
+                        <div class="text-base font-black font-mono text-emerald-400 tracking-tight">$${whole}<span class="text-xs">.${fraction}</span></div>
+                        <span class="text-[10px] text-slate-500 line-through font-mono">$${listPrice}</span>
+                        <span class="text-[9px] text-emerald-500 font-bold ml-auto font-mono">FREE Exp. Ship</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Amazon Action Buttons -->
-            <div class="pt-2 border-t border-[#e7e7e7] space-y-1.5">
+            <!-- Action Buttons -->
+            <div class="pt-2 border-t border-slate-800/80 space-y-1.5">
                 <div class="grid grid-cols-2 gap-1.5">
-                    <button onclick="quickAddToCart('${p.product_id}')" class="a-button a-button-primary text-xs font-semibold py-1.5 text-center">
-                        Add to Cart
+                    <button onclick="quickAddToCart('${p.product_id}')" class="btn-modern btn-primary-glow text-xs py-1.5 text-center font-bold">
+                        <i class="fa-solid fa-cart-plus mr-1"></i> Add
                     </button>
-                    <button onclick="quickBuyNow('${p.product_id}')" class="a-button a-button-secondary text-xs font-semibold py-1.5 text-center">
-                        Buy Now
+                    <button onclick="quickBuyNow('${p.product_id}')" class="btn-modern btn-secondary-glow text-xs py-1.5 text-center font-bold">
+                        <i class="fa-solid fa-bolt mr-1"></i> Buy
                     </button>
                 </div>
-                <button onclick="viewProductDetails('${p.product_id}')" class="a-button a-button-subtle w-full text-xs py-1">
-                    Quick Specs
+                <button onclick="viewProductDetails('${p.product_id}')" class="btn-modern btn-glass w-full text-[11px] py-1 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-microchip mr-1 text-emerald-400"></i> Polyglot Specs
                 </button>
             </div>
         </div>

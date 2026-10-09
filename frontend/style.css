@@ -1,761 +1,289 @@
 /* =========================================================================
-   NEXCOMMERCE DESIGN SYSTEM - Inspired Directly by Amazon.com
+   NEXCOMMERCE DESIGN SYSTEM - Awwwards-Inspired Digital Commerce & Telemetry
    Enterprise Distributed Digital Commerce Platform
    Course: 25CS1302E - DBS-DBD (KL University)
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-    /* Amazon Signature Palette */
-    --amazon-nav-dark: #131921;
-    --amazon-nav-sub: #232f3e;
-    --amazon-nav-hover: #37475a;
-    --amazon-orange: #ff9900;
-    --amazon-orange-light: #febd69;
-    --amazon-orange-hover: #f3a847;
-    --amazon-orange-dark: #e47911;
+    /* Core Typography */
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 
-    /* Amazon Buttons */
-    --amazon-btn-primary: #ffd814;
-    --amazon-btn-primary-hover: #f7ca00;
-    --amazon-btn-primary-active: #f0b800;
-    --amazon-btn-primary-border: #fcd200;
-
-    --amazon-btn-secondary: #ffa41c;
-    --amazon-btn-secondary-hover: #fa8900;
-    --amazon-btn-secondary-active: #ee7e00;
-    --amazon-btn-secondary-border: #ff8f00;
-
-    --amazon-btn-subtle: #ffffff;
-    --amazon-btn-subtle-hover: #f7fafa;
-    --amazon-btn-subtle-border: #d5d9d9;
-
-    /* Typography & Surfaces */
-    --amazon-bg: #eaeded;
-    --amazon-card: #ffffff;
-    --amazon-border: #d5d9d9;
-    --amazon-border-subtle: #e7e7e7;
+    /* Awwwards Obsidian & Emerald Theme Palette */
+    --bg-base: #070d0a;
+    --bg-surface: #0d1712;
+    --bg-surface-elevated: #111f19;
+    --bg-glass: rgba(13, 23, 18, 0.75);
+    --bg-glass-card: rgba(17, 31, 25, 0.65);
     
-    --amazon-text-main: #0f1111;
-    --amazon-text-muted: #565959;
-    --amazon-text-link: #007185;
-    --amazon-text-link-hover: #c7511f;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-glass: rgba(16, 185, 129, 0.2);
+    --border-glass-hover: rgba(16, 185, 129, 0.45);
+    --border-glow: rgba(52, 211, 153, 0.5);
 
-    /* Status & Price Colors */
-    --amazon-price-red: #b12704;
-    --amazon-stock-green: #007600;
-    --amazon-prime-blue: #00a8e1;
-    --amazon-star-gold: #de7921;
-    --amazon-alert-red: #cc0c39;
+    --accent-emerald: #10b981;
+    --accent-emerald-light: #34d399;
+    --accent-emerald-glow: rgba(16, 185, 129, 0.35);
+    --accent-amber: #f59e0b;
+    --accent-amber-glow: rgba(245, 158, 11, 0.35);
+    --accent-rose: #f43f5e;
+    --accent-cyan: #06b6d4;
 
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
     /* Shadows */
-    --amazon-shadow-sm: 0 1px 2px rgba(15, 17, 17, 0.15);
-    --amazon-shadow-card: 0 2px 5px rgba(213, 217, 217, 0.5);
-    --amazon-shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.25);
-    --amazon-focus-glow: 0 0 0 3px rgba(228, 121, 17, 0.35);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.18);
+    --shadow-card-hover: 0 14px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.15);
 }
 
-/* Amazon Dark Console Mode (Redone High-Contrast OLED Theme) */
-body.dark-theme {
-    --amazon-bg: #0b0f19;
-    --amazon-card: #111827;
-    --amazon-border: #1e293b;
-    --amazon-border-subtle: #243248;
-    --amazon-text-main: #f8fafc;
-    --amazon-text-muted: #94a3b8;
-    --amazon-text-link: #38bdf8;
-    --amazon-text-link-hover: #febd69;
-    --amazon-shadow-card: 0 4px 14px rgba(0, 0, 0, 0.5);
-    --amazon-btn-subtle: #1e293b;
-    --amazon-btn-subtle-border: #334155;
-    --amazon-btn-subtle-hover: #334155;
-    background-color: #0b0f19;
-    color: #f8fafc;
+/* Light Theme Variables */
+body.light-theme {
+    --bg-base: #f1f5f3;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f8fafc;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --bg-glass-card: rgba(255, 255, 255, 0.95);
+    
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-glass: rgba(16, 185, 129, 0.3);
+    --border-glass-hover: rgba(16, 185, 129, 0.6);
+    --border-glow: rgba(16, 185, 129, 0.4);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.12);
 }
 
-body.dark-theme .bg-white {
-    background-color: #111827 !important;
-    color: #f8fafc !important;
-}
-
-body.dark-theme .bg-\[\#eaeded\] {
-    background-color: #0b0f19 !important;
-}
-
-body.dark-theme .bg-\[\#f0f2f2\] {
-    background-color: #1a2234 !important;
-    border-color: #283548 !important;
-}
-
-body.dark-theme .text-\[\#0f1111\] {
-    color: #f8fafc !important;
-}
-
-body.dark-theme .text-\[\#565959\] {
-    color: #94a3b8 !important;
-}
-
-body.dark-theme .border-\[\#d5d9d9\],
-body.dark-theme .border-\[\#e7e7e7\] {
-    border-color: #283548 !important;
-}
-
-body.dark-theme input,
-body.dark-theme select,
-body.dark-theme textarea {
-    background-color: #1a2234 !important;
-    color: #f8fafc !important;
-    border-color: #334155 !important;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Base resets & typography */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background-color: var(--amazon-bg);
-    color: var(--amazon-text-main);
-    line-height: 1.4;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--font-sans);
+    background-color: var(--bg-base);
+    color: var(--text-primary);
     min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Monospace font utility for SKU and Database IDs */
-.font-mono {
-    font-family: 'JetBrains Mono', Consolas, Menlo, Monaco, monospace;
+/* Subtle ambient gradient mesh */
+.ambient-glow-mesh {
+    background: 
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 35%),
+        radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--amazon-bg);
-}
-::-webkit-scrollbar-thumb {
-    background: #a2a6a6;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #6e7373;
+/* Glassmorphic Components */
+.glass-nav {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* =========================================================================
-   1. AMAZON TOP HEADER & NAVIGATION
-   ========================================================================= */
-
-.amazon-header-top {
-    background-color: var(--amazon-nav-dark);
-    color: #ffffff;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    gap: 8px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+.glass-card {
+    background: var(--bg-glass-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.amazon-nav-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5px 8px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: border-color 0.1s ease;
-    user-select: none;
-    color: #ffffff;
-    text-decoration: none;
-}
-.amazon-nav-item:hover {
-    border-color: #ffffff;
-}
-
-/* Amazon Omnisearch Bar */
-.amazon-search-container {
-    flex: 1;
-    display: flex;
-    height: 40px;
-    border-radius: 4px;
-    background: #ffffff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    position: relative;
-}
-.amazon-search-container:focus-within {
-    box-shadow: 0 0 0 3px #f90, 0 0 0 2px #fff;
-}
-
-.amazon-search-dropdown {
-    background: #e6e6e6;
-    color: #555555;
-    font-size: 12px;
-    font-weight: 500;
-    border: none;
-    border-right: 1px solid #cdcdcd;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    padding: 0 10px;
-    cursor: pointer;
-    outline: none;
-    max-width: 170px;
-}
-.amazon-search-dropdown:hover {
-    background: #dadada;
-    color: #111111;
-}
-
-.amazon-search-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 0 12px;
-    font-size: 14px;
-    color: #111111;
-    background: transparent;
-}
-.amazon-search-input::placeholder {
-    color: #757575;
-    font-size: 13px;
-}
-
-.amazon-search-btn {
-    width: 45px;
-    background: var(--amazon-orange-light);
-    border: none;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #111111;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-.amazon-search-btn:hover {
-    background: var(--amazon-orange-hover);
-}
-
-/* Amazon Sub-Nav Bar */
-.amazon-subnav {
-    background-color: var(--amazon-nav-sub);
-    color: #ffffff;
-    height: 39px;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    gap: 6px;
-    overflow-x: auto;
-    white-space: nowrap;
-    border-bottom: 1px solid #19222d;
-    z-index: 90;
-}
-.amazon-subnav::-webkit-scrollbar {
-    height: 0;
-}
-
-.amazon-subnav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #ffffff;
-    padding: 6px 9px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: border-color 0.1s ease;
-}
-.amazon-subnav-link:hover {
-    border-color: #ffffff;
-}
-.amazon-subnav-link.active {
-    font-weight: 700;
-    color: var(--amazon-orange-light);
-    border-bottom: 2px solid var(--amazon-orange-light);
-}
-
-/* =========================================================================
-   2. AMAZON TACTILE BUTTONS
-   ========================================================================= */
-
-.a-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 20px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.2s ease,
-                background-color 0.15s ease,
-                border-color 0.15s ease,
-                filter 0.2s ease;
-    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
-}
-
-.a-button:hover {
-    transform: translateY(-1.5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.a-button:active {
-    transform: scale(0.96) translateY(0);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* Shimmer Light-Sweep Animation across Primary/Secondary Buttons */
-.a-button-primary::after,
-.a-button-secondary::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -75%;
-    width: 50%;
-    height: 200%;
-    background: linear-gradient(
-        120deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.4) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    transform: rotate(25deg);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-.a-button-primary:hover::after,
-.a-button-secondary:hover::after {
-    opacity: 1;
-    animation: btn-shimmer-sweep 1.2s infinite;
-}
-
-@keyframes btn-shimmer-sweep {
-    0% { left: -75%; }
-    100% { left: 130%; }
-}
-
-/* Yellow Add to Cart Button */
-.a-button-primary {
-    background: var(--amazon-btn-primary);
-    border: 1px solid var(--amazon-btn-primary-border);
-    color: #0f1111;
-}
-.a-button-primary:hover {
-    background: var(--amazon-btn-primary-hover);
-    border-color: #a88734 #9c7e31 #846a29;
-}
-.a-button-primary:active {
-    background: var(--amazon-btn-primary-active);
-}
-
-/* Orange Buy Now Button with Ambient Pulse */
-.a-button-secondary {
-    background: var(--amazon-btn-secondary);
-    border: 1px solid var(--amazon-btn-secondary-border);
-    color: #0f1111;
-    box-shadow: 0 2px 6px rgba(255, 164, 28, 0.35);
-}
-.a-button-secondary:hover {
-    background: var(--amazon-btn-secondary-hover);
-    box-shadow: 0 4px 14px rgba(255, 164, 28, 0.5);
-    filter: brightness(1.03);
-}
-.a-button-secondary:active {
-    background: var(--amazon-btn-secondary-active);
-}
-
-/* Subtle White / Gray Button */
-.a-button-subtle {
-    background: var(--amazon-btn-subtle);
-    border: 1px solid var(--amazon-btn-subtle-border);
-    color: var(--amazon-text-main);
-}
-.a-button-subtle:hover {
-    background: var(--amazon-btn-subtle-hover);
-    border-color: #a2a6a6;
-}
-.a-button-subtle:active {
-    transform: scale(0.97);
-}
-
-.a-button-sm {
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 8px;
-}
-
-/* =========================================================================
-   3. AMAZON PRODUCT CARD & GRID
-   ========================================================================= */
-
-.amazon-product-card {
-    background: var(--amazon-card);
-    border: 1px solid var(--amazon-border-subtle);
-    border-radius: 4px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    transition: box-shadow 0.18s ease, transform 0.18s ease;
-}
-.amazon-product-card:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+.glass-card:hover {
+    border-color: var(--border-glass-hover);
+    box-shadow: var(--shadow-card-hover);
     transform: translateY(-2px);
 }
 
-.amazon-product-image-container {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background: #f7f7f7;
-    border-radius: 3px;
-    overflow: hidden;
+.glass-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+}
+
+.glass-modal {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), var(--shadow-glow);
+    border-radius: 16px;
+}
+
+/* Glowing Badges & Beacons */
+.pulse-beacon {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-body.dark-theme .amazon-product-image-container {
-    background: #111822;
-}
-
-.amazon-product-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 8px;
-    transition: transform 0.25s ease;
-}
-.amazon-product-card:hover .amazon-product-image {
-    transform: scale(1.04);
-}
-
-/* Amazon Split-Price Component */
-.a-price {
-    color: var(--amazon-text-main);
     display: inline-flex;
-    align-items: baseline;
-    font-family: 'Inter', sans-serif;
-}
-.a-price-symbol {
-    font-size: 12px;
-    font-weight: 500;
-    vertical-align: top;
-    position: relative;
-    top: -0.4em;
-    margin-right: 1px;
-}
-.a-price-whole {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.02em;
-}
-.a-price-fraction {
-    font-size: 12px;
-    font-weight: 500;
-    vertical-align: top;
-    position: relative;
-    top: -0.4em;
-    margin-left: 1px;
 }
 
-/* Prime Delivery Badge */
-.prime-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    color: #00a8e1;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 13px;
-    letter-spacing: -0.03em;
-}
-.prime-check {
-    color: var(--amazon-orange);
-    font-style: normal;
-    font-weight: 900;
-    font-size: 11px;
-}
-
-/* Amazon Star Rating */
-.a-star-rating {
-    color: var(--amazon-star-gold);
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 12px;
-}
-.a-review-count {
-    color: var(--amazon-text-link);
-    font-size: 12px;
-    margin-left: 4px;
-}
-.a-review-count:hover {
-    color: var(--amazon-text-link-hover);
-    text-decoration: underline;
-}
-
-/* Best Seller / Amazon Choice Ribbon */
-.a-badge-choice {
-    display: inline-block;
-    background: #232f3e;
-    color: #ffffff;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 2px;
-    letter-spacing: 0.02em;
-}
-.a-badge-choice-highlight {
-    color: var(--amazon-orange);
-}
-
-/* =========================================================================
-   4. AMAZON 4-CARD FEATURE WIDGETS (Homepage Grid)
-   ========================================================================= */
-
-.amazon-feature-box {
-    background: var(--amazon-card);
-    border: 1px solid var(--amazon-border-subtle);
-    border-radius: 4px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-}
-.amazon-feature-box h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--amazon-text-main);
-    line-height: 1.25;
-    margin-bottom: 12px;
-}
-.amazon-feature-box .see-more-link {
-    color: var(--amazon-text-link);
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-    margin-top: 12px;
-}
-.amazon-feature-box .see-more-link:hover {
-    color: var(--amazon-text-link-hover);
-    text-decoration: underline;
-}
-
-/* =========================================================================
-   5. AMAZON BUY BOX (Product Details Page & Modal)
-   ========================================================================= */
-
-.a-buybox {
-    background: var(--amazon-card);
-    border: 1px solid var(--amazon-border);
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-
-.a-buybox-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--amazon-text-muted);
-}
-.a-buybox-row span:last-child {
-    color: var(--amazon-text-main);
-    font-weight: 500;
-}
-
-/* =========================================================================
-   6. AMAZON 5-STAR RATING BREAKDOWN BARS
-   ========================================================================= */
-
-.rating-bar-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--amazon-text-link);
-    cursor: pointer;
-}
-.rating-bar-row:hover {
-    color: var(--amazon-text-link-hover);
-}
-.rating-bar-container {
-    flex: 1;
-    height: 16px;
-    background: #f0f2f2;
-    border-radius: 4px;
-    border: 1px solid #d5d9d9;
-    overflow: hidden;
-}
-.rating-bar-fill {
-    height: 100%;
-    background: #ffa41c;
-    border-radius: 3px 0 0 3px;
-}
-
-/* =========================================================================
-   7. AMAZON MULTI-TIER FOOTER
-   ========================================================================= */
-
-.amazon-footer-backtotop {
-    background: var(--amazon-nav-hover);
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 500;
-    text-align: center;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-.amazon-footer-backtotop:hover {
-    background: #485769;
-}
-
-.amazon-footer-main {
-    background: var(--amazon-nav-sub);
-    color: #dddddd;
-    padding: 40px 20px 30px;
-    border-bottom: 1px solid #3a4553;
-}
-.amazon-footer-col h4 {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-.amazon-footer-col ul {
-    list-style: none;
-    space-y: 6px;
-}
-.amazon-footer-col li {
-    margin-bottom: 8px;
-}
-.amazon-footer-col a {
-    color: #dddddd;
-    font-size: 12px;
-    text-decoration: none;
-}
-.amazon-footer-col a:hover {
-    text-decoration: underline;
-    color: #ffffff;
-}
-
-.amazon-footer-bottom {
-    background: var(--amazon-nav-dark);
-    color: #999999;
-    padding: 24px 20px;
-    text-align: center;
-    font-size: 11px;
-}
-
-/* =========================================================================
-   8. TOAST NOTIFICATIONS & TIMELINE
-   ========================================================================= */
-
-.amazon-toast {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: #ffffff;
-    border: 1px solid var(--amazon-border);
-    border-left: 4px solid var(--amazon-orange);
-    border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    font-size: 13px;
-    color: #0f1111;
-    pointer-events: auto;
-    animation: toast-slide-in 0.2s ease forwards;
-}
-@keyframes toast-slide-in {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-/* 5-Step Order Tracking Timeline */
-.amazon-order-timeline {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    padding: 16px 0;
-}
-.timeline-track {
+.pulse-beacon::before {
+    content: '';
     position: absolute;
-    top: 26px;
-    left: 20px;
-    right: 20px;
-    height: 4px;
-    background: #e7e7e7;
-    z-index: 1;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: inherit;
+    background: inherit;
+    opacity: 0.7;
+    animation: pulse-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
-.timeline-track-fill {
-    height: 100%;
-    background: #007600;
-    transition: width 0.4s ease;
+
+@keyframes pulse-ping {
+    75%, 100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
 }
-.timeline-node {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+
+.glow-pill {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--accent-emerald-light);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
 }
-.timeline-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid #d5d9d9;
-    display: flex;
+
+/* Modern Awwwards Button Styles */
+.btn-modern {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    color: #ffffff;
-    transition: all 0.2s ease;
-}
-.timeline-node.completed .timeline-dot {
-    background: #007600;
-    border-color: #007600;
-}
-.timeline-node.active .timeline-dot {
-    background: var(--amazon-orange);
-    border-color: var(--amazon-orange);
-}
-.timeline-label {
-    font-size: 11px;
+    gap: 0.5rem;
     font-weight: 600;
-    color: var(--amazon-text-muted);
-    margin-top: 6px;
+    font-size: 0.8125rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
 }
-.timeline-node.completed .timeline-label {
-    color: #007600;
+
+.btn-primary-glow {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.btn-primary-glow:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-secondary-glow {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.btn-secondary-glow:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-glass {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--border-glass-hover);
+    color: var(--accent-emerald-light);
+}
+
+/* Command Palette (Spotlight) */
+.command-palette-backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Micro-interaction product cards */
+.product-card-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.product-card-media img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover .product-card-media img {
+    transform: scale(1.06);
+}
+
+.quick-action-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover .quick-action-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-emerald);
+}
+
+/* Code & Pre Blocks */
+pre, code {
+    font-family: var(--font-mono);
+}
+
+/* Toast Notifications */
+.awwwards-toast {
+    background: rgba(17, 31, 25, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border-glass);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.2);
+    animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
