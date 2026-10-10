@@ -55,17 +55,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const getCategoryIcon = (cid: string) => {
     switch (cid) {
+      case 'cat_semi_01': return 'fa-microchip';
+      case 'cat_hpc_02': return 'fa-server';
+      case 'cat_aero_03': return 'fa-shuttle-space';
+      case 'cat_telecom_04': return 'fa-tower-broadcast';
+      case 'cat_bio_05': return 'fa-dna';
+      case 'cat_energy_06': return 'fa-solar-panel';
+      case 'cat_robot_07': return 'fa-robot';
+      case 'cat_quantum_08': return 'fa-atom';
+      case 'cat_storage_09': return 'fa-hard-drive';
+      case 'cat_net_10': return 'fa-shield-halved';
+      case 'cat_maker_11': return 'fa-industry';
+      case 'cat_edu_12': return 'fa-microscope';
       case 'cat_comp_01': return 'fa-server';
       case 'cat_elec_02': return 'fa-microchip';
       case 'cat_audio_03': return 'fa-headphones';
       case 'cat_net_04': return 'fa-network-wired';
       case 'cat_storage_05': return 'fa-hard-drive';
-      case 'cat_display_06': return 'fa-desktop';
-      case 'cat_periph_07': return 'fa-keyboard';
-      case 'cat_power_08': return 'fa-bolt';
-      case 'cat_daily_09': return 'fa-mug-hot';
-      case 'cat_daily_10': return 'fa-pen-ruler';
-      case 'cat_daily_11': return 'fa-heart-pulse';
       default: return 'fa-box';
     }
   };
@@ -84,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           theme === 'forest' 
             ? 'bg-[#061810] text-emerald-50 border-r border-emerald-900/60' 
             : theme === 'dark' 
-              ? 'bg-[#0b0f19] text-slate-100 border-r border-slate-800' 
+              ? 'bg-[#030712] text-slate-100 border-r border-slate-800' 
               : 'bg-white text-gray-900 border-r border-gray-200'
         } w-80 sm:w-96 shadow-2xl z-10 flex-col justify-between transition-all duration-300`}
       >
@@ -94,11 +100,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           theme === 'forest' 
             ? 'bg-[#04100b] border-b border-emerald-950' 
             : theme === 'dark' 
-              ? 'bg-[#080c14] border-b border-slate-800' 
-              : 'bg-[#131921] text-white'
+              ? 'bg-[#030712] border-b border-cyan-500/30' 
+              : 'bg-[#0f172a] text-white border-b border-cyan-500/30'
         } p-4 flex items-center justify-between`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 text-slate-950 font-black flex items-center justify-center text-lg shadow-md ring-2 ring-white/20">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600 text-slate-950 font-black flex items-center justify-center text-lg shadow-md ring-2 ring-cyan-400/40">
               {user ? user.name.charAt(0).toUpperCase() : <i className="fa-solid fa-user text-sm"></i>}
             </div>
             <div className="leading-tight">
@@ -108,12 +114,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className={`text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-full ${
                   isAdmin 
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' 
+                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' 
                     : isManager 
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' 
-                      : 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
+                      : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
                 }`}>
-                  {isAdmin ? '👑 ADMIN (SUPERUSER)' : isManager ? '🏢 WAREHOUSE MGR' : '🛍️ CUSTOMER'}
+                  {isAdmin ? '👑 ADMIN (SUPERUSER)' : isManager ? '🏢 CORRIDOR MGR' : '🛰️ RESEARCH USER'}
                 </span>
               </div>
             </div>

@@ -48,10 +48,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <i className={`fa-heart ${inWishlist ? 'fa-solid text-rose-500 scale-110' : 'fa-regular text-gray-400 hover:text-rose-500'} text-sm transition-all`}></i>
         </button>
 
-        {/* Prime Badge */}
-        <div className="absolute bottom-1.5 left-1.5 bg-[#002f36] text-[#00a8e1] px-1.5 py-0.5 rounded text-[10px] font-black tracking-wider flex items-center gap-0.5 shadow-sm">
-          <span>prime</span>
-          <i className="fa-solid fa-check text-[9px] text-[#ff9900]"></i>
+        {/* State Lab Research Certification Badge */}
+        <div className="absolute bottom-1.5 left-1.5 bg-slate-950/90 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-wider flex items-center gap-1 shadow-sm backdrop-blur-md">
+          <i className="fa-solid fa-microchip text-[9px] text-cyan-400"></i>
+          <span>STATE-CERTIFIED</span>
         </div>
       </div>
 
@@ -59,12 +59,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <div className="space-y-1.5 flex-1 flex flex-col">
         {/* Category & Semantic Similarity Tag */}
         <div className="flex items-center justify-between gap-1">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)]">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)] font-mono">
             {product.category_name || 'Hardware'}
           </span>
           {product.similarity_score !== undefined && product.similarity_score > 0 && (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/40 text-purple-600 dark:text-purple-300 text-[10px] font-mono font-bold shrink-0 shadow-sm">
-              <i className="fa-solid fa-brain text-[9px] text-purple-500"></i>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-500 dark:text-cyan-300 text-[10px] font-mono font-bold shrink-0 shadow-sm">
+              <i className="fa-solid fa-brain text-[9px] text-cyan-400"></i>
               <span>{Math.round(product.similarity_score * 100)}% Match</span>
             </div>
           )}
@@ -75,40 +75,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {product.name}
         </h4>
 
-        {/* Reviews & Star Rating */}
+        {/* Reviews & Quality Rating */}
         <div className="flex items-center gap-1 text-xs">
-          <div className="flex text-amber-500 text-[11px]">
+          <div className="flex text-amber-400 text-[11px]">
             <i className="fa-solid fa-star"></i>
             <i className="fa-solid fa-star"></i>
             <i className="fa-solid fa-star"></i>
             <i className="fa-solid fa-star"></i>
             <i className="fa-solid fa-star-half-stroke"></i>
           </div>
-          <span className="text-[var(--color-link)] text-[11px] font-medium ml-1">4.7</span>
-          <span className="text-[var(--text-muted)] text-[10px]">(128)</span>
+          <span className="text-cyan-500 font-mono text-[11px] font-bold ml-1">4.9</span>
+          <span className="text-[var(--text-muted)] text-[10px] font-mono">Verified Node</span>
         </div>
 
         {/* Price */}
         <div className="pt-1 flex items-baseline gap-1">
-          <span className="text-xs font-semibold text-[var(--text-main)]">$</span>
-          <span className="text-xl font-bold text-[var(--text-main)] tracking-tight">
+          <span className="text-xs font-semibold text-[var(--text-main)] font-mono">$</span>
+          <span className="text-xl font-bold text-[var(--text-main)] tracking-tight font-mono">
             {Math.floor(product.price)}
           </span>
-          <span className="text-xs font-bold text-[var(--text-main)] -ml-0.5">
+          <span className="text-xs font-bold text-[var(--text-main)] -ml-0.5 font-mono">
             {Math.round((product.price % 1) * 100).toString().padStart(2, '0')}
           </span>
-          <span className="text-[11px] text-[var(--text-muted)] line-through ml-1.5">
+          <span className="text-[11px] text-[var(--text-muted)] line-through ml-1.5 font-mono">
             ${(product.price * 1.15).toFixed(2)}
           </span>
         </div>
 
-        {/* Stock & Delivery Guarantee */}
+        {/* Stock & Hub Dispatch */}
         <div className="text-[11px] font-medium">
           {isOutOfStock ? (
-            <span className="text-rose-500 font-bold">Currently unavailable</span>
+            <span className="text-rose-500 font-bold">Corridor Depleted</span>
           ) : (
-            <span className="text-emerald-500 font-semibold">
-              <i className="fa-solid fa-truck-fast mr-1"></i>FREE Delivery Tomorrow
+            <span className="text-emerald-500 font-semibold flex items-center gap-1">
+              <i className="fa-solid fa-network-wired text-[10px]"></i> Regional Hub Dispatch Ready
             </span>
           )}
         </div>
@@ -123,11 +123,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             e.stopPropagation();
             onAddToCart(product);
           }}
-          className={`a-button a-button-primary w-full py-1.5 text-xs font-bold ${
+          className={`a-button a-button-primary w-full py-2 text-xs font-bold ${
             isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          <i className="fa-solid fa-cart-plus"></i> Add to Cart
+          <i className="fa-solid fa-cart-plus"></i> Add to Requisition
         </button>
 
         <button
@@ -137,11 +137,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             e.stopPropagation();
             onBuyNow(product);
           }}
-          className={`a-button a-button-secondary w-full py-1.5 text-xs font-bold ${
+          className={`a-button a-button-secondary w-full py-2 text-xs font-bold ${
             isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          <i className="fa-solid fa-bolt"></i> Buy Now
+          <i className="fa-solid fa-bolt-lightning"></i> Instant Node Deploy
         </button>
       </div>
 

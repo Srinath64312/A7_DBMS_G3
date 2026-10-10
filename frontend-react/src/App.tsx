@@ -92,6 +92,8 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('default');
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const PAGE_SIZE = 32;
 
   // Cart & Wishlist State
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -566,6 +568,17 @@ export function App() {
     });
   }, [products, selectedCategory, searchQuery, inStockOnly, isSemanticMode, sortBy]);
 
+  // Reset pagination when query or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery, inStockOnly, isSemanticMode, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredProducts.slice(start, start + PAGE_SIZE);
+  }, [filteredProducts, currentPage]);
+
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -612,14 +625,14 @@ export function App() {
         {/* Filter and Storefront Toolbar */}
         <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl p-3 mb-5 flex flex-wrap items-center justify-between gap-3 shadow-sm text-xs transition-colors">
           <div className="flex items-center gap-3">
-            <span className="font-bold text-[var(--text-muted)]">
-              Showing <span className="text-[var(--text-main)] font-extrabold">{filteredProducts.length}</span> results
+            <span className="font-bold text-[var(--text-muted)] font-mono">
+              Showing <span className="text-[var(--text-main)] font-extrabold">{filteredProducts.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredProducts.length)}</span> of <span className="text-cyan-400 font-extrabold">{filteredProducts.length.toLocaleString()}</span> state research nodes
               {selectedCategory && ` in ${categories.find(c => c.category_id === selectedCategory)?.name || selectedCategory}`}
             </span>
             {selectedCategory && (
               <button
                 onClick={() => setSelectedCategory('')}
-                className="text-xs text-[var(--color-link)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                className="text-xs text-cyan-400 hover:underline flex items-center gap-1 font-semibold cursor-pointer font-mono"
               >
                 Clear filter <i className="fa-solid fa-xmark"></i>
               </button>
@@ -634,7 +647,7 @@ export function App() {
               title="Add a new product directly to the website catalog"
             >
               <i className="fa-solid fa-plus text-xs"></i>
-              <span>Add Product</span>
+              <span>Register Node</span>
             </button>
 
             {/* AI Semantic Vector Search Toggle */}
@@ -646,22 +659,22 @@ export function App() {
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition cursor-pointer ${
                 isSemanticMode
-                  ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
-                  : 'bg-[var(--bg-card-subtle)] text-purple-600 dark:text-purple-400 border-[var(--border-subtle)] hover:border-purple-400'
+                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-sm font-black'
+                  : 'bg-[var(--bg-card-subtle)] text-cyan-600 dark:text-cyan-400 border-[var(--border-subtle)] hover:border-cyan-400'
               }`}
               title="Toggle AI Semantic Vector Search (pgvector cosine similarity)"
             >
-              <i className={`fa-solid fa-brain ${isSemanticMode ? 'animate-pulse' : ''}`}></i>
+              <i className={`fa-solid fa-brain ${isSemanticMode ? 'animate-pulse text-slate-950' : 'text-cyan-500'}`}></i>
               <span>{isSemanticMode ? 'AI Semantic: ON' : 'AI Semantic: OFF'}</span>
             </button>
 
             {/* Vector Math & Embeddings Inspector */}
             <button
               onClick={() => setIsSemanticModalOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-card-subtle)] border border-[var(--border-subtle)] hover:border-purple-400 text-[var(--text-muted)] hover:text-purple-400 text-xs font-semibold cursor-pointer transition"
-              title="Open 16-Dimensional Vector & Cosine Math Inspector"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-card-subtle)] border border-[var(--border-subtle)] hover:border-cyan-400 text-[var(--text-muted)] hover:text-cyan-400 text-xs font-semibold cursor-pointer transition"
+              title="Open 1536-Dimensional Vector & Cosine Math Inspector"
             >
-              <i className="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
+              <i className="fa-solid fa-wand-magic-sparkles text-cyan-500"></i>
               <span className="hidden sm:inline">Vector Inspector</span>
             </button>
 
@@ -671,7 +684,7 @@ export function App() {
                 type="checkbox"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
-                className="rounded text-[#e47911] focus:ring-0 cursor-pointer"
+                className="rounded text-cyan-500 focus:ring-0 cursor-pointer"
               />
               <span>In Stock Only</span>
             </label>
@@ -718,19 +731,70 @@ export function App() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts.map(prod => (
-              <ProductCard
-                key={prod.product_id}
-                product={prod}
-                inWishlist={wishlist.some(w => w.product_id === prod.product_id)}
-                onToggleWishlist={handleToggleWishlist}
-                onAddToCart={(p) => handleAddToCart(p)}
-                onBuyNow={(p) => handleBuyNow(p)}
-                onViewDetails={(p) => setActiveModalProduct(p)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {paginatedProducts.map(prod => (
+                <ProductCard
+                  key={prod.product_id}
+                  product={prod}
+                  inWishlist={wishlist.some(w => w.product_id === prod.product_id)}
+                  onToggleWishlist={handleToggleWishlist}
+                  onAddToCart={(p) => handleAddToCart(p)}
+                  onBuyNow={(p) => handleBuyNow(p)}
+                  onViewDetails={(p) => setActiveModalProduct(p)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Bar */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl shadow-sm">
+                <div className="text-xs text-[var(--text-muted)] font-mono">
+                  Page <span className="text-[var(--text-main)] font-bold">{currentPage}</span> of <span className="text-[var(--text-main)] font-bold">{totalPages}</span> (32 nodes / page)
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 350, behavior: 'smooth' }); }}
+                    className="px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-subtle)] text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:border-cyan-400 text-[var(--text-main)] transition"
+                  >
+                    <i className="fa-solid fa-chevron-left mr-1"></i> Prev
+                  </button>
+
+                  {/* Dynamic page numbers */}
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum = currentPage;
+                    if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
+                    if (pageNum < 1 || pageNum > totalPages) return null;
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 350, behavior: 'smooth' }); }}
+                        className={`w-8 h-8 rounded-lg text-xs font-mono font-bold transition ${
+                          currentPage === pageNum
+                            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-sm'
+                            : 'bg-[var(--bg-card-subtle)] border border-[var(--border-subtle)] text-[var(--text-main)] hover:border-cyan-400'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 350, behavior: 'smooth' }); }}
+                    className="px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-subtle)] text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:border-cyan-400 text-[var(--text-main)] transition"
+                  >
+                    Next <i className="fa-solid fa-chevron-right ml-1"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </main>
 

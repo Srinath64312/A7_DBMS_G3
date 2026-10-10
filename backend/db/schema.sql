@@ -219,3 +219,12 @@ CREATE TABLE IF NOT EXISTS sellers (
 CREATE INDEX IF NOT EXISTS idx_sellers_user ON sellers(user_id);
 CREATE INDEX IF NOT EXISTS idx_sellers_city ON sellers(city);
 
+-- 19. State-Scale High-Throughput Performance Indexes (3,000+ Items)
+CREATE INDEX IF NOT EXISTS idx_products_cat_price ON products (category_id, price);
+CREATE INDEX IF NOT EXISTS idx_products_active_price ON products (is_active, price);
+CREATE INDEX IF NOT EXISTS idx_products_sku_lookup ON products (sku);
+CREATE INDEX IF NOT EXISTS idx_inventory_prod_wh_qty ON inventory (product_id, warehouse_id, quantity);
+CREATE INDEX IF NOT EXISTS idx_inventory_txns_prod_time ON inventory_transactions (product_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_user_status ON orders (user_id, status);
+
+

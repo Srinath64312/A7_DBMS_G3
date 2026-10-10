@@ -149,29 +149,29 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 {product.name}
               </h2>
               <div className="text-[11px] font-mono text-gray-500 mt-1">
-                ASIN: <span className="font-bold text-gray-700 dark:text-gray-300">{product.sku}</span> • Polyglot Backend
+                NODE SKU: <span className="font-bold text-cyan-400 font-mono">{product.sku}</span> • State Hardware Registry
               </div>
             </div>
 
             {/* Ratings */}
             <div className="flex items-center gap-2 text-xs">
-              <div className="flex text-amber-500">
+              <div className="flex text-amber-400">
                 {[1,2,3,4,5].map(i => (
                   <i key={i} className="fa-solid fa-star"></i>
                 ))}
               </div>
-              <span className="text-[#007185] dark:text-sky-400 font-semibold">{reviews.length ? `${reviews.length} ratings` : 'Verified Product'}</span>
+              <span className="text-cyan-500 font-semibold font-mono">{reviews.length ? `${reviews.length} peer evaluations` : 'State-Certified Node'}</span>
             </div>
 
             <div className="border-t border-slate-200 dark:border-slate-800 pt-3">
-              <div className="text-xs text-gray-500">Price:</div>
-              <div className="text-2xl font-bold text-[#b12704] dark:text-rose-400">
+              <div className="text-xs text-gray-500">Unit Price:</div>
+              <div className="text-2xl font-bold text-cyan-500 font-mono">
                 ${product.price.toFixed(2)}
               </div>
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-bold text-gray-700 dark:text-gray-300">About this item</span>
+              <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Technical Specifications</span>
               <p className="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
                 {product.description}
               </p>
@@ -180,7 +180,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             {/* Technical Attributes */}
             {product.attributes && Object.keys(product.attributes).length > 0 && (
               <div className="space-y-1.5 pt-2">
-                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Specifications</span>
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Architecture & Telemetry</span>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   {Object.entries(product.attributes).map(([k, v]) => (
                     <div key={k} className="p-2 bg-slate-50 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
@@ -196,18 +196,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Col 3: Buy Box */}
           <div className="lg:col-span-3 bg-[#fafafa] dark:bg-slate-800/60 border border-[#d5d9d9] dark:border-slate-700 rounded-lg p-4 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="text-xl font-bold text-[#b12704] dark:text-rose-400">
+              <div className="text-xl font-bold text-cyan-500 font-mono">
                 ${(product.price * quantity).toFixed(2)}
               </div>
 
-              <div className="text-xs text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
-                <i className="fa-solid fa-circle-check"></i> In Stock & Ready to Dispatch
+              <div className="text-xs text-emerald-500 font-bold flex items-center gap-1">
+                <i className="fa-solid fa-circle-check"></i> Corridor Dispatch Ready
               </div>
 
               {/* Warehouse Selection */}
               <div>
                 <label className="text-xs text-gray-600 dark:text-slate-400 block mb-1 font-semibold">
-                  Fulfillment Warehouse:
+                  Logistics Corridor Hub:
                 </label>
                 <select
                   value={selectedWarehouse}
@@ -221,14 +221,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       </option>
                     ))
                   ) : (
-                    <option value="wh_hyd_01">Hyderabad Central Hub (wh_hyd_01)</option>
+                    <option value="wh_hyd_01">Hyderabad Regional Corridor (wh_hyd_01)</option>
                   )}
                 </select>
               </div>
 
               {/* Quantity */}
               <div>
-                <label className="text-xs text-gray-600 dark:text-slate-400 block mb-1 font-semibold">Quantity:</label>
+                <label className="text-xs text-gray-600 dark:text-slate-400 block mb-1 font-semibold">Allocation Units:</label>
                 <select
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
@@ -251,7 +251,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 }}
                 className="a-button a-button-primary w-full py-2 text-xs"
               >
-                <i className="fa-solid fa-cart-plus"></i> Add to Cart
+                <i className="fa-solid fa-cart-plus"></i> Add to Requisition
               </button>
               <button
                 type="button"
@@ -261,7 +261,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 }}
                 className="a-button a-button-secondary w-full py-2 text-xs font-semibold"
               >
-                <i className="fa-solid fa-bolt"></i> Buy Now
+                <i className="fa-solid fa-bolt-lightning"></i> Instant Node Deploy
               </button>
             </div>
           </div>
@@ -272,14 +272,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         {recommendations.length > 0 && (
           <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800">
             <h3 className="text-sm font-bold text-[#0f1111] dark:text-slate-100 flex items-center gap-1.5 mb-3">
-              <i className="fa-solid fa-brain text-purple-500"></i> AI Vector Similarity Matches
+              <i className="fa-solid fa-brain text-cyan-400"></i> AI Vector Similarity Matches (HNSW Cosine)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {recommendations.slice(0, 4).map(rec => (
                 <div
                   key={rec.product_id}
                   onClick={() => onSelectProduct(rec)}
-                  className="bg-white dark:bg-slate-800 p-2.5 rounded border border-slate-200 dark:border-slate-700 hover:border-[#e47911] transition cursor-pointer flex flex-col justify-between"
+                  className="bg-white dark:bg-slate-800 p-2.5 rounded border border-slate-200 dark:border-slate-700 hover:border-cyan-400 transition cursor-pointer flex flex-col justify-between"
                 >
                   <img
                     src={getProductImage(rec)}
@@ -288,7 +288,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   />
                   <div>
                     <span className="text-xs font-semibold line-clamp-2">{rec.name}</span>
-                    <span className="text-xs font-bold text-[#b12704] dark:text-rose-400 mt-1 block">
+                    <span className="text-xs font-bold text-cyan-500 font-mono mt-1 block">
                       ${rec.price.toFixed(2)}
                     </span>
                   </div>

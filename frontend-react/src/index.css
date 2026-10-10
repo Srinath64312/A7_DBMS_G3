@@ -1,47 +1,47 @@
 :root, html.light, body.light {
-  --bg-page: #eaeded;
+  --bg-page: #f1f5f9;
   --bg-card: #ffffff;
   --bg-card-subtle: #f8fafc;
-  --text-main: #0f1111;
-  --text-muted: #565959;
-  --border-subtle: #d5d9d9;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-subtle: #cbd5e1;
   --border-card: #e2e8f0;
-  --color-brand: #ff9900;
-  --color-primary: #ffd814;
-  --color-primary-hover: #f7ca00;
-  --color-secondary: #ffa41c;
-  --color-secondary-hover: #fa8900;
-  --color-price: #b12704;
-  --color-link: #007185;
-  --header-bg: #131921;
-  --subnav-bg: #232f3e;
+  --color-brand: #0284c7;
+  --color-primary: #0284c7;
+  --color-primary-hover: #0369a1;
+  --color-secondary: #4f46e5;
+  --color-secondary-hover: #4338ca;
+  --color-price: #0369a1;
+  --color-link: #0284c7;
+  --header-bg: #0f172a;
+  --subnav-bg: #1e293b;
   --toolbar-bg: #ffffff;
 }
 
 html.dark:not(.forest), body.dark:not(.forest) {
-  --bg-page: #080c14;
-  --bg-card: #0f172a;
-  --bg-card-subtle: #1e293b;
+  --bg-page: #030712;
+  --bg-card: #0b1120;
+  --bg-card-subtle: #111c33;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-subtle: #1e293b;
   --border-card: #334155;
-  --color-brand: #38bdf8;
-  --color-primary: #38bdf8;
-  --color-primary-hover: #0ea5e9;
-  --color-secondary: #f59e0b;
-  --color-secondary-hover: #d97706;
-  --color-price: #f87171;
+  --color-brand: #00f0ff;
+  --color-primary: #00f0ff;
+  --color-primary-hover: #38bdf8;
+  --color-secondary: #2563eb;
+  --color-secondary-hover: #1d4ed8;
+  --color-price: #00f0ff;
   --color-link: #38bdf8;
-  --header-bg: #0b0f19;
-  --subnav-bg: #111827;
-  --toolbar-bg: #0f172a;
+  --header-bg: #030712;
+  --subnav-bg: #0b1120;
+  --toolbar-bg: #0b1120;
 }
 
 html.forest, body.forest {
-  --bg-page: #05130d;
-  --bg-card: #092016;
-  --bg-card-subtle: #0f2c20;
+  --bg-page: #02120d;
+  --bg-card: #062319;
+  --bg-card-subtle: #0d3829;
   --text-main: #ecfdf5;
   --text-muted: #a7f3d0;
   --border-subtle: #143829;
@@ -49,13 +49,13 @@ html.forest, body.forest {
   --color-brand: #10b981;
   --color-primary: #10b981;
   --color-primary-hover: #059669;
-  --color-secondary: #f59e0b;
-  --color-secondary-hover: #d97706;
+  --color-secondary: #06b6d4;
+  --color-secondary-hover: #0891b2;
   --color-price: #34d399;
   --color-link: #10b981;
-  --header-bg: #04100b;
-  --subnav-bg: #081d14;
-  --toolbar-bg: #092016;
+  --header-bg: #02120d;
+  --subnav-bg: #062319;
+  --toolbar-bg: #062319;
 }
 
 body {
@@ -64,106 +64,111 @@ body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Amazon Nav Items */
-.amazon-nav-item {
+/* Navigation Mesh Items (Quantum Titanium Glass) */
+.amazon-nav-item, .nav-mesh-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 6px 9px;
-  border-radius: 2px;
+  padding: 6px 10px;
+  border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
   user-select: none;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.amazon-nav-item:hover {
-  border-color: #ffffff;
+.amazon-nav-item:hover, .nav-mesh-item:hover {
+  border-color: rgba(0, 240, 255, 0.4);
+  background-color: rgba(0, 240, 255, 0.08);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
 }
 
-/* Tactile Button Animations (Amazon Design Standard) */
-.a-button {
+/* Hyperion Quantum Button System */
+.a-button, .btn-quantum {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  border-radius: 9999px;
-  font-weight: 500;
+  gap: 0.5rem;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 0.8125rem;
   cursor: pointer;
   user-select: none;
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 
-.a-button:hover {
+.a-button:hover, .btn-quantum:hover {
   transform: translateY(-1.5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.a-button:active {
-  transform: scale(0.96) translateY(0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+.a-button:active, .btn-quantum:active {
+  transform: scale(0.97) translateY(0);
 }
 
-/* Shimmer Wave Sweep on Primary / Secondary */
+/* Shimmer Wave Sweep */
 @keyframes btn-shimmer-sweep {
   0% { transform: translateX(-150%) skewX(-20deg); }
   50%, 100% { transform: translateX(250%) skewX(-20deg); }
 }
 
-.a-button-primary {
-  background-color: var(--color-primary);
-  color: #0f1111;
-  border: 1px solid #fcd200;
-  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+/* Quantum Luminescent Primary (Add to Cart / Confirm) */
+.a-button-primary, .btn-quantum-primary {
+  background: linear-gradient(135deg, #00f0ff 0%, #0284c7 100%);
+  color: #030712;
+  border: 1px solid #38bdf8;
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
 }
 
-.a-button-primary:hover {
-  background-color: var(--color-primary-hover);
-  border-color: #a88734 #9c7e31 #846a29;
+.a-button-primary:hover, .btn-quantum-primary:hover {
+  background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%);
+  border-color: #7dd3fc;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.55);
 }
 
-.a-button-primary::after {
+.a-button-primary::after, .btn-quantum-primary::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
   transform: translateX(-150%) skewX(-20deg);
   pointer-events: none;
 }
 
-.a-button-primary:hover::after {
+.a-button-primary:hover::after, .btn-quantum-primary:hover::after {
   animation: btn-shimmer-sweep 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Ambient Pulse Glow for High-Priority Secondary CTA (Buy Now) */
-@keyframes cta-pulse-glow {
+/* Ambient Pulse Glow for Quantum Secondary (Deploy / Buy Now) */
+@keyframes quantum-pulse-glow {
   0%, 100% {
-    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
   }
   50% {
-    box-shadow: 0 0 14px rgba(255, 164, 28, 0.65), 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.7), 0 0 10px rgba(37, 99, 235, 0.4);
   }
 }
 
-.a-button-secondary {
-  background-color: var(--color-secondary);
-  color: #0f1111;
-  border: 1px solid #ffa41c;
-  animation: cta-pulse-glow 3s infinite ease-in-out;
+.a-button-secondary, .btn-quantum-secondary {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  color: #ffffff;
+  border: 1px solid #60a5fa;
+  font-weight: 700;
+  animation: quantum-pulse-glow 3s infinite ease-in-out;
 }
 
-.a-button-secondary:hover {
-  background-color: var(--color-secondary-hover);
-  border-color: #a88734 #9c7e31 #846a29;
+.a-button-secondary:hover, .btn-quantum-secondary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+  border-color: #93c5fd;
   animation: none;
+  box-shadow: 0 0 22px rgba(124, 58, 237, 0.6);
 }
 
-.a-button-secondary::after {
+.a-button-secondary::after, .btn-quantum-secondary::after {
   content: '';
   position: absolute;
   top: 0;
@@ -175,18 +180,18 @@ body {
   pointer-events: none;
 }
 
-.a-button-secondary:hover::after {
+.a-button-secondary:hover::after, .btn-quantum-secondary:hover::after {
   animation: btn-shimmer-sweep 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.a-button-subtle {
-  background-color: #ffffff;
-  color: #0f1111;
-  border: 1px solid #d5d9d9;
+.a-button-subtle, .btn-quantum-subtle {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
-.a-button-subtle:hover {
-  background-color: #f7fafa;
-  border-color: #a6acac;
+.a-button-subtle:hover, .btn-quantum-subtle:hover {
+  background-color: var(--bg-card-subtle);
+  border-color: var(--color-brand);
 }
 
 /* Custom scrollbars */

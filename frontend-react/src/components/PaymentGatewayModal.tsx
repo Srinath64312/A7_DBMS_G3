@@ -235,8 +235,8 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
-                <i className="fa-solid fa-credit-card text-[#febd69] text-xl"></i>
-                <h3 className="text-lg font-bold">NexCommerce Secure Payment Gateway</h3>
+                <i className="fa-solid fa-shield-halved text-cyan-400 text-xl"></i>
+                <h3 className="text-lg font-bold">Hyperion Distributed Payment & ACID Gateway</h3>
               </div>
               <button
                 onClick={handleClose}
@@ -256,7 +256,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             {/* Order Items Preview */}
             <div className="space-y-2 max-h-36 overflow-y-auto bg-slate-50 dark:bg-slate-800/60 p-3 rounded border border-slate-200 dark:border-slate-700">
               <div className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                Order Summary ({items.length} item{items.length > 1 ? 's' : ''}):
+                Requisition Summary ({items.length} node{items.length > 1 ? 's' : ''}):
               </div>
               {items.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center text-xs">
@@ -264,8 +264,8 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                   <span className="font-mono font-bold">${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
-              <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between items-center text-sm font-bold text-[#b12704] dark:text-rose-400">
-                <span>Total Amount Due:</span>
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between items-center text-sm font-bold text-cyan-500 font-mono">
+                <span>Total Requisition Allocation:</span>
                 <span>${totalAmount.toFixed(2)}</span>
               </div>
             </div>
@@ -275,8 +275,8 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
               <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between text-xs font-bold text-gray-700 dark:text-gray-300">
                   <div className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-location-dot text-amber-500"></i>
-                    <span>Delivery Destination ({addresses.length} Saved Addresses):</span>
+                    <i className="fa-solid fa-location-dot text-cyan-400"></i>
+                    <span>Deployment Corridor Destination ({addresses.length} Saved Hubs):</span>
                   </div>
                   {onOpenAddressModal && (
                     <button

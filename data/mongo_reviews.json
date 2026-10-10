@@ -29,7 +29,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Exceeded all my expectations.",
-    "created_at": "2026-10-09T11:12:58.761412"
+    "created_at": "2026-10-10T21:56:07.715150"
   },
   "rev_002": {
     "review_id": "rev_002",
@@ -37,7 +37,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Build quality is top notch.",
-    "created_at": "2026-10-09T11:12:58.761445"
+    "created_at": "2026-10-10T21:56:07.715172"
   },
   "rev_003": {
     "review_id": "rev_003",
@@ -45,7 +45,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Highly recommended for professionals.",
-    "created_at": "2026-10-09T11:12:58.761463"
+    "created_at": "2026-10-10T21:56:07.715183"
   },
   "rev_004": {
     "review_id": "rev_004",
@@ -53,7 +53,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Exceeded all my expectations.",
-    "created_at": "2026-10-09T11:12:58.761474"
+    "created_at": "2026-10-10T21:56:07.715190"
   },
   "rev_005": {
     "review_id": "rev_005",
@@ -61,7 +61,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Solid product, no complaints.",
-    "created_at": "2026-10-09T11:12:58.761485"
+    "created_at": "2026-10-10T21:56:07.715199"
   },
   "rev_006": {
     "review_id": "rev_006",
@@ -69,7 +69,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Absolute beast of a machine!",
-    "created_at": "2026-10-09T11:12:58.761496"
+    "created_at": "2026-10-10T21:56:07.715205"
   },
   "rev_007": {
     "review_id": "rev_007",
@@ -77,7 +77,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Best I have ever used.",
-    "created_at": "2026-10-09T11:12:58.761520"
+    "created_at": "2026-10-10T21:56:07.715212"
   },
   "rev_008": {
     "review_id": "rev_008",
@@ -85,7 +85,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761530"
+    "created_at": "2026-10-10T21:56:07.715219"
   },
   "rev_009": {
     "review_id": "rev_009",
@@ -93,7 +93,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761539"
+    "created_at": "2026-10-10T21:56:07.715224"
   },
   "rev_010": {
     "review_id": "rev_010",
@@ -101,7 +101,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761549"
+    "created_at": "2026-10-10T21:56:07.715231"
   },
   "rev_011": {
     "review_id": "rev_011",
@@ -109,7 +109,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Build quality is top notch.",
-    "created_at": "2026-10-09T11:12:58.761563"
+    "created_at": "2026-10-10T21:56:07.715238"
   },
   "rev_012": {
     "review_id": "rev_012",
@@ -117,7 +117,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761575"
+    "created_at": "2026-10-10T21:56:07.715246"
   },
   "rev_013": {
     "review_id": "rev_013",
@@ -125,7 +125,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761585"
+    "created_at": "2026-10-10T21:56:07.715253"
   },
   "rev_014": {
     "review_id": "rev_014",
@@ -133,7 +133,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761594"
+    "created_at": "2026-10-10T21:56:07.715258"
   },
   "rev_015": {
     "review_id": "rev_015",
@@ -141,7 +141,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761603"
+    "created_at": "2026-10-10T21:56:07.715264"
   },
   "rev_016": {
     "review_id": "rev_016",
@@ -149,7 +149,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Exceeded all my expectations.",
-    "created_at": "2026-10-09T11:12:58.761616"
+    "created_at": "2026-10-10T21:56:07.715273"
   },
   "rev_017": {
     "review_id": "rev_017",
@@ -157,7 +157,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Fast, but gets a bit warm under load.",
-    "created_at": "2026-10-09T11:12:58.761625"
+    "created_at": "2026-10-10T21:56:07.715278"
   },
   "rev_018": {
     "review_id": "rev_018",
@@ -165,7 +165,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "A bit pricey, but worth every penny.",
-    "created_at": "2026-10-09T11:12:58.761635"
+    "created_at": "2026-10-10T21:56:07.715286"
   },
   "rev_019": {
     "review_id": "rev_019",
@@ -173,7 +173,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "A bit pricey, but worth every penny.",
-    "created_at": "2026-10-09T11:12:58.761644"
+    "created_at": "2026-10-10T21:56:07.715291"
   },
   "rev_020": {
     "review_id": "rev_020",
@@ -181,7 +181,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761653"
+    "created_at": "2026-10-10T21:56:07.715297"
   },
   "rev_021": {
     "review_id": "rev_021",
@@ -189,7 +189,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761663"
+    "created_at": "2026-10-10T21:56:07.715304"
   },
   "rev_022": {
     "review_id": "rev_022",
@@ -197,7 +197,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Highly recommended for professionals.",
-    "created_at": "2026-10-09T11:12:58.761676"
+    "created_at": "2026-10-10T21:56:07.715312"
   },
   "rev_023": {
     "review_id": "rev_023",
@@ -205,7 +205,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Exceeded all my expectations.",
-    "created_at": "2026-10-09T11:12:58.761710"
+    "created_at": "2026-10-10T21:56:07.715318"
   },
   "rev_024": {
     "review_id": "rev_024",
@@ -213,7 +213,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Build quality is top notch.",
-    "created_at": "2026-10-09T11:12:58.761717"
+    "created_at": "2026-10-10T21:56:07.715324"
   },
   "rev_025": {
     "review_id": "rev_025",
@@ -221,7 +221,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761728"
+    "created_at": "2026-10-10T21:56:07.715339"
   },
   "rev_026": {
     "review_id": "rev_026",
@@ -229,7 +229,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Absolute beast of a machine!",
-    "created_at": "2026-10-09T11:12:58.761736"
+    "created_at": "2026-10-10T21:56:07.715346"
   },
   "rev_027": {
     "review_id": "rev_027",
@@ -237,7 +237,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Highly recommended for professionals.",
-    "created_at": "2026-10-09T11:12:58.761752"
+    "created_at": "2026-10-10T21:56:07.715353"
   },
   "rev_028": {
     "review_id": "rev_028",
@@ -245,7 +245,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Solid product, no complaints.",
-    "created_at": "2026-10-09T11:12:58.761760"
+    "created_at": "2026-10-10T21:56:07.715358"
   },
   "rev_029": {
     "review_id": "rev_029",
@@ -253,7 +253,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Setup was a breeze.",
-    "created_at": "2026-10-09T11:12:58.761770"
+    "created_at": "2026-10-10T21:56:07.715365"
   },
   "rev_030": {
     "review_id": "rev_030",
@@ -261,7 +261,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Looks great and works perfectly.",
-    "created_at": "2026-10-09T11:12:58.761778"
+    "created_at": "2026-10-10T21:56:07.715371"
   },
   "rev_031": {
     "review_id": "rev_031",
@@ -269,7 +269,7 @@
     "user_id": "usr_cust_01",
     "rating": 4,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761789"
+    "created_at": "2026-10-10T21:56:07.715378"
   },
   "rev_032": {
     "review_id": "rev_032",
@@ -277,7 +277,7 @@
     "user_id": "usr_cust_01",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761799"
+    "created_at": "2026-10-10T21:56:07.715384"
   },
   "rev_033": {
     "review_id": "rev_033",
@@ -285,7 +285,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Highly recommended for professionals.",
-    "created_at": "2026-10-09T11:12:58.761806"
+    "created_at": "2026-10-10T21:56:07.715390"
   },
   "rev_034": {
     "review_id": "rev_034",
@@ -293,7 +293,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "Incredible performance for the price.",
-    "created_at": "2026-10-09T11:12:58.761815"
+    "created_at": "2026-10-10T21:56:07.715400"
   },
   "rev_035": {
     "review_id": "rev_035",
@@ -301,7 +301,7 @@
     "user_id": "usr_cust_02",
     "rating": 4,
     "comment": "The best purchase I made this year.",
-    "created_at": "2026-10-09T11:12:58.761824"
+    "created_at": "2026-10-10T21:56:07.715407"
   },
   "rev_036": {
     "review_id": "rev_036",
@@ -309,7 +309,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Looks great and works perfectly.",
-    "created_at": "2026-10-09T11:12:58.761831"
+    "created_at": "2026-10-10T21:56:07.715413"
   },
   "rev_037": {
     "review_id": "rev_037",
@@ -317,7 +317,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761841"
+    "created_at": "2026-10-10T21:56:07.715419"
   },
   "rev_038": {
     "review_id": "rev_038",
@@ -325,7 +325,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Very reliable and fast.",
-    "created_at": "2026-10-09T11:12:58.761848"
+    "created_at": "2026-10-10T21:56:07.715425"
   },
   "rev_039": {
     "review_id": "rev_039",
@@ -333,7 +333,7 @@
     "user_id": "usr_cust_02",
     "rating": 5,
     "comment": "Build quality is top notch.",
-    "created_at": "2026-10-09T11:12:58.761855"
+    "created_at": "2026-10-10T21:56:07.715430"
   },
   "rev_040": {
     "review_id": "rev_040",
@@ -367,5 +367,41 @@
     "comment": "Hey",
     "created_at": "2026-09-23T18:25:12.092146",
     "helpful_count": 0
+  },
+  "rev_prod_res_01_0001_usr_cust_01": {
+    "review_id": "rev_prod_res_01_0001_usr_cust_01",
+    "product_id": "prod_res_01_0001",
+    "user_id": "usr_cust_01",
+    "user_name": "Abhinay Sai",
+    "rating": 5,
+    "comment": "Remarkable sustained FP8 throughput. The NVLink-5 interconnect reduced our cluster all-reduce latency to sub-2 microseconds.",
+    "created_at": "2026-10-10T16:28:34.677778+00:00"
+  },
+  "rev_prod_res_02_0002_usr_cust_02": {
+    "review_id": "rev_prod_res_02_0002_usr_cust_02",
+    "product_id": "prod_res_02_0002",
+    "user_id": "usr_cust_02",
+    "user_name": "Chandu K",
+    "rating": 5,
+    "comment": "Exemplary direct-to-chip liquid cooling. The EPYC dual-socket blade ran continuously under full Linpack exascale benchmark without thermal throttling.",
+    "created_at": "2026-10-10T16:28:34.677796+00:00"
+  },
+  "rev_prod_res_08_0008_usr_mgr_01": {
+    "review_id": "rev_prod_res_08_0008_usr_mgr_01",
+    "product_id": "prod_res_08_0008",
+    "user_id": "usr_mgr_01",
+    "user_name": "Poli Naidu",
+    "rating": 5,
+    "comment": "Cryogenic dilution stability reached 9.4 mK with zero magnetic flux drift. Essential for multi-qubit coherent gate control.",
+    "created_at": "2026-10-10T16:28:34.677800+00:00"
+  },
+  "rev_prod_res_03_0003_usr_admin_01": {
+    "review_id": "rev_prod_res_03_0003_usr_admin_01",
+    "product_id": "prod_res_03_0003",
+    "user_id": "usr_admin_01",
+    "user_name": "Admin Srinath",
+    "rating": 5,
+    "comment": "Passed DO-254 Level A flight certification with full radiation hardness assurance. Superb hardware architecture.",
+    "created_at": "2026-10-10T16:28:34.677804+00:00"
   }
 }

@@ -31,9 +31,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <i className="fa-solid fa-cart-shopping text-amber-500 text-lg"></i>
-            <h3 className="font-bold text-base">Shopping Cart</h3>
-            <span className="text-xs text-gray-500">({totalCount} items)</span>
+            <i className="fa-solid fa-cart-shopping text-cyan-400 text-lg"></i>
+            <h3 className="font-bold text-base">Requisition Queue</h3>
+            <span className="text-xs text-gray-400">({totalCount} items)</span>
           </div>
           <button
             onClick={onClose}
@@ -44,18 +44,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         </div>
 
         {/* Free delivery badge */}
-        <div className="bg-emerald-50 dark:bg-emerald-950/40 p-2.5 px-4 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2 border-b border-emerald-200 dark:border-emerald-900">
-          <i className="fa-solid fa-circle-check text-emerald-600"></i>
-          <span>Your order qualifies for <strong>FREE Delivery</strong> via Prime Logistics.</span>
+        <div className="bg-cyan-950/40 p-2.5 px-4 text-xs text-cyan-300 flex items-center gap-2 border-b border-cyan-800/40">
+          <i className="fa-solid fa-shield-halved text-cyan-400"></i>
+          <span>Requisition qualifies for <strong>State Research Corridor Priority Dispatch</strong>.</span>
         </div>
 
         {/* Items List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {cart.length === 0 ? (
             <div className="text-center py-16 space-y-3 text-gray-500">
-              <i className="fa-solid fa-cart-arrow-down text-5xl text-gray-300 dark:text-slate-700"></i>
-              <p className="font-bold text-sm">Your Amazon Cart is empty</p>
-              <p className="text-xs">Browse the catalog to add servers, GPUs, and network hardware.</p>
+              <i className="fa-solid fa-microchip text-5xl text-gray-300 dark:text-slate-700"></i>
+              <p className="font-bold text-sm">Your Requisition Queue is empty</p>
+              <p className="text-xs">Browse the 3,000+ research nodes to add GPUs, accelerators, and servers.</p>
             </div>
           ) : (
             cart.map(item => {
@@ -77,9 +77,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   />
                   <div className="flex-1 min-w-0 space-y-1">
                     <h4 className="font-bold truncate">{item.name}</h4>
-                    <div className="text-[#b12704] dark:text-rose-400 font-bold">${item.price.toFixed(2)}</div>
+                    <div className="text-cyan-400 font-mono font-bold">${item.price.toFixed(2)}</div>
                     <div className="text-[10px] text-gray-500 truncate">
-                      Fulfillment: {item.warehouse_name || 'Hyderabad Hub'}
+                      Fulfillment: {item.warehouse_name || 'Hyderabad Logistics Corridor'}
                     </div>
 
                     <div className="flex items-center justify-between pt-1">
@@ -118,7 +118,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           <div className="p-4 border-t border-gray-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 space-y-3">
             <div className="flex justify-between items-center text-sm font-bold">
               <span>Subtotal ({totalCount} items):</span>
-              <span className="text-[#b12704] dark:text-rose-400 text-base">${totalAmount.toFixed(2)}</span>
+              <span className="text-cyan-400 font-mono text-base">${totalAmount.toFixed(2)}</span>
             </div>
 
             <button
@@ -128,7 +128,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               }}
               className="a-button a-button-primary w-full py-2.5 text-xs font-bold shadow-md"
             >
-              <i className="fa-solid fa-lock mr-1"></i> Proceed to Checkout ({totalCount} items)
+              <i className="fa-solid fa-lock mr-1"></i> Proceed to ACID Checkout ({totalCount} items)
             </button>
           </div>
         )}

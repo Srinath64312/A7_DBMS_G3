@@ -6,13 +6,13 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-12 bg-[#232f3e] text-white text-xs select-none">
+    <footer className="mt-12 bg-[#030712] text-white text-xs select-none border-t border-cyan-500/20">
       {/* Back to top */}
       <div 
         onClick={scrollToTop}
-        className="bg-[#37475a] hover:bg-[#485769] py-3.5 text-center text-xs font-semibold cursor-pointer transition"
+        className="bg-[#0b1120] hover:bg-[#111c33] py-3.5 text-center text-xs font-semibold cursor-pointer transition text-cyan-400 font-mono border-b border-cyan-500/20"
       >
-        Back to top
+        <i className="fa-solid fa-chevron-up mr-1 text-[10px]"></i> Back to Top of Research Grid
       </div>
 
       {/* Main footer content */}
@@ -63,13 +63,13 @@ export const Footer: React.FC = () => {
       {/* Bottom Bar */}
       <div className="py-6 text-center space-y-2 text-gray-400 text-[11px]">
         <div className="flex items-center justify-center gap-4">
-          <span className="font-black text-white text-base">NexCommerce</span>
+          <span className="font-black text-white text-base">Nex<span className="text-cyan-400">Commerce</span></span>
           <span>•</span>
           <span>English</span>
           <span>•</span>
           <span>INR ₹ / USD $</span>
           <span>•</span>
-          <span>India</span>
+          <span>State Logistics Corridors</span>
         </div>
         <div>
           © 2026 NexCommerce Platform (Group 3). Built with React 19, TypeScript, Vite, Tailwind CSS, PostgreSQL & MongoDB.

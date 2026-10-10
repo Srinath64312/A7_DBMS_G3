@@ -33,8 +33,8 @@ export const SubNav: React.FC<SubNavProps> = ({
       theme === 'forest' 
         ? 'bg-[#081d14] border-b border-emerald-950/90' 
         : theme === 'dark' 
-          ? 'bg-[#0f172a] border-b border-slate-800/90' 
-          : 'bg-[#232f3e]'
+          ? 'bg-[#0b1120] border-b border-cyan-500/20' 
+          : 'bg-[#0f172a] border-b border-cyan-500/20'
     } text-white text-xs select-none shadow-sm transition-colors duration-250`}>
       <div className="max-w-[1750px] mx-auto flex items-center justify-between px-4 py-1 gap-2">
         
@@ -43,11 +43,11 @@ export const SubNav: React.FC<SubNavProps> = ({
           {/* All Departments / Open RBAC Sidebar */}
           <button
             onClick={onOpenSidebar || (() => onSelectCategory(''))}
-            className="amazon-nav-item flex items-center gap-1.5 py-1 px-2.5 font-bold hover:border-white cursor-pointer shrink-0"
+            className="amazon-nav-item flex items-center gap-1.5 py-1 px-2.5 font-bold hover:border-cyan-400/50 cursor-pointer shrink-0"
             title="Open Role-Based Menu (Customer / Staff / Admin)"
           >
-            <i className="fa-solid fa-bars text-sm text-[#febd69]"></i>
-            <span>All Departments</span>
+            <i className="fa-solid fa-bars text-sm text-cyan-400"></i>
+            <span>All Research Sectors</span>
           </button>
 
           {/* Clean Department Categories */}
@@ -55,10 +55,10 @@ export const SubNav: React.FC<SubNavProps> = ({
             <button
               key={cat.category_id}
               onClick={() => onSelectCategory(cat.category_id)}
-              className={`amazon-nav-item py-1 px-2.5 text-xs transition shrink-0 ${
+              className={`amazon-nav-item py-1 px-2.5 text-xs transition shrink-0 rounded ${
                 selectedCategory === cat.category_id 
-                  ? 'border-white bg-[#37475a] font-bold text-white' 
-                  : 'text-gray-200 hover:text-white'
+                  ? 'border-cyan-400 bg-cyan-950/80 font-bold text-cyan-300 shadow-sm' 
+                  : 'text-gray-300 hover:text-white hover:border-cyan-500/30'
               }`}
             >
               {cat.name}
